@@ -80,7 +80,7 @@ def test_analyze():
     assert result.session_id == "test_002"
     assert result.query == "Explain ML"
     assert len(result.paths) > 0
-    print(f"✅ Analysis complete: {result.status}")
+    print(f"✅ Analysis complete: {str(result.needs_fix)}")
 
 
 def test_analyze_with_error():
@@ -113,7 +113,7 @@ def test_analyze_with_error():
     result = analyzer.analyze(traj)
 
     assert result is not None
-    print(f"✅ Error analysis complete: {result.status}")
+    print(f"✅ Error analysis complete: {str(result.needs_fix)}")
 
 
 if __name__ == "__main__":
