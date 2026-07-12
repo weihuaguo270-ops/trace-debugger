@@ -1,0 +1,48 @@
+{
+  "session_id": "demo_001",
+  "query": "写一份关于 AI 行业趋势的简短报告",
+  "model": "gpt-4",
+  "timestamp": "2026-07-12T10:00:00Z",
+  "steps": [
+    {
+      "step": 0,
+      "thought": "用户需要 AI 行业趋势报告，我先搜索一下最新动态",
+      "action": {
+        "name": "web_search",
+        "args": {
+          "query": "AI industry trends 2026"
+        }
+      },
+      "observation": "搜索结果：1. AI 市场规模预计 2026 年达到 5000 亿美元 2. 生成式 AI 是主要增长驱动力 3. 中国 AI 专利申请量全球第一",
+      "duration_seconds": 1.2,
+      "tokens_estimated": 150
+    },
+    {
+      "step": 1,
+      "thought": "获得了一些基本信息，再补充搜索中国 AI 市场的具体情况",
+      "action": {
+        "name": "web_search",
+        "args": {
+          "query": "中国 AI 市场 2026 趋势"
+        }
+      },
+      "observation": "搜索结果：1. 中国 AI 市场规模预计突破 8000 亿元人民币 2. 大模型赛道竞争激烈，百模大战进入洗牌期 3. AI 芯片国产替代加速",
+      "duration_seconds": 1.1,
+      "tokens_estimated": 140
+    },
+    {
+      "step": 2,
+      "thought": "已经收集到足够的信息，可以开始撰写报告了",
+      "observation": ""
+    },
+    {
+      "step": 3,
+      "thought": "整理搜索结果，撰写完整的行业趋势报告",
+      "observation": ""
+    }
+  ],
+  "final_answer": "## AI 行业趋势报告（2026）\n\n1. **市场规模持续扩大**：全球 AI 市场预计 2026 年达到 5000 亿美元，中国突破 8000 亿元。\n2. **生成式 AI 主导**：大模型技术仍是核心驱动力，应用场景从文本扩展到多模态。\n3. **竞争格局变化**：百模大战进入洗牌期，头部效应明显。\n4. **基础设施自主化**：AI 芯片国产替代加速推进。",
+  "total_duration_seconds": 3.5,
+  "system_prompt_preview": "你是一个 helpful assistant，需要根据搜索结果撰写报告",
+  "total_tokens_estimated": 800
+}
