@@ -1,5 +1,7 @@
 # Trace Debugger
 
+[![CI](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml/badge.svg)](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **Agent 执行轨迹分析工具** — 读取 Harness 轨迹 JSON，识别失败根因，逐步骤回放，批量扫描发现系统性问题。
 
 ## 解决的问题
