@@ -5,7 +5,6 @@ import os
 import sys
 import tempfile
 
-# Simple trajectory for testing
 SAMPLE_TRAJECTORY = {
     "session_id": "test_001",
     "query": "What is Python?",
@@ -26,43 +25,37 @@ SAMPLE_TRAJECTORY = {
 
 def test_imports():
     """Verify package imports work"""
-    from trace_debugger import TraceDebugger
-    assert TraceDebugger is not None
-    print("✅ Imports OK")
+    from trace_debugger import Analyzer, Trajectory
+    from trace_debugger.reader import Step, Path
+    assert Analyzer is not None
+    assert Trajectory is not None
+    print("✅ Package imports OK")
 
 
 def test_analyze_trajectory():
     """Test analyzing a simple trajectory"""
-    from trace_debugger import TraceDebugger
-    debugger = TraceDebugger()
+    from trace_debugger import Analyzer
     
-    # Create a temp file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        json.dump(SAMPLE_TRAJECTORY, f)
-        tmp_path = f.name
-    
-    try:
-        result = debugger.analyze(tmp_path)
-        assert result is not None
-        print(f"✅ Trajectory analyzed: {result}")
-    finally:
-        os.unlink(tmp_path)
+    analyzer = Analyzer()
+    result = analyzer.analyze(SAMPLE_TRAJECTORY)
+    assert result is not None
+    assert result.summary is not None
+    print(f"✅ Trajectory analyzed: {result.status}")
 
 
-def test_classify_failures():
-    """Test failure classification"""
-    from trace_debugger.failure_classifier import classify_step
+def test_reporter():
+    """Test reporter output"""
+    from trace_debugger import Analyzer, format_report
     
-    # A successful step
-    cls = classify_step({
-        "step_index": 1, "type": "action",
-        "action": {"name": "web_search"},
-        "content": "OK"
-    })
-    print(f"✅ Step classified: {cls}")
+    analyzer = Analyzer()
+    result = analyzer.analyze(SAMPLE_TRAJECTORY)
+    report = format_report(result)
+    assert len(report) > 0
+    print(f"✅ Report generated ({len(report)} chars)")
 
 
 if __name__ == "__main__":
     test_imports()
     test_analyze_trajectory()
+    test_reporter()
     print("\n🎉 All tests passed!")
