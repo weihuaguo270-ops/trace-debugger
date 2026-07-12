@@ -9,7 +9,7 @@ import tempfile
 def test_imports():
     """Verify package imports work"""
     from trace_debugger import Analyzer
-    from trace_debugger.reader import Trajectory, Step, Path
+    from trace_debugger.reader import Trajectory, Step, Path, parse
     assert Analyzer is not None
     assert Trajectory is not None
     print("✅ Package imports OK")
@@ -39,7 +39,7 @@ def test_parse_minimal():
         "final_answer": "Python is a programming language",
     }
 
-    traj = Trajectory.parse(data)
+    traj = parse(data)
     assert traj.session_id == "test_001"
     assert traj.query == "What is Python?"
     assert traj.num_steps == 2
@@ -72,7 +72,7 @@ def test_analyze():
         "final_answer": "Machine learning is a subset of AI.",
     }
 
-    traj = Trajectory.parse(data)
+    traj = parse(data)
     analyzer = Analyzer()
     result = analyzer.analyze(traj)
 
@@ -108,7 +108,7 @@ def test_analyze_with_error():
         "final_answer": "I encountered an error.",
     }
 
-    traj = Trajectory.parse(data)
+    traj = parse(data)
     analyzer = Analyzer()
     result = analyzer.analyze(traj)
 
