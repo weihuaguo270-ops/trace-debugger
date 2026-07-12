@@ -1,72 +1,49 @@
-# Trace Debugger — Agent 执行轨迹复盘分析工具
+# Trace Debugger
 
-> Agent 跑错了不告诉你为什么，Trace Debugger 告诉你。
+**Agent execution trace analyzer** — parse Harness execution trajectories, identify failure root causes, replay step-by-step, and batch-scan for systematic failure patterns.
 
-## 这是什么
+## Why
 
-Harness 记录了 Agent 的完整执行轨迹（thought → action → observation → final answer），但**这些原始 JSON 只有机器能读懂**。Trace Debugger 把这些轨迹"翻译"成对人类有意义的复盘分析。
+Agent execution trajectories are typically stored as raw JSON — machines can read them, humans can't. Trace Debugger translates these trajectories into actionable insights.
 
-输入一条 Harness 轨迹 JSON，输出：
+**Input:** Harness trajectory JSON → **Output:** Root cause analysis, failure classification, interactive replay
 
-```
-✅ 执行顺利，2 步无错误
-```
+## Commands
 
-或者当任务更复杂时：
+| Command | Description |
+|---------|-------------|
+| `tdebug <file.json>` | Analyze trajectory, identify root causes per path |
+| `tdebug replay <file.json>` | Step-by-step replay with Enter advancement |
+| `tdebug scan <directory>` | Batch-analyze latest N trajectories in directory |
 
-```
-⚠️ 路径 0 搜索无结果
-❌ 路径 1 工具报错 (超时)
-✅ 路径 2 最终完成
-建议：先修复路径 1 的搜索策略后重新输出
-```
+## Failure Classification
 
-## 核心功能
-
-| 功能 | 命令 | 说明 |
-|------|------|------|
-| **路径复盘** | `tdebug <file.json>` | 分析轨迹，识别每条路径的成败原因 |
-| **交互回放** | `tdebug replay <file.json>` | 逐步骤浏览，每步按 Enter 推进 |
-| **扫描模式** | `tdebug scan <目录>` | 批量分析目录中最新 N 条轨迹 |
-
-## 失败原因分类
-
-| 类型 | 检测什么 |
+| Type | Detects |
 |------|---------|
-| tool_error | 工具调用报错（参数错误/执行异常） |
-| search_empty | 搜索无有效结果 |
-| search_timeout | 搜索/工具调用超时 |
-| llm_offtrack | LLM 偏离用户意图 |
-| duplicate | 重复相同尝试 |
-| no_answer | 未给出最终答案 |
+| `tool_error` | Tool call failure (invalid params, execution exception) |
+| `search_empty` | Search returned no useful results |
+| `search_timeout` | Search / tool call timed out |
+| `llm_offtrack` | LLM deviated from user intent |
+| `duplicate` | Repeated identical attempts |
+| `no_answer` | No final answer produced |
 
-## 快速开始
+## Quick Start
 
 ```bash
 pip install -e .
 tdebug trajectory.json
-tdebug replay trajectory.json    # 逐步骤回放
-tdebug scan ./trajectories/      # 扫描目录
+tdebug replay trajectory.json
+tdebug scan ./trajectories/
 ```
 
-## 与 handwritten-react-agent 的关系
+## Input Format
 
-```
-Agent 执行 → Harness 记录轨迹 JSON
-                ↓
-         Trace Debugger 读取
-                ↓
-         路径分析 + 失败分类
-                ↓
-         复盘报告 + 修复建议
-                ↓
-         用户决定是否修复
-```
+Trace Debugger reads trajectories in Harness format (thought/action/observation sequences). Compatible with any ReAct-based agent framework that records execution traces in this schema.
 
-## 项目演进路线
+## Related Projects
 
-| 阶段 | 内容 |
-|------|------|
-| ✅ 已完成 | 轨迹解析、路径分析、失败分类、复盘报告、交互回放 |
-| 🔲 下一阶段 | 与 Agent 运行时实时集成（执行失败→自动复盘→用户确认→修复） |
-| 🔲 远期 | 多轨迹对比、失败模式学习、自动修复建议执行 |
+- [handwritten-react-agent](https://github.com/weihuaguo270-ops/handwritten-react-agent) — ReAct Agent framework that produces Harness-format trajectories
+
+## License
+
+MIT
