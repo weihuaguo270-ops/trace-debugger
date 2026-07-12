@@ -17,7 +17,7 @@ def test_imports():
 
 def test_parse_minimal():
     """Test Trajectory.parse with minimal data"""
-    from trace_debugger.reader import Trajectory
+    from trace_debugger.reader import Trajectory, parse
 
     data = {
         "session_id": "test_001",
@@ -50,7 +50,7 @@ def test_parse_minimal():
 def test_analyze():
     """Test full analysis pipeline"""
     from trace_debugger import Analyzer
-    from trace_debugger.reader import Trajectory
+    from trace_debugger.reader import Trajectory, parse
 
     data = {
         "session_id": "test_002",
@@ -86,7 +86,7 @@ def test_analyze():
 def test_analyze_with_error():
     """Test analyzing a trajectory with errors"""
     from trace_debugger import Analyzer
-    from trace_debugger.reader import Trajectory
+    from trace_debugger.reader import Trajectory, parse
 
     data = {
         "session_id": "test_003",
