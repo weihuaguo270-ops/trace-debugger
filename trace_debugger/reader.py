@@ -1,6 +1,6 @@
 """reader — 读取并解析 Harness 轨迹 JSON
 
-支持 Handwritten Agent 和 LangGraph 版两种轨迹格式。
+支持 react-agent 和 LangGraph 版两种轨迹格式。
 """
 from __future__ import annotations
 import json
