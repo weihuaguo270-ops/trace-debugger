@@ -116,9 +116,68 @@ def test_analyze_with_error():
     print(f"✅ Error analysis complete: {str(result.needs_fix)}")
 
 
+def test_detect_duplicate_and_no_answer():
+    """duplicate / no_answer 路径级检测"""
+    from trace_debugger import Analyzer
+    from trace_debugger.reader import parse
+
+    dup_data = {
+        "session_id": "dup",
+        "query": "search twice",
+        "model": "gpt-4",
+        "steps": [
+            {
+                "step": 0,
+                "thought": "search",
+                "action": {"name": "web_search", "args": {"query": "AI"}},
+                "observation": "result about AI industry trends and markets " * 3,
+            },
+            {
+                "step": 1,
+                "thought": "search again",
+                "action": {"name": "web_search", "args": {"query": "AI"}},
+                "observation": "result about AI industry trends and markets " * 3,
+            },
+            {
+                "step": 2,
+                "thought": "FINAL ANSWER: done",
+                "observation": "",
+            },
+        ],
+        "final_answer": "done",
+    }
+    result = Analyzer().analyze(parse(dup_data))
+    types = set()
+    for pa in result.paths:
+        types.update(pa.failure_types)
+    assert "duplicate" in types, types
+    print("✅ duplicate detection OK")
+
+    no_ans = {
+        "session_id": "noans",
+        "query": "hello",
+        "model": "gpt-4",
+        "steps": [
+            {
+                "step": 0,
+                "thought": "thinking only",
+                "observation": "",
+            },
+        ],
+        "final_answer": "",
+    }
+    result2 = Analyzer().analyze(parse(no_ans))
+    types2 = set()
+    for pa in result2.paths:
+        types2.update(pa.failure_types)
+    assert "no_answer" in types2, types2
+    print("✅ no_answer detection OK")
+
+
 if __name__ == "__main__":
     test_imports()
     test_parse_minimal()
     test_analyze()
     test_analyze_with_error()
+    test_detect_duplicate_and_no_answer()
     print("\n🎉 All tests passed!")

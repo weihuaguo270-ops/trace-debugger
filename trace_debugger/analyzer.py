@@ -145,9 +145,51 @@ class Analyzer:
                 if sa.failure_detail:
                     failure_details.append(f"Step {step.index}: {sa.failure_detail}")
 
+        # 路径级：重复相同工具调用（相邻步同名同参）
+        prev_key = None
+        for step in path.steps:
+            if not step.is_action:
+                continue
+            key = (step.action_name, step.action_args.strip())
+            if prev_key is not None and key == prev_key and key[0]:
+                failure_types.add(FailureType.DUPLICATE_ATTEMPT)
+                detail = (
+                    f"Step {step.index}: 重复调用 "
+                    f"{step.action_name}({step.action_args[:60]})"
+                )
+                failure_details.append(detail)
+                for sa in step_analyses:
+                    if sa.step_index == step.index and sa.success:
+                        sa.success = False
+                        sa.failure_type = FailureType.DUPLICATE_ATTEMPT
+                        sa.failure_detail = detail
+                        sa.suggestion = "添加状态追踪，避免重复相同尝试"
+                        break
+            prev_key = key
+
+        # 路径级：未给出最终答案
+        has_final_marker = any(s.is_final for s in path.steps)
+        has_final_text = bool((path.final_answer or "").strip())
+        if path.steps and not has_final_marker and not has_final_text:
+            failure_types.add(FailureType.NO_FINAL_ANSWER)
+            detail = "路径结束时未给出最终答案"
+            failure_details.append(detail)
+            last = path.steps[-1]
+            for sa in step_analyses:
+                if sa.step_index == last.index and sa.success:
+                    sa.success = False
+                    sa.failure_type = FailureType.NO_FINAL_ANSWER
+                    sa.failure_detail = detail
+                    sa.suggestion = "确保 Agent 在结束前输出 FINAL ANSWER"
+                    break
+
+        path_ok = path.success and FailureType.NO_FINAL_ANSWER not in failure_types
+
         summary_parts = []
-        if path.success:
+        if path_ok and not failure_types:
             summary_parts.append("成功")
+        elif path_ok:
+            summary_parts.append("完成但有问题")
         else:
             summary_parts.append("失败")
         summary_parts.append(f"{len(path.steps)} 步")
@@ -161,7 +203,7 @@ class Analyzer:
             path_index=index,
             num_steps=path.num_steps,
             tools_used=path.tools_used,
-            success=path.success,
+            success=path_ok,
             is_main=path.is_main_path,
             has_errors=path.has_errors,
             failure_types=list(failure_types),
@@ -190,9 +232,7 @@ class Analyzer:
                 failure_detail = f"{step.action_name} 耗时 {step.duration:.1f}s"
                 suggestion = "考虑限制搜索范围或加缓存"
 
-        if not failure_type and step.is_thought and not step.is_action:
-            # 检查 LLM 是否跑偏
-            pass
+        # llm_offtrack / context_overflow：规划中，暂无可靠启发式
 
         return StepAnalysis(
             step_index=step.index,
@@ -254,6 +294,8 @@ class Analyzer:
             FailureType.SEARCH_EMPTY: "调整搜索词策略，先确认需求再搜索",
             FailureType.SEARCH_TIMEOUT: "限制搜索范围或添加缓存层",
             FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束",
+            FailureType.CONTEXT_OVERFLOW: "压缩上下文或启用摘要/窗口滑动",
             FailureType.DUPLICATE_ATTEMPT: "添加状态追踪，避免重复相同尝试",
+            FailureType.NO_FINAL_ANSWER: "确保 Agent 在结束前输出 FINAL ANSWER",
         }
         return mapping.get(failure_type, "检查执行环境和输入")

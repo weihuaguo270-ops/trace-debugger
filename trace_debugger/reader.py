@@ -159,8 +159,14 @@ def parse(data: dict) -> Trajectory:
 
     # 路径划分：当前 Harness 格式是连续记录，暂按单路径处理
     # 后续扩展：当 ToT/orchestrator 产生多条路径时，根据特征切分
-    paths = [Path(steps=steps, success=True, is_main_path=True,
-                  final_answer=data.get("final_answer", ""))]
+    final_answer = data.get("final_answer", "") or ""
+    has_final = bool(final_answer.strip()) or any(s.is_final for s in steps)
+    paths = [Path(
+        steps=steps,
+        success=has_final,
+        is_main_path=True,
+        final_answer=final_answer,
+    )]
 
     return Trajectory(
         session_id=data.get("session_id", ""),
