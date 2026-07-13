@@ -74,3 +74,7 @@ $ tdebug examples/sample_trajectory.json
 ## License
 
 MIT
+
+## 贡献与安全
+
+见 [CONTRIBUTING.md](CONTRIBUTING.md) / [SECURITY.md](SECURITY.md)。
