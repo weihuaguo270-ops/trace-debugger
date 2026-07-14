@@ -234,7 +234,6 @@ def test_detect_offtrack_and_overflow():
 
 def test_sample_trajectory_not_false_offtrack():
     """示例正常轨迹不应被误判为 offtrack"""
-    import os
     from trace_debugger import Analyzer
     from trace_debugger.reader import load
 
