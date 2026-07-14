@@ -78,12 +78,12 @@ $ tdebug examples/sample_trajectory.json
 
 路径分析:
   ✅ 路径 0（主路径）:
-     Step 0: web_search "AI industry trends 2026" ✓
-     Step 1: web_search "中国 AI 市场 2026 趋势" ✓
-     Step 2: 整理信息 ✓
-     Step 3: 撰写报告 ✓
+     Step 1: web_search "AI industry trends 2026" ✓
+     Step 2: web_search "中国 AI 市场 2026 趋势" ✓
+     Step 3: 整理信息 ✓
+     Step 4: 撰写报告 ✓
 
-评估: ✅ 执行顺利，3 步无错误
+评估: ✅ 执行顺利，4 步无错误
 ```
 
 更多示例见 [`examples/sample_trajectory.json`](examples/sample_trajectory.json)。

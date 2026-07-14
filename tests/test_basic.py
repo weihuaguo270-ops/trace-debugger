@@ -25,13 +25,13 @@ def test_parse_minimal():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "I should search for this",
                 "action": {"name": "web_search", "args": {"query": "Python"}},
                 "observation": "Python is a programming language",
             },
             {
-                "step": 1,
+                "step": 2,
                 "thought": "I have enough info",
                 "observation": "",
             },
@@ -58,13 +58,13 @@ def test_analyze():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "Let me search for machine learning",
                 "action": {"name": "web_search", "args": {"query": "machine learning"}},
                 "observation": "Machine learning is a subset of AI",
             },
             {
-                "step": 1,
+                "step": 2,
                 "thought": "I have enough to answer",
                 "observation": "",
             },
@@ -94,13 +94,13 @@ def test_analyze_with_error():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "Let me execute Python code",
                 "action": {"name": "execute_python", "args": {"code": "print(1/0)"}},
                 "observation": "Error: division by zero",
             },
             {
-                "step": 1,
+                "step": 2,
                 "thought": "That failed, let me try again",
                 "observation": "",
             },
@@ -127,19 +127,19 @@ def test_detect_duplicate_and_no_answer():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "search",
                 "action": {"name": "web_search", "args": {"query": "AI"}},
                 "observation": "result about AI industry trends and markets " * 3,
             },
             {
-                "step": 1,
+                "step": 2,
                 "thought": "search again",
                 "action": {"name": "web_search", "args": {"query": "AI"}},
                 "observation": "result about AI industry trends and markets " * 3,
             },
             {
-                "step": 2,
+                "step": 3,
                 "thought": "FINAL ANSWER: done",
                 "observation": "",
             },
@@ -159,7 +159,7 @@ def test_detect_duplicate_and_no_answer():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "thinking only",
                 "observation": "",
             },
@@ -185,7 +185,7 @@ def test_detect_offtrack_and_overflow():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "FINAL ANSWER: 今天天气很好，适合出门散步，记得带伞以免突然下雨。",
                 "observation": "",
             }
@@ -206,14 +206,14 @@ def test_detect_offtrack_and_overflow():
         "model": "gpt-4",
         "steps": [
             {
-                "step": 0,
+                "step": 1,
                 "thought": "read",
                 "action": {"name": "fetch_page", "args": {"url": "x"}},
                 "observation": "Error: maximum context length exceeded for this model",
                 "tokens_estimated": 100,
             },
             {
-                "step": 1,
+                "step": 2,
                 "thought": "FINAL ANSWER: failed",
                 "observation": "",
             },
