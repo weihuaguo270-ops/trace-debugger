@@ -1,12 +1,11 @@
 """Trace Debugger CLI"""
 from __future__ import annotations
-import argparse
 import sys
 import os
 
 from .reader import load, load_recent
-from .analyzer import Analyzer
-from .reporter import format_report, format_json
+from .analyzer import Analyzer, FailureType, failure_distribution
+from .reporter import format_report
 
 
 def main():
@@ -44,7 +43,7 @@ def _print_help():
     print("用法:")
     print("  tdebug <file.json>              复盘单条轨迹")
     print("  tdebug replay <file.json>       逐步骤回放")
-    print("  tdebug scan <directory> [N]     扫描最新 N 条轨迹")
+    print("  tdebug scan <directory> [N]     扫描最新 N 条轨迹 + 失败分布")
     print()
     print("示例:")
     print("  tdebug traj_xxx.json")
@@ -71,11 +70,11 @@ def _cmd_replay(filepath: str):
     traj = load(filepath)
 
     print("=" * 55)
-    print(f"  Trace Debugger — 回放模式")
+    print("  Trace Debugger — 回放模式")
     print(f"  查询: {traj.query[:80]}")
     print("=" * 55)
 
-    for i, step in enumerate(traj.steps):
+    for step in traj.steps:
         input(f"\n按 Enter 查看 Step {step.index}...")
         print(f"\n--- Step {step.index} ---")
         if step.thought:
@@ -105,16 +104,32 @@ def _cmd_scan(directory: str, n: int):
         return
 
     print("=" * 55)
-    print(f"  Trace Debugger — 扫描结果")
+    print("  Trace Debugger — 扫描结果")
     print(f"  目录: {directory}")
     print(f"  最近 {len(trajs)} 条轨迹")
     print("=" * 55)
 
+    analyses = []
     for i, traj in enumerate(trajs):
         analyzer = Analyzer()
         analysis = analyzer.analyze(traj)
+        analyses.append(analysis)
         icon = "✅" if "无错误" in analysis.overall_assessment else "⚠️"
+        fails = sorted({ft for pa in analysis.paths for ft in pa.failure_types})
+        fail_s = ",".join(fails) if fails else "-"
         print(f"\n  [{i+1}] {icon} {traj.session_id}")
         print(f"      {traj.query[:80]}")
-        print(f"      {traj.total_duration:.1f}s / {traj.total_steps} 步 / {traj.model}")
+        print(f"      {traj.total_duration:.1f}s / {traj.num_steps} 步 / {traj.model}")
         print(f"      {analysis.overall_assessment}")
+        print(f"      失败类型: {fail_s}")
+
+    dist = failure_distribution(analyses)
+    print("\n" + "-" * 55)
+    print("  失败类型分布（路径级计数）")
+    if not dist:
+        print("  （无检测到失败类型）")
+    else:
+        for ft, cnt in sorted(dist.items(), key=lambda x: (-x[1], x[0])):
+            label = FailureType.LABELS.get(ft, ft)
+            print(f"  {ft:20s} {cnt:3d}  ({label})")
+    print("=" * 55)

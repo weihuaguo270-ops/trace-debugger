@@ -3,11 +3,14 @@
 对轨迹中的每条路径进行深度分析：
   - 工具调用是否成功/失败
   - 搜索是否返回有效结果
-  - LLM 是否偏离用户意图
+  - LLM 是否偏离用户意图（启发式）
+  - 上下文是否可能溢出（token / 错误文案）
   - 是否存在重复尝试相同方案
   - 最终方案的可靠性评估
 """
 from __future__ import annotations
+import re
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -38,6 +41,68 @@ class FailureType:
         "unknown": "未知原因",
     }
 
+
+_STOPWORDS = {
+    "的", "了", "是", "在", "和", "与", "或", "及", "等", "吗", "呢", "吧", "啊",
+    "请", "一下", "一个", "什么", "怎么", "如何", "哪些", "这个", "那个", "可以",
+    "需要", "帮我", "给我", "进行", "关于", "一份", "一些",
+    "a", "an", "the", "is", "are", "was", "were", "be", "to", "of", "in", "on",
+    "for", "and", "or", "what", "which", "how", "who", "why", "when", "where",
+    "please", "write", "tell", "me", "my", "your", "with", "from", "that", "this",
+}
+
+_OVERFLOW_PATTERNS = (
+    r"context\s*(length|window|limit)",
+    r"maximum\s*context",
+    r"token\s*limit",
+    r"too\s*many\s*tokens",
+    r"上下文.{0,8}(超|满|溢出|不够|超过)",
+    r"(超过|超出).{0,8}(上下文|context|token)",
+)
+
+
+def content_tokens(text: str) -> set[str]:
+    """抽取内容词：英文按词；中文按 2/3-gram，避免无空格整句糊成一词。"""
+    if not text:
+        return set()
+    text = text.lower()
+    tokens: set[str] = set()
+    for p in re.findall(r"[a-zA-Z0-9]{2,}", text):
+        if p not in _STOPWORDS:
+            tokens.add(p)
+    for run in re.findall(r"[\u4e00-\u9fff]+", text):
+        if 2 <= len(run) <= 4 and run not in _STOPWORDS:
+            tokens.add(run)
+        for n in (2, 3):
+            if len(run) < n:
+                continue
+            for i in range(len(run) - n + 1):
+                gram = run[i : i + n]
+                if gram not in _STOPWORDS:
+                    tokens.add(gram)
+    return tokens
+
+
+def looks_like_overflow_text(text: str) -> bool:
+    if not text:
+        return False
+    low = text.lower()
+    return any(re.search(p, low, flags=re.I) for p in _OVERFLOW_PATTERNS)
+
+
+def is_search_tool(name: str) -> bool:
+    n = (name or "").lower()
+    return "search" in n or "搜索" in name
+
+
+def failure_distribution(analyses: list[TrajectoryAnalysis]) -> dict[str, int]:
+    """汇总多条轨迹的失败类型计数。"""
+    counts: Counter[str] = Counter()
+    for analysis in analyses:
+        for pa in analysis.paths:
+            for ft in pa.failure_types:
+                counts[ft] += 1
+    return dict(counts)
 
 # ── 分析结果 ──
 
@@ -93,24 +158,38 @@ class Analyzer:
     用法：
         analyzer = Analyzer()
         analysis = analyzer.analyze(trajectory)
+
+    启发式说明：
+      - llm_offtrack: 查询内容词与最终答案重叠过低
+      - context_overflow: 单步/累计 token 超预算，或观测含溢出文案
     """
+
+    def __init__(
+        self,
+        *,
+        token_budget: int = 8192,
+        step_token_warn: int = 4096,
+        offtrack_overlap: float = 0.15,
+        timeout_seconds: float = 20.0,
+    ):
+        self.token_budget = token_budget
+        self.step_token_warn = step_token_warn
+        self.offtrack_overlap = offtrack_overlap
+        self.timeout_seconds = timeout_seconds
 
     def analyze(self, traj: Trajectory) -> TrajectoryAnalysis:
         """分析完整轨迹"""
         path_analyses = []
         for i, path in enumerate(traj.paths):
-            pa = self._analyze_path(path, i)
+            pa = self._analyze_path(path, i, traj)
             path_analyses.append(pa)
 
-        # 主路径摘要
         main = traj.main_path
         main_summary = self._summarize_main(main, path_analyses) if main else "无主路径"
 
-        # 失败路径摘要
         failed = traj.failed_paths
         failed_summary = self._summarize_failed(failed, path_analyses) if failed else "无失败路径"
 
-        # 总体评估
         all_failures = []
         for pa in path_analyses:
             all_failures.extend(pa.failure_details)
@@ -131,19 +210,28 @@ class Analyzer:
             fix_suggestions=self._generate_suggestions(traj, path_analyses),
         )
 
-    def _analyze_path(self, path: Path, index: int) -> PathAnalysis:
+    def _analyze_path(self, path: Path, index: int, traj: Trajectory) -> PathAnalysis:
         """分析单条路径"""
         step_analyses = []
         failure_types = set()
         failure_details = []
+        cum_tokens = 0
 
         for step in path.steps:
-            sa = self._analyze_step(step)
+            cum_tokens += int(step.tokens or 0)
+            sa = self._analyze_step(step, cum_tokens=cum_tokens, traj=traj)
             step_analyses.append(sa)
             if not sa.success and sa.failure_type:
                 failure_types.add(sa.failure_type)
                 if sa.failure_detail:
                     failure_details.append(f"Step {step.index}: {sa.failure_detail}")
+
+        # 路径级：元数据总 token
+        meta_tokens = int((traj.metadata or {}).get("total_tokens_estimated") or 0)
+        if meta_tokens >= self.token_budget:
+            failure_types.add(FailureType.CONTEXT_OVERFLOW)
+            detail = f"轨迹 total_tokens_estimated={meta_tokens} ≥ budget={self.token_budget}"
+            failure_details.append(detail)
 
         # 路径级：重复相同工具调用（相邻步同名同参）
         prev_key = None
@@ -169,7 +257,9 @@ class Analyzer:
 
         # 路径级：未给出最终答案
         has_final_marker = any(s.is_final for s in path.steps)
-        has_final_text = bool((path.final_answer or "").strip())
+        has_final_text = bool((path.final_answer or "").strip()) or bool(
+            (traj.final_answer or "").strip()
+        )
         if path.steps and not has_final_marker and not has_final_text:
             failure_types.add(FailureType.NO_FINAL_ANSWER)
             detail = "路径结束时未给出最终答案"
@@ -183,7 +273,26 @@ class Analyzer:
                     sa.suggestion = "确保 Agent 在结束前输出 FINAL ANSWER"
                     break
 
+        # 路径级：llm_offtrack（需有最终答案才比较）
+        offtrack = self._detect_offtrack(traj, path)
+        if offtrack:
+            failure_types.add(FailureType.LLM_OFFTRACK)
+            failure_details.append(offtrack)
+            # 挂到最后一步
+            last = path.steps[-1] if path.steps else None
+            if last:
+                for sa in step_analyses:
+                    if sa.step_index == last.index and sa.success:
+                        sa.success = False
+                        sa.failure_type = FailureType.LLM_OFFTRACK
+                        sa.failure_detail = offtrack
+                        sa.suggestion = "在 system prompt 中强化约束，或增加意图校验"
+                        break
+
         path_ok = path.success and FailureType.NO_FINAL_ANSWER not in failure_types
+        # offtrack / overflow 视为「完成但有问题」仍可能 path.success=True from parse
+        if FailureType.LLM_OFFTRACK in failure_types:
+            path_ok = False
 
         summary_parts = []
         if path_ok and not failure_types:
@@ -212,27 +321,81 @@ class Analyzer:
             summary=" | ".join(summary_parts),
         )
 
-    def _analyze_step(self, step: Step) -> StepAnalysis:
+    def _detect_offtrack(self, traj: Trajectory, path: Path) -> str:
+        """查询与最终答案内容词重叠过低 → llm_offtrack。"""
+        answer = (path.final_answer or traj.final_answer or "").strip()
+        if not answer:
+            for s in reversed(path.steps):
+                if s.is_final:
+                    answer = s.thought
+                    break
+        if not answer or not traj.query.strip():
+            return ""
+
+        q_tok = content_tokens(traj.query)
+        a_tok = content_tokens(answer)
+        # 短查询 / 短答案：关键词重叠启发式假阳性高，跳过
+        if len(q_tok) < 2 or len(a_tok) < 2:
+            return ""
+        if len(answer) < 40 and len(a_tok) < 4:
+            return ""
+
+        overlap = len(q_tok & a_tok) / len(q_tok)
+        if overlap < self.offtrack_overlap:
+            return (
+                f"最终答案与用户查询内容词重叠过低 "
+                f"({overlap:.0%} < {self.offtrack_overlap:.0%})；"
+                f"查询词={sorted(q_tok)[:6]} 答案词样例={sorted(a_tok)[:6]}"
+            )
+        return ""
+
+    def _analyze_step(
+        self,
+        step: Step,
+        *,
+        cum_tokens: int = 0,
+        traj: Optional[Trajectory] = None,
+    ) -> StepAnalysis:
         """分析单步"""
         failure_type = ""
         failure_detail = ""
         suggestion = ""
 
-        if step.is_action:
+        # 上下文溢出：文案或 token
+        obs = step.observation or ""
+        err = step.error_message or ""
+        if looks_like_overflow_text(obs) or looks_like_overflow_text(err):
+            failure_type = FailureType.CONTEXT_OVERFLOW
+            failure_detail = "观测/错误信息提示上下文或 token 限制"
+            suggestion = "压缩上下文或启用摘要/窗口滑动"
+        elif step.tokens >= self.step_token_warn:
+            failure_type = FailureType.CONTEXT_OVERFLOW
+            failure_detail = (
+                f"单步 tokens={step.tokens} ≥ 警告阈值 {self.step_token_warn}"
+            )
+            suggestion = "缩短观测或限制工具返回长度"
+        elif cum_tokens >= self.token_budget:
+            failure_type = FailureType.CONTEXT_OVERFLOW
+            failure_detail = (
+                f"累计 tokens≈{cum_tokens} ≥ budget={self.token_budget}"
+            )
+            suggestion = "压缩上下文或启用摘要/窗口滑动"
+
+        if not failure_type and step.is_action:
             if step.has_error:
                 failure_type = FailureType.TOOL_ERROR
                 failure_detail = f"{step.action_name} 调用失败: {step.error_message[:100]}"
                 suggestion = f"检查 {step.action_name} 的参数或重试"
-            elif "搜索" in step.action_name and (not step.observation or len(step.observation) < 20):
+            elif is_search_tool(step.action_name) and (
+                not step.observation or len(step.observation) < 20
+            ):
                 failure_type = FailureType.SEARCH_EMPTY
                 failure_detail = f"搜索 '{step.action_args[:60]}' 无有效结果"
                 suggestion = "换搜索词或尝试其他来源"
-            elif step.duration > 20:
+            elif step.duration > self.timeout_seconds:
                 failure_type = FailureType.SEARCH_TIMEOUT
                 failure_detail = f"{step.action_name} 耗时 {step.duration:.1f}s"
                 suggestion = "考虑限制搜索范围或加缓存"
-
-        # llm_offtrack / context_overflow：规划中，暂无可靠启发式
 
         return StepAnalysis(
             step_index=step.index,
@@ -293,7 +456,7 @@ class Analyzer:
             FailureType.TOOL_ERROR: "检查工具参数是否正确，或增加参数校验",
             FailureType.SEARCH_EMPTY: "调整搜索词策略，先确认需求再搜索",
             FailureType.SEARCH_TIMEOUT: "限制搜索范围或添加缓存层",
-            FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束",
+            FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束，或增加意图校验",
             FailureType.CONTEXT_OVERFLOW: "压缩上下文或启用摘要/窗口滑动",
             FailureType.DUPLICATE_ATTEMPT: "添加状态追踪，避免重复相同尝试",
             FailureType.NO_FINAL_ANSWER: "确保 Agent 在结束前输出 FINAL ANSWER",

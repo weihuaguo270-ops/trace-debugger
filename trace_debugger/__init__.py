@@ -10,6 +10,13 @@
 """
 __version__ = "0.1.0"
 
-from trace_debugger.analyzer import Analyzer, TrajectoryAnalysis, PathAnalysis, StepAnalysis
+from trace_debugger.analyzer import (
+    Analyzer,
+    TrajectoryAnalysis,
+    PathAnalysis,
+    StepAnalysis,
+    FailureType,
+    failure_distribution,
+)
 from trace_debugger.reader import Trajectory, Path, Step
 from trace_debugger.reporter import format_report, format_json

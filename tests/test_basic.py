@@ -174,10 +174,87 @@ def test_detect_duplicate_and_no_answer():
     print("✅ no_answer detection OK")
 
 
+def test_detect_offtrack_and_overflow():
+    """llm_offtrack / context_overflow 启发式"""
+    from trace_debugger import Analyzer, failure_distribution
+    from trace_debugger.reader import parse
+
+    off = {
+        "session_id": "off",
+        "query": "写一份关于人工智能行业趋势的详细分析报告",
+        "model": "gpt-4",
+        "steps": [
+            {
+                "step": 0,
+                "thought": "FINAL ANSWER: 今天天气很好，适合出门散步，记得带伞以免突然下雨。",
+                "observation": "",
+            }
+        ],
+        "final_answer": (
+            "今天天气很好，适合出门散步，记得带伞以免突然下雨。"
+            "周末还可以去公园野餐，欣赏美丽的风景。"
+        ),
+    }
+    r = Analyzer().analyze(parse(off))
+    types = {ft for pa in r.paths for ft in pa.failure_types}
+    assert "llm_offtrack" in types, types
+    print("✅ llm_offtrack detection OK")
+
+    ov = {
+        "session_id": "ov",
+        "query": "summarize this",
+        "model": "gpt-4",
+        "steps": [
+            {
+                "step": 0,
+                "thought": "read",
+                "action": {"name": "fetch_page", "args": {"url": "x"}},
+                "observation": "Error: maximum context length exceeded for this model",
+                "tokens_estimated": 100,
+            },
+            {
+                "step": 1,
+                "thought": "FINAL ANSWER: failed",
+                "observation": "",
+            },
+        ],
+        "final_answer": "failed due to context",
+        "total_tokens_estimated": 9000,
+    }
+    r2 = Analyzer(token_budget=8192).analyze(parse(ov))
+    types2 = {ft for pa in r2.paths for ft in pa.failure_types}
+    assert "context_overflow" in types2, types2
+    print("✅ context_overflow detection OK")
+
+    dist = failure_distribution([r, r2])
+    assert dist.get("llm_offtrack", 0) >= 1
+    assert dist.get("context_overflow", 0) >= 1
+    print(f"✅ failure_distribution OK: {dist}")
+
+
+def test_sample_trajectory_not_false_offtrack():
+    """示例正常轨迹不应被误判为 offtrack"""
+    import os
+    from trace_debugger import Analyzer
+    from trace_debugger.reader import load
+
+    path = os.path.join(os.path.dirname(__file__), "..", "examples", "sample_trajectory.json")
+    path = os.path.abspath(path)
+    if not os.path.exists(path):
+        print("⚠️ sample missing, skip")
+        return
+    result = Analyzer().analyze(load(path))
+    types = {ft for pa in result.paths for ft in pa.failure_types}
+    assert "llm_offtrack" not in types, types
+    print("✅ sample trajectory not false-offtrack")
+
+
 if __name__ == "__main__":
     test_imports()
     test_parse_minimal()
     test_analyze()
     test_analyze_with_error()
     test_detect_duplicate_and_no_answer()
+    test_detect_offtrack_and_overflow()
+    test_sample_trajectory_not_false_offtrack()
     print("\n🎉 All tests passed!")
