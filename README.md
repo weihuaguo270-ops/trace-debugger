@@ -44,7 +44,20 @@ tdebug scan ./trajectories/ 10   # 批量扫描 + 失败类型分布
 
 ## 输入格式
 
-Trace Debugger 读取 Harness 格式的轨迹（thought/action/observation 序列）。兼容任何按此 schema 记录执行轨迹的 ReAct Agent。
+读取 **Harness Format B** 轨迹（`thought` / `action` / `observation`）。约定：
+
+- `step` 为 **1-based**
+- 工具参数优先 `action.arguments`（字符串）；也接受 `args`（对象）
+- 同一步多工具可用 `actions[]`（reader 取首个作主调用）
+
+权威 JSON Schema：[react-agent/schemas/harness_trajectory.schema.json](https://github.com/weihuaguo270-ops/react-agent/blob/main/schemas/harness_trajectory.schema.json)
+
+一键闭环（含本工具失败分类 + eval-engine 评分）：
+
+```bash
+# 在 react-agent 仓
+python examples/harness_closed_loop.py --fixture
+```
 
 ## 相关项目
 

@@ -130,12 +130,21 @@ def parse(data: dict) -> Trajectory:
         step_num = s.get("step", 0)
         thought = s.get("thought", "")
         action = s.get("action", {}) or {}
+        actions = s.get("actions")
+        if (not action) and isinstance(actions, list) and actions:
+            action = actions[0] or {}
         observation = s.get("observation", "")
         duration = s.get("duration_seconds", 0.0)
         tokens = s.get("tokens_estimated", 0)
 
         action_name = action.get("name", "") if isinstance(action, dict) else ""
-        action_args = action.get("arguments", action.get("args", "")) if isinstance(action, dict) else ""
+        raw_args = ""
+        if isinstance(action, dict):
+            raw_args = action.get("arguments", action.get("args", ""))
+        if isinstance(raw_args, dict):
+            action_args = json.dumps(raw_args, ensure_ascii=False)
+        else:
+            action_args = str(raw_args) if raw_args is not None else ""
 
         # 检测错误
         has_error = False
@@ -149,7 +158,7 @@ def parse(data: dict) -> Trajectory:
             index=step_num,
             thought=thought,
             action_name=action_name,
-            action_args=str(action_args)[:200],
+            action_args=action_args[:200],
             observation=observation[:300],
             duration=duration,
             tokens=tokens,

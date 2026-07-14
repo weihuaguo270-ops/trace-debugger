@@ -5,38 +5,34 @@
   "timestamp": "2026-07-12T10:00:00Z",
   "steps": [
     {
-      "step": 0,
+      "step": 1,
       "thought": "用户需要 AI 行业趋势报告，我先搜索一下最新动态",
       "action": {
         "name": "web_search",
-        "args": {
-          "query": "AI industry trends 2026"
-        }
+        "arguments": "{\"query\": \"AI industry trends 2026\"}"
       },
       "observation": "搜索结果：1. AI 市场规模预计 2026 年达到 5000 亿美元 2. 生成式 AI 是主要增长驱动力 3. 中国 AI 专利申请量全球第一",
       "duration_seconds": 1.2,
       "tokens_estimated": 150
     },
     {
-      "step": 1,
+      "step": 2,
       "thought": "获得了一些基本信息，再补充搜索中国 AI 市场的具体情况",
       "action": {
         "name": "web_search",
-        "args": {
-          "query": "中国 AI 市场 2026 趋势"
-        }
+        "arguments": "{\"query\": \"中国 AI 市场 2026 趋势\"}"
       },
       "observation": "搜索结果：1. 中国 AI 市场规模预计突破 8000 亿元人民币 2. 大模型赛道竞争激烈，百模大战进入洗牌期 3. AI 芯片国产替代加速",
       "duration_seconds": 1.1,
       "tokens_estimated": 140
     },
     {
-      "step": 2,
+      "step": 3,
       "thought": "已经收集到足够的信息，可以开始撰写报告了",
       "observation": ""
     },
     {
-      "step": 3,
+      "step": 4,
       "thought": "整理搜索结果，撰写完整的行业趋势报告",
       "observation": ""
     }
