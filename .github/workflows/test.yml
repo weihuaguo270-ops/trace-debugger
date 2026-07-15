@@ -32,3 +32,5 @@ jobs:
         pip install -e . pytest
     - name: Test
       run: python -m pytest tests/ -v --tb=short
+    - name: Publish failure snapshot (fixture)
+      run: python examples/publish_failure_snapshot.py --dir examples/failure_bundle --stem ci_failure_smoke --out-dir /tmp/tdebug_docs

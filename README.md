@@ -59,6 +59,17 @@ tdebug scan ./trajectories/ 10   # 批量扫描 + 失败类型分布
 python examples/harness_closed_loop.py --fixture
 ```
 
+## 失败分布周报
+
+```bash
+# 发布 Markdown + 归档 JSON（默认证件束演示样例）
+python examples/publish_failure_snapshot.py --dir examples/failure_bundle
+# 索引见 docs/FAILURE_INDEX.md
+tdebug scan examples/failure_bundle 20
+```
+
+公开快照示例：[docs/tdebug_failure_20260715.md](docs/tdebug_failure_20260715.md)
+
 ## 相关项目
 
 - [react-agent](https://github.com/weihuaguo270-ops/react-agent) — 生成 Harness 格式轨迹的 ReAct Agent 学习实现

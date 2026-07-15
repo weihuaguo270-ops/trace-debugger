@@ -1,0 +1,16 @@
+{
+  "session_id": "fail_offtrack",
+  "query": "写一份关于人工智能行业趋势的详细分析报告",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-15T00:00:03Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "FINAL ANSWER: 今天天气很好，适合出门散步，记得带伞以免突然下雨。",
+      "observation": ""
+    }
+  ],
+  "final_answer": "今天天气很好，适合出门散步，记得带伞以免突然下雨。周末还可以去公园野餐，欣赏美丽的风景。",
+  "total_steps": 1,
+  "total_duration_seconds": 0.3
+}

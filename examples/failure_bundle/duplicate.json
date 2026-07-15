@@ -1,0 +1,36 @@
+{
+  "session_id": "fail_duplicate",
+  "query": "搜索 Python 文档",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-15T00:00:02Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "搜索",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Python docs\"}"
+      },
+      "observation": "结果很少",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 2,
+      "thought": "再试同一查询",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Python docs\"}"
+      },
+      "observation": "结果很少",
+      "duration_seconds": 1.1
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: 见 python.org",
+      "observation": ""
+    }
+  ],
+  "final_answer": "见 python.org",
+  "total_steps": 3,
+  "total_duration_seconds": 2.5
+}

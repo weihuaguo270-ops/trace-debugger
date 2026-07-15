@@ -1,0 +1,16 @@
+{
+  "session_id": "fail_no_answer",
+  "query": "北京今天天气如何？",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-15T00:00:01Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "先想想怎么搜",
+      "observation": ""
+    }
+  ],
+  "final_answer": "",
+  "total_steps": 1,
+  "total_duration_seconds": 0.1
+}
