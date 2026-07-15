@@ -1,0 +1,843 @@
+{
+  "report_id": "tdebug_failure_20260715_080519",
+  "timestamp": "2026-07-15T08:05:19.321511+00:00",
+  "source_dir": "d:/agent_learning/react-agent/src/react_agent/trajectories",
+  "n_trajectories": 100,
+  "distribution": {
+    "tool_error": 2,
+    "duplicate": 1,
+    "llm_offtrack": 6,
+    "no_answer": 1
+  },
+  "distribution_labels": {
+    "tool_error": "工具调用报错",
+    "duplicate": "重复相同尝试",
+    "llm_offtrack": "LLM 偏离用户意图",
+    "no_answer": "未给出最终答案"
+  },
+  "trajectories": [
+    {
+      "file": "traj_20260713_181151_46vs.json",
+      "session_id": "20260713_181151_46vs",
+      "query": "（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：预警：高温黄色预警）\n（相关记忆：风力：白天北风二三级，夜间北风一二级）标准大气压下纯水沸点是多少摄氏度？请只回答数字，不要编造",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_181128_cw1d.json",
+      "session_id": "20260713_181128_cw1d",
+      "query": "（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：预警：高温黄色预警）\n（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分）标准大气压下纯水沸点是多少摄氏度？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_181105_ey54.json",
+      "session_id": "20260713_181105_ey54",
+      "query": "（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：预警：高温黄色预警）\n（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分）标准大气压下纯水沸点是多少摄氏度？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_181040_0bnw.json",
+      "session_id": "20260713_181040_0bnw",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：风力：白天北风二三级，夜间北风一二级）\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）一本书共 90 页，小李每天读 15 页，几天能读完？请只回答天数",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_181016_2mew.json",
+      "session_id": "20260713_181016_2mew",
+      "query": "（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分）\n（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：- 颁奖时间：2025年10月7日）请使用计算器计算 99+1",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_180952_7jx4.json",
+      "session_id": "20260713_180952_7jx4",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分）\n（相关记忆：- 颁奖时间：2025年10月7日）15 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_180932_krhd.json",
+      "session_id": "20260713_180932_krhd",
+      "query": "（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分）德国的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_141821_9ydt.json",
+      "session_id": "20260713_141821_9ydt",
+      "query": "帮我规划一个学习Python的计划，分3步",
+      "assessment": "⚠️ 有少量问题（1/4 步），可考虑优化",
+      "failure_types": [
+        "tool_error"
+      ],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141818_dubd.json",
+      "session_id": "20260713_141818_dubd",
+      "query": "切换沙箱为 auto 模式",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141740_io4n.json",
+      "session_id": "20260713_141740_io4n",
+      "query": "请用结构化的方式分析新能源汽车的优缺点",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141643_bjb6.json",
+      "session_id": "20260713_141643_bjb6",
+      "query": "查看当前上下文使用情况",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141640_kmub.json",
+      "session_id": "20260713_141640_kmub",
+      "query": "切换成 research_assistant 角色",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141634_32ag.json",
+      "session_id": "20260713_141634_32ag",
+      "query": "我喜欢看科幻电影",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_141630_cob7.json",
+      "session_id": "20260713_141630_cob7",
+      "query": "同时帮我查一下今天的时间，并计算 50*30",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141628_m3wf.json",
+      "session_id": "20260713_141628_m3wf",
+      "query": "我叫什么名字？",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_141624_aq0s.json",
+      "session_id": "20260713_141624_aq0s",
+      "query": "记住我叫张三",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141621_ocd7.json",
+      "session_id": "20260713_141621_ocd7",
+      "query": "切换上下文管理策略为 truncate",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141618_7b6d.json",
+      "session_id": "20260713_141618_7b6d",
+      "query": "如果所有的 A 都是 B，所有的 B 都是 C，那么 A 和 C 的关系是什么？",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_141614_6g3z.json",
+      "session_id": "20260713_141614_6g3z",
+      "query": "小明有 5 个苹果，给了小红 2 个，又买了 3 个，现在有几个？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141608_jc87.json",
+      "session_id": "20260713_141608_jc87",
+      "query": "请解释一下机器学习中的过拟合是什么",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141535_ux67.json",
+      "session_id": "20260713_141535_ux67",
+      "query": "对比一下Python和JavaScript的优缺点",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141520_br6m.json",
+      "session_id": "20260713_141520_br6m",
+      "query": "帮我审查这段代码有什么问题：def add(a,b): return a+b",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141513_bcrb.json",
+      "session_id": "20260713_141513_bcrb",
+      "query": "现在东京时间是多少？",
+      "assessment": "✅ 执行顺利，3 步无错误",
+      "failure_types": [],
+      "num_steps": 3
+    },
+    {
+      "file": "traj_20260713_141443_9vcx.json",
+      "session_id": "20260713_141443_9vcx",
+      "query": "memory.py 模块的类名叫什么？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141421_m2y0.json",
+      "session_id": "20260713_141421_m2y0",
+      "query": "项目的 RAG 模块在哪个文件？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141353_zdux.json",
+      "session_id": "20260713_141353_zdux",
+      "query": "这个项目里 react_loop.py 是做什么的？",
+      "assessment": "✅ 执行顺利，3 步无错误",
+      "failure_types": [],
+      "num_steps": 3
+    },
+    {
+      "file": "traj_20260713_141323_jayb.json",
+      "session_id": "20260713_141323_jayb",
+      "query": "搜索AI Agent的维基百科词条，打开第一条结果，然后总结内容（用中文）",
+      "assessment": "⚠️ 有少量问题（2/7 步），可考虑优化",
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "num_steps": 7
+    },
+    {
+      "file": "traj_20260713_141244_uyk8.json",
+      "session_id": "20260713_141244_uyk8",
+      "query": "搜索一下2026年AI Agent的最新发展",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141239_lg9x.json",
+      "session_id": "20260713_141239_lg9x",
+      "query": "先告诉我时间，再计算 100 / 7",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141236_0nai.json",
+      "session_id": "20260713_141236_0nai",
+      "query": "计算 100 / 7 等于多少",
+      "assessment": "❌ 执行问题较多（1/2 步），建议检查",
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141231_683e.json",
+      "session_id": "20260713_141231_683e",
+      "query": "计算 (123+456)*2 和 789/3 分别是多少",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141227_bmhf.json",
+      "session_id": "20260713_141227_bmhf",
+      "query": "计算 (23 + 45) * 2 等于多少",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141224_jqg2.json",
+      "session_id": "20260713_141224_jqg2",
+      "query": "现在几点了？",
+      "assessment": "❌ 执行问题较多（1/2 步），建议检查",
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141129_7rcd.json",
+      "session_id": "20260713_141129_7rcd",
+      "query": "帮我规划一个学习Python的计划，分3步",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141125_vslf.json",
+      "session_id": "20260713_141125_vslf",
+      "query": "切换沙箱为 auto 模式",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141039_30u3.json",
+      "session_id": "20260713_141039_30u3",
+      "query": "请用结构化的方式分析新能源汽车的优缺点",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_141027_mn5k.json",
+      "session_id": "20260713_141027_mn5k",
+      "query": "查看当前上下文使用情况",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_141020_w7u5.json",
+      "session_id": "20260713_141020_w7u5",
+      "query": "切换成 research_assistant 角色",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140959_aqwc.json",
+      "session_id": "20260713_140959_aqwc",
+      "query": "我喜欢看科幻电影",
+      "assessment": "✅ 执行顺利，3 步无错误",
+      "failure_types": [],
+      "num_steps": 3
+    },
+    {
+      "file": "traj_20260713_140954_bgse.json",
+      "session_id": "20260713_140954_bgse",
+      "query": "同时帮我查一下今天的时间，并计算 50*30",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140950_38td.json",
+      "session_id": "20260713_140950_38td",
+      "query": "我叫什么名字？",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_140942_n29t.json",
+      "session_id": "20260713_140942_n29t",
+      "query": "记住我叫张三",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_140937_w9gp.json",
+      "session_id": "20260713_140937_w9gp",
+      "query": "切换上下文管理策略为 truncate",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140931_8n8j.json",
+      "session_id": "20260713_140931_8n8j",
+      "query": "如果所有的 A 都是 B，所有的 B 都是 C，那么 A 和 C 的关系是什么？",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_140926_k28b.json",
+      "session_id": "20260713_140926_k28b",
+      "query": "小明有 5 个苹果，给了小红 2 个，又买了 3 个，现在有几个？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140901_bax8.json",
+      "session_id": "20260713_140901_bax8",
+      "query": "请解释一下机器学习中的过拟合是什么",
+      "assessment": "⚠️ 有少量问题（1/4 步），可考虑优化",
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_140836_2vmw.json",
+      "session_id": "20260713_140836_2vmw",
+      "query": "对比一下Python和JavaScript的优缺点",
+      "assessment": "⚠️ 有少量问题（1/4 步），可考虑优化",
+      "failure_types": [
+        "no_answer"
+      ],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_140819_8ehx.json",
+      "session_id": "20260713_140819_8ehx",
+      "query": "帮我审查这段代码有什么问题：def add(a,b): return a+b",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140813_isyv.json",
+      "session_id": "20260713_140813_isyv",
+      "query": "现在东京时间是多少？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140744_azbc.json",
+      "session_id": "20260713_140744_azbc",
+      "query": "memory.py 模块的类名叫什么？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140717_gh9q.json",
+      "session_id": "20260713_140717_gh9q",
+      "query": "项目的 RAG 模块在哪个文件？",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140619_3j22.json",
+      "session_id": "20260713_140619_3j22",
+      "query": "这个项目里 react_loop.py 是做什么的？",
+      "assessment": "✅ 执行顺利，4 步无错误",
+      "failure_types": [],
+      "num_steps": 4
+    },
+    {
+      "file": "traj_20260713_140549_014n.json",
+      "session_id": "20260713_140549_014n",
+      "query": "搜索AI Agent的维基百科词条，打开第一条结果，然后总结内容（用中文）",
+      "assessment": "✅ 执行顺利，5 步无错误",
+      "failure_types": [],
+      "num_steps": 5
+    },
+    {
+      "file": "traj_20260713_140504_lw8l.json",
+      "session_id": "20260713_140504_lw8l",
+      "query": "搜索一下2026年AI Agent的最新发展",
+      "assessment": "✅ 执行顺利，5 步无错误",
+      "failure_types": [],
+      "num_steps": 5
+    },
+    {
+      "file": "traj_20260713_140500_i2ig.json",
+      "session_id": "20260713_140500_i2ig",
+      "query": "先告诉我时间，再计算 100 / 7",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140456_lj4s.json",
+      "session_id": "20260713_140456_lj4s",
+      "query": "计算 100 / 7 等于多少",
+      "assessment": "❌ 执行问题较多（1/2 步），建议检查",
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140452_vmo2.json",
+      "session_id": "20260713_140452_vmo2",
+      "query": "计算 (123+456)*2 和 789/3 分别是多少",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140449_81qn.json",
+      "session_id": "20260713_140449_81qn",
+      "query": "计算 (23 + 45) * 2 等于多少",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140446_n8x3.json",
+      "session_id": "20260713_140446_n8x3",
+      "query": "现在几点了？",
+      "assessment": "❌ 执行问题较多（1/2 步），建议检查",
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140155_b1tm.json",
+      "session_id": "20260713_140155_b1tm",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：风力：白天北风二三级，夜间北风一二级）2025 年诺贝尔物理学奖得主是谁？如果不确定请说明不确定，不要编造具体姓名年份以外的虚假奖项细节",
+      "assessment": "✅ 执行顺利，3 步无错误",
+      "failure_types": [],
+      "num_steps": 3
+    },
+    {
+      "file": "traj_20260713_140131_r6dj.json",
+      "session_id": "20260713_140131_r6dj",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：风力：白天北风二三级，夜间北风一二级）请用计算器计算 1234*5678，只根据工具结果回答最终数字",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_140109_50je.json",
+      "session_id": "20260713_140109_50je",
+      "query": "法国的首都是什么？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_140041_fonp.json",
+      "session_id": "20260713_140041_fonp",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：风力：白天北风二三级，夜间北风一二级）\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）鲁迅的《狂人日记》是哪一年发表的？请只回答年份，不要编造",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_140018_9aif.json",
+      "session_id": "20260713_140018_9aif",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）7 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135952_e04q.json",
+      "session_id": "20260713_135952_e04q",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）7 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135927_qtvy.json",
+      "session_id": "20260713_135927_qtvy",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）7 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135905_h68o.json",
+      "session_id": "20260713_135905_h68o",
+      "query": "日本的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135841_8gir.json",
+      "session_id": "20260713_135841_8gir",
+      "query": "日本的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135816_4fez.json",
+      "session_id": "20260713_135816_4fez",
+      "query": "日本的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135752_q2dd.json",
+      "session_id": "20260713_135752_q2dd",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：风力：白天北风二三级，夜间北风一二级）\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）鲁迅的《狂人日记》是哪一年发表的？请只回答四位年份",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135729_iiyl.json",
+      "session_id": "20260713_135729_iiyl",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：风力：白天北风二三级，夜间北风一二级）\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）鲁迅的《狂人日记》是哪一年发表的？请只回答四位年份",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135703_41ch.json",
+      "session_id": "20260713_135703_41ch",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：风力：白天北风二三级，夜间北风一二级）\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）鲁迅的《狂人日记》是哪一年发表的？请只回答四位年份",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135639_1679.json",
+      "session_id": "20260713_135639_1679",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：预警：高温黄色预警）先计算 12*12，再把结果加 7，最终是多少？请用计算器",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135613_62c6.json",
+      "session_id": "20260713_135613_62c6",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：风力：白天北风二三级，夜间北风一二级）小明比小红大 3 岁，两人年龄之和是 25 岁。小明多少岁？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135551_lvkd.json",
+      "session_id": "20260713_135551_lvkd",
+      "query": "（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：预警：高温黄色预警）\n（相关记忆：风力：白天北风二三级，夜间北风一二级）一个池塘里有一片荷叶，每天面积翻一倍。第 30 天荷叶覆盖整个池塘。问：第几天荷叶覆盖一半的池塘？请",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135524_6shc.json",
+      "session_id": "20260713_135524_6shc",
+      "query": "（相关记忆：日期：2026年7月13日（星期一））\n（相关记忆：明日（7月14日）夜间天气：转为雷雨天气）\n（相关记忆：风力：白天北风二三级，夜间北风一二级）先告诉我现在时间，再计算 100/7 约等于多少",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135426_khj1.json",
+      "session_id": "20260713_135426_khj1",
+      "query": "搜索一下今天北京的天气温度",
+      "assessment": "✅ 执行顺利，3 步无错误",
+      "failure_types": [],
+      "num_steps": 3
+    },
+    {
+      "file": "traj_20260713_135417_y1xp.json",
+      "session_id": "20260713_135417_y1xp",
+      "query": "现在几点了？请调用时间工具回答",
+      "assessment": "❌ 执行问题较多（1/2 步），建议检查",
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135408_ahl0.json",
+      "session_id": "20260713_135408_ahl0",
+      "query": "请使用计算器工具计算 (23+45)*2",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135401_z9tm.json",
+      "session_id": "20260713_135401_z9tm",
+      "query": "在标准大气压下，纯水的沸点是多少摄氏度？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_135354_lafp.json",
+      "session_id": "20260713_135354_lafp",
+      "query": "计算 1234 × 5678 等于多少？请给出最终数字",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135342_lcag.json",
+      "session_id": "20260713_135342_lcag",
+      "query": "鲁迅的《狂人日记》是哪一年发表的？请只回答年份",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_135337_2ckr.json",
+      "session_id": "20260713_135337_2ckr",
+      "query": "法国的首都是什么？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134741_bo70.json",
+      "session_id": "20260713_134741_bo70",
+      "query": "2025 年诺贝尔物理学奖得主是谁？如果不确定请说明不确定，不要编造具体姓名年份以外的虚假奖项细节",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_134734_ysew.json",
+      "session_id": "20260713_134734_ysew",
+      "query": "请用计算器计算 1234*5678，只根据工具结果回答最终数字",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_134727_941u.json",
+      "session_id": "20260713_134727_941u",
+      "query": "法国的首都是什么？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134721_8xob.json",
+      "session_id": "20260713_134721_8xob",
+      "query": "鲁迅的《狂人日记》是哪一年发表的？请只回答年份，不要编造",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134714_bkoa.json",
+      "session_id": "20260713_134714_bkoa",
+      "query": "7 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134708_cay0.json",
+      "session_id": "20260713_134708_cay0",
+      "query": "7 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134700_4hyt.json",
+      "session_id": "20260713_134700_4hyt",
+      "query": "7 的平方是多少？请只回答数字",
+      "assessment": "✅ 执行顺利，3 步无错误",
+      "failure_types": [],
+      "num_steps": 3
+    },
+    {
+      "file": "traj_20260713_134654_mu1t.json",
+      "session_id": "20260713_134654_mu1t",
+      "query": "日本的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134648_0wo1.json",
+      "session_id": "20260713_134648_0wo1",
+      "query": "日本的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134642_2vwj.json",
+      "session_id": "20260713_134642_2vwj",
+      "query": "日本的首都是哪座城市？请只回答城市名",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134635_ooos.json",
+      "session_id": "20260713_134635_ooos",
+      "query": "鲁迅的《狂人日记》是哪一年发表的？请只回答四位年份",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134629_5v9k.json",
+      "session_id": "20260713_134629_5v9k",
+      "query": "鲁迅的《狂人日记》是哪一年发表的？请只回答四位年份",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134623_1cbs.json",
+      "session_id": "20260713_134623_1cbs",
+      "query": "鲁迅的《狂人日记》是哪一年发表的？请只回答四位年份",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134614_m3oc.json",
+      "session_id": "20260713_134614_m3oc",
+      "query": "先计算 12*12，再把结果加 7，最终是多少？请用计算器",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    },
+    {
+      "file": "traj_20260713_134608_zzs4.json",
+      "session_id": "20260713_134608_zzs4",
+      "query": "小明比小红大 3 岁，两人年龄之和是 25 岁。小明多少岁？请只回答数字",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134559_iihr.json",
+      "session_id": "20260713_134559_iihr",
+      "query": "一个池塘里有一片荷叶，每天面积翻一倍。第 30 天荷叶覆盖整个池塘。问：第几天荷叶覆盖一半的池塘？请给出天数",
+      "assessment": "✅ 执行顺利，1 步无错误",
+      "failure_types": [],
+      "num_steps": 1
+    },
+    {
+      "file": "traj_20260713_134547_5w6f.json",
+      "session_id": "20260713_134547_5w6f",
+      "query": "先告诉我现在时间，再计算 100/7 约等于多少",
+      "assessment": "✅ 执行顺利，2 步无错误",
+      "failure_types": [],
+      "num_steps": 2
+    }
+  ],
+  "meta": {
+    "git": "89abfc1",
+    "note": "启发式失败分类；非 LLM Judge"
+  }
+}

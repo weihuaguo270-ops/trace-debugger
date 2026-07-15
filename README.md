@@ -68,7 +68,9 @@ python examples/publish_failure_snapshot.py --dir examples/failure_bundle
 tdebug scan examples/failure_bundle 20
 ```
 
-公开快照示例：[docs/tdebug_failure_20260715.md](docs/tdebug_failure_20260715.md)
+公开快照示例：
+- 真实轨迹：[docs/tdebug_failure_real_20260715.md](docs/tdebug_failure_real_20260715.md)（100 条）
+- 演示样例：[docs/tdebug_failure_20260715.md](docs/tdebug_failure_20260715.md)
 
 ## 相关项目
 
