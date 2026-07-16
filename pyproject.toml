@@ -9,6 +9,34 @@ description = "Agent 执行轨迹复盘分析工具 — 读取 Harness 轨迹，
 readme = "README.md"
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+dev = [
+    "mypy>=1.8",
+    "pip-audit>=2.6",
+]
+
 [project.scripts]
 trace-debug = "trace_debugger.cli:main"
 tdebug = "trace_debugger.cli:main"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+check_untyped_defs = false
+allow_untyped_defs = true
+allow_incomplete_defs = true
+disable_error_code = [
+    "arg-type",
+    "assignment",
+    "var-annotated",
+    "misc",
+    "type-var",
+    "operator",
+    "return-value",
+    "union-attr",
+]
+files = ["trace_debugger"]

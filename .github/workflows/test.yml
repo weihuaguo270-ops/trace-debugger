@@ -28,9 +28,64 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
-      run: |
-        pip install -e . pytest
+      run: pip install -e ".[test]"
     - name: Test
+      if: matrix.python-version != '3.11'
       run: python -m pytest tests/ -v --tb=short
+    - name: Test with coverage
+      if: matrix.python-version == '3.11'
+      run: >
+        python -m pytest tests/ -v --tb=short
+        --cov=trace_debugger
+        --cov-report=term-missing
+        --cov-fail-under=50
     - name: Publish failure snapshot (fixture)
       run: python examples/publish_failure_snapshot.py --dir examples/failure_bundle --stem ci_failure_smoke --out-dir /tmp/tdebug_docs
+
+  test-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: pip install -e ".[test]"
+    - name: Pytest (no PYTHONIOENCODING)
+      shell: powershell
+      run: |
+        Remove-Item Env:PYTHONIOENCODING -ErrorAction SilentlyContinue
+        python -m pytest tests/ -v --tb=short
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Install
+      run: pip install -e ".[test,dev]"
+    - name: mypy
+      run: mypy trace_debugger
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Install + audit
+      run: |
+        python -m venv .audit-venv
+        .audit-venv/bin/pip install -U pip
+        .audit-venv/bin/pip install -e ".[test,dev]"
+        .audit-venv/bin/pip-audit

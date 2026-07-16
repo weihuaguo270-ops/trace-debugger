@@ -4,6 +4,8 @@
 
 **Agent 执行轨迹分析小工具（学习/配套实验）** — 读取 Harness 轨迹 JSON，识别失败根因，逐步骤回放，批量扫描发现系统性问题。
 
+CI：Ubuntu + **Windows**（3.10/3.11）、覆盖率门禁、mypy、pip-audit。
+
 ## 解决的问题
 
 Agent 的执行轨迹通常以原始 JSON 记录——机器能读，人看不懂。Trace Debugger 将这些轨迹"翻译"成对人类有意义的复盘分析。
