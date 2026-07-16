@@ -38,13 +38,13 @@ def format_report(analysis: TrajectoryAnalysis) -> str:
 
     # 路径详情
     for pa in analysis.paths:
-        icon = "✅" if pa.success else "❌"
+        icon = "[PASS]" if pa.success else "[FAIL]"
         label = "（主路径）" if pa.is_main else "（备选路径）"
         lines.append(f"  ── 路径 {pa.path_index} {label} {icon} ──")
         lines.append(f"  {pa.summary}")
 
         for sa in pa.step_analyses:
-            step_icon = "✅" if sa.success else "❌"
+            step_icon = "[PASS]" if sa.success else "[FAIL]"
             action_info = f" [{sa.action}]" if sa.action else ""
             lines.append(f"    {step_icon} Step {sa.step_index}{action_info}  {sa.duration:.1f}s")
             if sa.failure_detail:
@@ -116,7 +116,7 @@ def build_judge_prompt(analysis: TrajectoryAnalysis) -> str:
 {analysis.overall_assessment}
 
 ## 路径详情
-{chr(10).join(f"{'✅' if pa.success else '❌'} 路径{pa.path_index}{'（主）' if pa.is_main else ''}: {pa.summary}" for pa in analysis.paths)}
+{chr(10).join(f"{'[PASS]' if pa.success else '[FAIL]'} 路径{pa.path_index}{'（主）' if pa.is_main else ''}: {pa.summary}" for pa in analysis.paths)}
 
 ## 你的任务
 1. 主路径的最终答案是否可靠？有没有潜在风险？

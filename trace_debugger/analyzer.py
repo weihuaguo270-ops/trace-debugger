@@ -471,11 +471,11 @@ class Analyzer:
         )
         total_steps = sum(pa.num_steps for pa in analyses)
         if total_failures == 0:
-            return f"✅ 执行顺利，{total_steps} 步无错误"
+            return f"[PASS] 执行顺利，{total_steps} 步无错误"
         elif total_failures <= total_steps * 0.3:
-            return f"⚠️ 有少量问题（{total_failures}/{total_steps} 步），可考虑优化"
+            return f"[WARN] 有少量问题（{total_failures}/{total_steps} 步），可考虑优化"
         else:
-            return f"❌ 执行问题较多（{total_failures}/{total_steps} 步），建议检查"
+            return f"[FAIL] 执行问题较多（{total_failures}/{total_steps} 步），建议检查"
 
     def _generate_suggestions(self, traj: Trajectory, analyses: list[PathAnalysis]) -> list[str]:
         """生成修复建议"""

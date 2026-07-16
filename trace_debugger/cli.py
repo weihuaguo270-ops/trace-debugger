@@ -114,7 +114,7 @@ def _cmd_scan(directory: str, n: int):
         analyzer = Analyzer()
         analysis = analyzer.analyze(traj)
         analyses.append(analysis)
-        icon = "✅" if "无错误" in analysis.overall_assessment else "⚠️"
+        icon = "[PASS]" if "无错误" in analysis.overall_assessment else "[WARN]"
         fails = sorted({ft for pa in analysis.paths for ft in pa.failure_types})
         fail_s = ",".join(fails) if fails else "-"
         print(f"\n  [{i+1}] {icon} {traj.session_id}")

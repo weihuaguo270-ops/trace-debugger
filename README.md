@@ -97,7 +97,7 @@ $ tdebug examples/sample_trajectory.json
      Step 3: 整理信息 ✓
      Step 4: 撰写报告 ✓
 
-评估: ✅ 执行顺利，4 步无错误
+评估: [PASS] 执行顺利，4 步无错误
 ```
 
 更多示例见 [`examples/sample_trajectory.json`](examples/sample_trajectory.json)。
