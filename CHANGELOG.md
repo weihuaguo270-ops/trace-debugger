@@ -5,6 +5,9 @@
 ### Added
 - 失败分布周报发布：`examples/publish_failure_snapshot.py` + `examples/failure_bundle/` + `docs/FAILURE_INDEX.md`
 
+### Changed
+- `llm_offtrack`：答案 grounded 于工具观测或短事实+数字时不再误报（配合 react-agent 飞轮闭环）
+
 ## 0.1.0 (2026-07-12)
 
 ### Added

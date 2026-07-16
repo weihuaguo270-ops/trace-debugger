@@ -8,6 +8,7 @@
 |------|------|--------|----------|
 | [tdebug_failure_flywheel_20260716.md](./tdebug_failure_flywheel_20260716.md) | `failure_bundle`（飞轮首跑） | 5 | 全类型演示；闭环见 react-agent `FAILURE_FLYWHEEL.md` |
 | [tdebug_failure_real_20260715.md](./tdebug_failure_real_20260715.md) | `react-agent` 本地 `trajectories/`（gitignore） | **100** | tool_error×2, llm_offtrack×6, duplicate×1, no_answer×1 |
+| 闭环对照（react-agent） | 同批 100 文件重扫（新 analyzer） | **100** | `llm_offtrack` **6→1**；见 [flywheel_closed_loop_20260716](https://github.com/weihuaguo270-ops/react-agent/blob/main/docs/flywheel_closed_loop_20260716.md) |
 | [tdebug_failure_20260715.md](./tdebug_failure_20260715.md) | `examples/failure_bundle`（演示样例） | 5 | 全类型演示：tool_error / no_answer / duplicate / offtrack / overflow |
 
 ## 一键发布

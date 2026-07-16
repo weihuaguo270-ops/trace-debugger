@@ -248,6 +248,35 @@ def test_sample_trajectory_not_false_offtrack():
     print("✅ sample trajectory not false-offtrack")
 
 
+def test_tool_grounded_short_qa_not_offtrack():
+    """短问答 + 工具观测数字 → 不应误报 llm_offtrack"""
+    from trace_debugger import Analyzer
+    from trace_debugger.reader import parse
+
+    data = {
+        "session_id": "time_ok",
+        "query": "现在几点了？",
+        "model": "gpt-4",
+        "steps": [
+            {
+                "step": 1,
+                "thought": "查时间",
+                "action": {"name": "get_time", "arguments": "{}"},
+                "observation": "2026-07-13 14:12:25",
+            },
+            {
+                "step": 2,
+                "thought": "FINAL ANSWER: 当前时间是 2026年7月13日 14时12分25秒",
+                "observation": "",
+            },
+        ],
+        "final_answer": "当前时间是 **2026年7月13日 14时12分25秒**（本地时间）。",
+    }
+    types = {ft for pa in Analyzer().analyze(parse(data)).paths for ft in pa.failure_types}
+    assert "llm_offtrack" not in types, types
+    print("✅ tool-grounded short QA not offtrack")
+
+
 if __name__ == "__main__":
     test_imports()
     test_parse_minimal()

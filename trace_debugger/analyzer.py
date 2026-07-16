@@ -340,6 +340,18 @@ class Analyzer:
         if len(answer) < 40 and len(a_tok) < 4:
             return ""
 
+        # 工具已给出有效观测，且答案吸收了观测内容 → 视为 grounded，不打 offtrack
+        # （修复「现在几点了 / 算一下」类短问答的假阳性）
+        if self._answer_grounded_in_observations(path, a_tok, answer):
+            return ""
+
+        # 短事实查询（时间/计算/只要数字）且答案含数字：重叠启发式不可靠
+        q = traj.query.strip()
+        if re.search(r"(几点|多少|计算|等于|平方|阶乘|沸点|首都)", q) and re.search(
+            r"\d", answer
+        ):
+            return ""
+
         overlap = len(q_tok & a_tok) / len(q_tok)
         if overlap < self.offtrack_overlap:
             return (
@@ -348,6 +360,32 @@ class Analyzer:
                 f"查询词={sorted(q_tok)[:6]} 答案词样例={sorted(a_tok)[:6]}"
             )
         return ""
+
+    def _answer_grounded_in_observations(
+        self, path: Path, a_tok: set[str], answer: str
+    ) -> bool:
+        obs_parts: list[str] = []
+        for step in path.steps:
+            obs = (step.observation or "").strip()
+            if not obs:
+                continue
+            low = obs.lower()
+            if '"error"' in low or low.startswith("[错误]") or "执行错误" in obs[:40]:
+                continue
+            obs_parts.append(obs)
+        if not obs_parts:
+            return False
+        obs_text = "\n".join(obs_parts)
+        obs_tok = content_tokens(obs_text)
+        if obs_tok and a_tok:
+            # 答案词有一定比例来自观测
+            if len(a_tok & obs_tok) / max(len(a_tok), 1) >= 0.12:
+                return True
+        # 观测中的数字片段出现在答案里（时间/计算结果）
+        for m in re.findall(r"\d{2,}", obs_text):
+            if m in answer:
+                return True
+        return False
 
     def _analyze_step(
         self,
