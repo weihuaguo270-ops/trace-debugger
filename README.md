@@ -71,6 +71,7 @@ tdebug scan examples/failure_bundle 20
 公开快照示例：
 - 真实轨迹：[docs/tdebug_failure_real_20260715.md](docs/tdebug_failure_real_20260715.md)（100 条）
 - 演示样例：[docs/tdebug_failure_20260715.md](docs/tdebug_failure_20260715.md)
+- 飞轮扫描：[docs/tdebug_failure_flywheel_20260716.md](docs/tdebug_failure_flywheel_20260716.md)
 
 ## 相关项目
 
