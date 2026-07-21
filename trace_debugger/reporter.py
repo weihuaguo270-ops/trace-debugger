@@ -18,7 +18,7 @@ def format_report(analysis: TrajectoryAnalysis) -> str:
     """格式化为终端可读的复盘报告"""
     lines = []
     lines.append("=" * 55)
-    lines.append("  🔍 Trace Debugger — 执行复盘报告")
+    lines.append("  Trace Debugger — 执行复盘报告")
     lines.append("=" * 55)
     lines.append(f"  会话:    {analysis.session_id}")
     lines.append(f"  模型:    {analysis.model}")
@@ -65,7 +65,7 @@ def format_report(analysis: TrajectoryAnalysis) -> str:
         for i, s in enumerate(analysis.fix_suggestions, 1):
             lines.append(f"  {i}. {s}")
         lines.append("")
-        lines.append("  🔄 是否需要修复这些问题后重新输出？")
+        lines.append("  是否需要修复这些问题后重新输出？")
         lines.append(f"  输入 y 确认修复，n 忽略，v 查看详细步骤")
         lines.append("")
 

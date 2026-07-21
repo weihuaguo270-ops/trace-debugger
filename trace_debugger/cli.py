@@ -51,6 +51,15 @@ def _print_help():
     print("  tdebug scan ./trajectories/ 10")
 
 
+def _safe_print(text: str) -> None:
+    """Avoid UnicodeEncodeError on Windows GBK consoles."""
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+        print(text.encode(enc, errors="replace").decode(enc, errors="replace"))
+
+
 def _cmd_analyze(filepath: str):
     if not os.path.exists(filepath):
         print(f"文件不存在: {filepath}")
@@ -59,7 +68,7 @@ def _cmd_analyze(filepath: str):
     traj = load(filepath)
     analyzer = Analyzer()
     analysis = analyzer.analyze(traj)
-    print(format_report(analysis))
+    _safe_print(format_report(analysis))
 
 
 def _cmd_replay(filepath: str):
@@ -86,7 +95,7 @@ def _cmd_replay(filepath: str):
         if step.observation:
             print(f"  [返回] {step.observation[:300]}")
         if step.has_error:
-            print(f"  ⚠ [错误] {step.error_message[:200]}")
+            print(f"  [错误] {step.error_message[:200]}")
         print(f"  [耗时] {step.duration:.2f}s")
 
     print(f"\n最终答案: {traj.final_answer[:200]}")
