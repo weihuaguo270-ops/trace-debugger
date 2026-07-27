@@ -2,15 +2,19 @@
 
 [![CI](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml/badge.svg)](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Agent 执行轨迹分析小工具（学习/配套实验）** — 读取 Harness 轨迹 JSON，识别失败根因，逐步骤回放，批量扫描发现系统性问题。
+**Harness 轨迹复盘小工具（学习/配套）** — 读 Format B JSON，做失败分类、逐步回放、批量扫描。
 
 CI：Ubuntu + **Windows**（3.10/3.11）、覆盖率门禁、mypy、pip-audit。
 
-## 解决的问题
+## 用途
 
-Agent 的执行轨迹通常以原始 JSON 记录——机器能读，人看不懂。Trace Debugger 将这些轨迹"翻译"成对人类有意义的复盘分析。
+Agent 跑完留下 JSON 轨迹，人眼不好复盘。本工具做三件事：
 
-**输入：** Harness 轨迹 JSON → **输出：** 根因分析、失败分类、交互式回放
+- **分析**：每条路径成败原因（启发式规则，不是 LLM Judge）
+- **回放**：逐步看 thought / action / observation
+- **扫描**：目录里批量统计失败类型分布
+
+**输入**：Harness 轨迹 JSON → **输出**：根因标签、交互式回放、分布表
 
 ## 功能
 
@@ -77,7 +81,7 @@ tdebug scan examples/failure_bundle 20
 
 ## 相关项目
 
-- [react-agent](https://github.com/weihuaguo270-ops/react-agent) — 生成 Harness 格式轨迹的 ReAct Agent 学习实现
+- [react-agent](https://github.com/weihuaguo270-ops/react-agent) — 产出 Harness 轨迹的 Agent 运行时
 - [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) — 可对轨迹做 Process Reward 评分的实验框架
 
 ## 示例输出
