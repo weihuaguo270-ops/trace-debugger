@@ -8,7 +8,7 @@
 与 react-agent 框架的关系：
   Agent 执行 → Harness StepWatcher（实时）→ 失败 JSONL + 轨迹 JSON → Trace Debugger 复盘
 """
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from trace_debugger.analyzer import (
     Analyzer,

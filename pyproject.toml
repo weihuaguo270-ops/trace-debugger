@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trace-debugger"
-version = "0.2.0"
+version = "0.2.1"
 description = "Harness 轨迹复盘与失败治理 — 启发式分类、JSONL 记录、聚合统计、StepWatcher 运行时检测"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,6 +22,10 @@ dev = [
 [project.scripts]
 trace-debug = "trace_debugger.cli:main"
 tdebug = "trace_debugger.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["trace_debugger*"]
 
 [tool.mypy]
 python_version = "3.10"

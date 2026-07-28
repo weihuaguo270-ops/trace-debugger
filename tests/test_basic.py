@@ -279,7 +279,6 @@ def test_tool_grounded_short_qa_not_offtrack():
 
 def test_readable_failure_record():
     """JSONL + .log + 可读字段"""
-    import tempfile
     from trace_debugger.record import (
         append_events,
         format_failures_digest,
@@ -316,7 +315,6 @@ def test_readable_failure_record():
 
 def test_failure_stats_aggregate():
     """按失败类型聚合统计"""
-    import tempfile
     from trace_debugger.record import (
         append_events,
         aggregate_failure_stats,
@@ -365,26 +363,8 @@ def test_failure_stats_aggregate():
     print("✅ failure stats aggregate OK")
 
 
-if __name__ == "__main__":
-    test_imports()
-    test_parse_minimal()
-    test_analyze()
-    test_analyze_with_error()
-    test_detect_duplicate_and_no_answer()
-    test_detect_offtrack_and_overflow()
-    test_sample_trajectory_not_false_offtrack()
-    test_tool_grounded_short_qa_not_offtrack()
-    test_multi_path_paths_array()
-    test_multi_path_path_id()
-    test_failure_recording()
-    test_compare_snapshots()
-    test_step_watcher_runtime()
-    print("\n🎉 All tests passed!")
-
-
 def test_step_watcher_runtime():
     """StepWatcher 运行时逐步检测 + 结束补记"""
-    import tempfile
     from trace_debugger.runtime import StepWatcher, failure_tags_from_step
 
     with tempfile.TemporaryDirectory() as td:
@@ -515,7 +495,6 @@ def test_multi_path_path_id():
 
 def test_failure_recording():
     """JSONL 失败事件记录"""
-    import tempfile
     from trace_debugger import Analyzer
     from trace_debugger.reader import parse
     from trace_debugger.record import append_failure_events, failure_events_from_analysis
@@ -576,3 +555,22 @@ def test_compare_snapshots():
     assert "llm_offtrack" in report
     assert "-5" in report or "    -5" in report
     print("✅ compare snapshots OK")
+
+
+if __name__ == "__main__":
+    test_imports()
+    test_parse_minimal()
+    test_analyze()
+    test_analyze_with_error()
+    test_detect_duplicate_and_no_answer()
+    test_detect_offtrack_and_overflow()
+    test_sample_trajectory_not_false_offtrack()
+    test_tool_grounded_short_qa_not_offtrack()
+    test_readable_failure_record()
+    test_failure_stats_aggregate()
+    test_step_watcher_runtime()
+    test_multi_path_paths_array()
+    test_multi_path_path_id()
+    test_failure_recording()
+    test_compare_snapshots()
+    print("\n🎉 All tests passed!")

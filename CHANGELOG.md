@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 (2026-07-28)
+
+### Fixed
+- CI：`fixtures/` 被 setuptools 误识别为包，导致 `pip install -e` 失败；显式限定 `trace_debugger*` 包发现
+- CI：flake8 — 移除重复 `import tempfile`，`if __name__` 块移至测试定义之后
+
 ## 0.2.0 (2026-07-28)
 
 ### Added
