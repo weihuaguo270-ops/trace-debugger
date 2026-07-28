@@ -277,6 +277,94 @@ def test_tool_grounded_short_qa_not_offtrack():
     print("✅ tool-grounded short QA not offtrack")
 
 
+def test_readable_failure_record():
+    """JSONL + .log + 可读字段"""
+    import tempfile
+    from trace_debugger.record import (
+        append_events,
+        format_failures_digest,
+        load_failure_events,
+        readable_log_path,
+    )
+
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "failures.jsonl")
+        ev = {
+            "recorded_at": "2026-07-28T12:00:00+00:00",
+            "event_type": "step_failure",
+            "session_id": "demo",
+            "query": "calc 2+2",
+            "step_index": 1,
+            "action": "calculator",
+            "action_args": '{"expression": "2++"}',
+            "observation": '{"error": "syntax"}',
+            "failure_type": "tool_error",
+            "failure_detail": "calculator 调用失败",
+            "suggestion": "检查参数",
+        }
+        append_events(path, [ev])
+        loaded = load_failure_events(path)[0]
+        assert loaded["failure_label"] == "工具调用报错"
+        assert "Step 1" in loaded["summary"]
+        assert loaded["context"]["action"] == "calculator"
+        assert readable_log_path(path).is_file()
+        digest = format_failures_digest(path)
+        assert "工具调用报错" in digest
+        assert "calculator" in digest
+    print("✅ readable failure record OK")
+
+
+def test_failure_stats_aggregate():
+    """按失败类型聚合统计"""
+    import tempfile
+    from trace_debugger.record import (
+        append_events,
+        aggregate_failure_stats,
+        format_failure_stats,
+    )
+
+    events = [
+        {
+            "recorded_at": "2026-07-28T12:00:00+00:00",
+            "event_type": "step_failure",
+            "session_id": "s1",
+            "failure_type": "tool_error",
+            "action": "calculator",
+            "step_index": 1,
+        },
+        {
+            "recorded_at": "2026-07-28T12:01:00+00:00",
+            "event_type": "step_failure",
+            "session_id": "s1",
+            "failure_type": "search_empty",
+            "action": "web_search",
+            "step_index": 2,
+        },
+        {
+            "recorded_at": "2026-07-28T12:02:00+00:00",
+            "event_type": "step_failure",
+            "session_id": "s2",
+            "failure_type": "tool_error",
+            "action": "calculator",
+            "step_index": 1,
+        },
+    ]
+    stats = aggregate_failure_stats(events)
+    assert stats["n_events"] == 3
+    assert stats["n_sessions"] == 2
+    assert stats["by_type"][0]["failure_type"] == "tool_error"
+    assert stats["by_type"][0]["count"] == 2
+    assert stats["by_type"][0]["unique_sessions"] == 2
+
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "failures.jsonl")
+        append_events(path, events)
+        report = format_failure_stats(path)
+        assert "工具调用报错" in report
+        assert "tool_error" in report
+    print("✅ failure stats aggregate OK")
+
+
 if __name__ == "__main__":
     test_imports()
     test_parse_minimal()
@@ -285,4 +373,206 @@ if __name__ == "__main__":
     test_detect_duplicate_and_no_answer()
     test_detect_offtrack_and_overflow()
     test_sample_trajectory_not_false_offtrack()
+    test_tool_grounded_short_qa_not_offtrack()
+    test_multi_path_paths_array()
+    test_multi_path_path_id()
+    test_failure_recording()
+    test_compare_snapshots()
+    test_step_watcher_runtime()
     print("\n🎉 All tests passed!")
+
+
+def test_step_watcher_runtime():
+    """StepWatcher 运行时逐步检测 + 结束补记"""
+    import tempfile
+    from trace_debugger.runtime import StepWatcher, failure_tags_from_step
+
+    with tempfile.TemporaryDirectory() as td:
+        record_path = os.path.join(td, "live.jsonl")
+        watcher = StepWatcher(
+            session_id="live",
+            query="search AI",
+            model="gpt-4",
+            record_path=record_path,
+        )
+        sa1 = watcher.on_step(
+            step_index=1,
+            thought="search",
+            action_name="web_search",
+            action_args='{"query": "AI"}',
+            observation="short",
+            duration=0.5,
+        )
+        assert not sa1.success
+        assert sa1.failure_type == "search_empty"
+        tags = failure_tags_from_step(sa1)
+        assert tags["failure_tags"] == ["search_empty"]
+
+        watcher.on_step(
+            step_index=2,
+            thought="FINAL ANSWER: done",
+            observation="",
+        )
+        analysis = watcher.on_finish(final_answer="done", total_duration=1.0)
+        assert analysis.session_id == "live"
+
+        traj = watcher.to_trajectory_dict()
+        assert traj["steps"][0].get("failure_tags") == ["search_empty"]
+
+        with open(record_path, encoding="utf-8") as f:
+            lines = f.readlines()
+        assert len(lines) >= 1
+        first = json.loads(lines[0])
+        assert first["event_type"] == "step_failure"
+        assert first["step_index"] == 1
+    print("✅ StepWatcher runtime OK")
+
+
+def test_multi_path_paths_array():
+    """顶层 paths[] 多路径解析"""
+    from trace_debugger.reader import parse
+
+    data = {
+        "session_id": "multi_paths",
+        "query": "explore options",
+        "model": "gpt-4",
+        "steps": [],
+        "paths": [
+            {
+                "path_id": 0,
+                "is_main": False,
+                "success": False,
+                "steps": [
+                    {
+                        "step": 1,
+                        "thought": "try A",
+                        "action": {"name": "web_search", "args": {"query": "bad"}},
+                        "observation": "err",
+                    },
+                ],
+            },
+            {
+                "path_id": 1,
+                "is_main": True,
+                "success": True,
+                "final_answer": "good answer about AI trends",
+                "steps": [
+                    {
+                        "step": 1,
+                        "thought": "try B",
+                        "action": {"name": "web_search", "args": {"query": "AI trends"}},
+                        "observation": "AI trends are growing rapidly in 2026 " * 2,
+                    },
+                    {
+                        "step": 2,
+                        "thought": "FINAL ANSWER: AI trends are growing",
+                        "observation": "",
+                    },
+                ],
+            },
+        ],
+    }
+    traj = parse(data)
+    assert traj.num_paths == 2
+    assert traj.main_path is not None
+    assert traj.main_path.is_main_path
+    assert len(traj.failed_paths) >= 1
+    print("✅ multi-path paths[] OK")
+
+
+def test_multi_path_path_id():
+    """step.path_id 分组多路径"""
+    from trace_debugger.reader import parse
+
+    data = {
+        "session_id": "multi_pid",
+        "query": "branch test",
+        "model": "gpt-4",
+        "main_path_index": 1,
+        "steps": [
+            {
+                "step": 1,
+                "path_id": 0,
+                "thought": "branch fail",
+                "action": {"name": "calc", "args": {}},
+                "observation": '{"error": "fail"}',
+            },
+            {
+                "step": 1,
+                "path_id": 1,
+                "thought": "FINAL ANSWER: ok",
+                "observation": "",
+            },
+        ],
+        "final_answer": "ok",
+    }
+    traj = parse(data)
+    assert traj.num_paths == 2
+    main = traj.main_path
+    assert main is not None and main.is_main_path
+    print("✅ multi-path path_id OK")
+
+
+def test_failure_recording():
+    """JSONL 失败事件记录"""
+    import tempfile
+    from trace_debugger import Analyzer
+    from trace_debugger.reader import parse
+    from trace_debugger.record import append_failure_events, failure_events_from_analysis
+
+    data = {
+        "session_id": "rec",
+        "query": "calc",
+        "model": "gpt-4",
+        "steps": [
+            {
+                "step": 1,
+                "thought": "calc",
+                "action": {"name": "calc", "args": {}},
+                "observation": '{"error": "bad"}',
+            },
+            {"step": 2, "thought": "FINAL ANSWER: no", "observation": ""},
+        ],
+        "final_answer": "no",
+    }
+    analysis = Analyzer().analyze(parse(data))
+    events = failure_events_from_analysis(analysis, source_file="x.json")
+    assert any(e["failure_type"] == "tool_error" for e in events)
+
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "failures.jsonl")
+        n = append_failure_events(analysis, path, source_file="x.json")
+        assert n >= 1
+        with open(path, encoding="utf-8") as f:
+            line = json.loads(f.readline())
+        assert line["session_id"] == "rec"
+        assert line["event_type"] == "step_failure"
+    print("✅ failure recording OK")
+
+
+def test_compare_snapshots():
+    """扫描快照对比"""
+    from trace_debugger.record import compare_snapshots
+
+    base = {
+        "report_id": "old",
+        "timestamp": "2026-07-01T00:00:00+00:00",
+        "n_trajectories": 10,
+        "distribution": {"tool_error": 2, "llm_offtrack": 6},
+        "trajectories": [{"failure_types": ["tool_error"]}] * 2
+        + [{"failure_types": ["llm_offtrack"]}] * 6
+        + [{"failure_types": []}] * 2,
+    }
+    cur = {
+        "report_id": "new",
+        "timestamp": "2026-07-16T00:00:00+00:00",
+        "n_trajectories": 10,
+        "distribution": {"tool_error": 2, "llm_offtrack": 1},
+        "trajectories": [{"failure_types": ["tool_error"]}] * 2
+        + [{"failure_types": ["llm_offtrack"]}]
+        + [{"failure_types": []}] * 7,
+    }
+    report = compare_snapshots(cur, base)
+    assert "llm_offtrack" in report
+    assert "-5" in report or "    -5" in report
+    print("✅ compare snapshots OK")

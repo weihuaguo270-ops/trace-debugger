@@ -1,0 +1,447 @@
+{
+  "schema_version": "1",
+  "description": "黄金失败集 — 7 类 taxonomy + 正例 + held-out；供证据链与 CI 门禁",
+  "n_cases": 27,
+  "n_passed": 27,
+  "n_failed": 0,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "id": "golden_tool_error",
+      "file": "tool_error.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "detected_failures": [
+        "tool_error"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_search_empty",
+      "file": "search_empty.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_empty"
+      ],
+      "detected_failures": [
+        "search_empty"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['search_empty']"
+    },
+    {
+      "id": "golden_search_timeout",
+      "file": "search_timeout.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_timeout"
+      ],
+      "detected_failures": [
+        "search_timeout"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['search_timeout']"
+    },
+    {
+      "id": "golden_duplicate_with_empty",
+      "file": "duplicate_with_empty.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "duplicate",
+        "search_empty"
+      ],
+      "detected_failures": [
+        "duplicate",
+        "search_empty"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "notes": "verified detected=['duplicate', 'search_empty']"
+    },
+    {
+      "id": "golden_duplicate_only",
+      "file": "duplicate_only.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "duplicate"
+      ],
+      "detected_failures": [
+        "duplicate"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "notes": "verified detected=['duplicate']"
+    },
+    {
+      "id": "golden_no_answer",
+      "file": "no_answer.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "no_answer"
+      ],
+      "detected_failures": [
+        "no_answer"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/1 步），建议检查",
+      "notes": "verified detected=['no_answer']"
+    },
+    {
+      "id": "golden_offtrack",
+      "file": "offtrack.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "llm_offtrack"
+      ],
+      "detected_failures": [
+        "llm_offtrack"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/1 步），建议检查",
+      "notes": "verified detected=['llm_offtrack']"
+    },
+    {
+      "id": "golden_overflow_step",
+      "file": "overflow_step.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "context_overflow"
+      ],
+      "detected_failures": [
+        "context_overflow"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "golden_overflow_meta",
+      "file": "overflow_meta.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "context_overflow"
+      ],
+      "detected_failures": [
+        "context_overflow"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "golden_pass_clean",
+      "file": "pass_clean.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_pass_grounded_qa",
+      "file": "pass_grounded_qa.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_pass_multi_step",
+      "file": "pass_multi_step.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_tool_error_recovered",
+      "file": "tool_error_recovered.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "detected_failures": [
+        "tool_error"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_no_duplicate_diff_args",
+      "file": "no_duplicate_diff_args.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_multi_paths",
+      "file": "multi_paths.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "detected_failures": [
+        "tool_error"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_path_id_branch",
+      "file": "path_id_branch.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "detected_failures": [
+        "tool_error"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_search_empty_cn",
+      "file": "search_empty_cn.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_empty"
+      ],
+      "detected_failures": [
+        "search_empty"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['search_empty']"
+    },
+    {
+      "id": "golden_search_timeout_slow",
+      "file": "search_timeout_slow.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_timeout"
+      ],
+      "detected_failures": [
+        "search_timeout"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['search_timeout']"
+    },
+    {
+      "id": "golden_no_answer_empty_final",
+      "file": "no_answer_empty_final.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "no_answer"
+      ],
+      "detected_failures": [
+        "no_answer"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['no_answer']"
+    },
+    {
+      "id": "golden_offtrack_subtle",
+      "file": "offtrack_subtle.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "llm_offtrack"
+      ],
+      "detected_failures": [
+        "llm_offtrack"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/1 步），建议检查",
+      "notes": "verified detected=['llm_offtrack']"
+    },
+    {
+      "id": "golden_overflow_cumulative",
+      "file": "overflow_cumulative.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "context_overflow"
+      ],
+      "detected_failures": [
+        "context_overflow"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "held_out_pass_report",
+      "file": "held_out_pass_report.json",
+      "split": "held_out",
+      "category": "positive",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "held_out_mixed_warn",
+      "file": "held_out_mixed_warn.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "detected_failures": [
+        "tool_error"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "held_out_search_chain",
+      "file": "held_out_search_chain.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "search_empty"
+      ],
+      "detected_failures": [
+        "search_empty"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "notes": "verified detected=['search_empty']"
+    },
+    {
+      "id": "held_out_offtrack_calc",
+      "file": "held_out_offtrack_calc.json",
+      "split": "held_out",
+      "category": "positive",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "held_out_no_answer_maxsteps",
+      "file": "held_out_no_answer_maxsteps.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "no_answer"
+      ],
+      "detected_failures": [
+        "no_answer"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['no_answer']"
+    },
+    {
+      "id": "held_out_duplicate_blocked",
+      "file": "held_out_duplicate_blocked.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "duplicate",
+        "search_empty"
+      ],
+      "detected_failures": [
+        "duplicate",
+        "search_empty"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "notes": "verified detected=['duplicate', 'search_empty']"
+    }
+  ],
+  "report_id": "golden_evidence_20260728_115720",
+  "timestamp": "2026-07-28T11:57:20.892681+00:00",
+  "source_dir": "D:/agent_learning/trace-debugger/fixtures/failure_golden",
+  "distribution": {
+    "tool_error": 5,
+    "search_empty": 5,
+    "search_timeout": 2,
+    "duplicate": 3,
+    "no_answer": 3,
+    "llm_offtrack": 2,
+    "context_overflow": 3
+  },
+  "distribution_labels": {
+    "tool_error": "工具调用报错",
+    "search_empty": "搜索无有效结果",
+    "search_timeout": "搜索超时",
+    "duplicate": "重复相同尝试",
+    "no_answer": "未给出最终答案",
+    "llm_offtrack": "LLM 偏离用户意图",
+    "context_overflow": "上下文窗口溢出"
+  },
+  "meta": {
+    "git": "99ae967",
+    "note": "黄金集标签经 Analyzer 验证；held-out 与 golden 分栏"
+  }
+}

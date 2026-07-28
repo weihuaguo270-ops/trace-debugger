@@ -1,0 +1,35 @@
+{
+  "session_id": "golden_dup_only",
+  "query": "查 Python 官方文档",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:05Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Python docs\"}"
+      },
+      "observation": "Python official documentation covers tutorial library reference and standard modules in detail. Python official documentation covers tutorial library reference and standard modules in detail. ",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 2,
+      "thought": "same again",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Python docs\"}"
+      },
+      "observation": "Python official documentation covers tutorial library reference and standard modules in detail. Python official documentation covers tutorial library reference and standard modules in detail. ",
+      "duration_seconds": 1.1
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: see docs.python.org",
+      "observation": ""
+    }
+  ],
+  "final_answer": "see docs.python.org",
+  "total_duration_seconds": 2.5
+}

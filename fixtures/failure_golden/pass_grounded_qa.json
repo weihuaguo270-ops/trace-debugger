@@ -1,0 +1,25 @@
+{
+  "session_id": "golden_pass_grounded",
+  "query": "现在几点了？",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:11Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "查时间",
+      "action": {
+        "name": "get_time",
+        "arguments": "{}"
+      },
+      "observation": "2026-07-28 14:12:25",
+      "duration_seconds": 0.1
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 当前时间是 2026年7月28日 14时12分25秒",
+      "observation": ""
+    }
+  ],
+  "final_answer": "当前时间是 **2026年7月28日 14时12分25秒**（本地时间）。",
+  "total_duration_seconds": 0.3
+}

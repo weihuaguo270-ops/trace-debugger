@@ -1,0 +1,27 @@
+{
+  "session_id": "golden_overflow_meta",
+  "query": "long context task",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:09Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "read",
+      "action": {
+        "name": "read_file",
+        "arguments": "{\"path\": \"big.txt\"}"
+      },
+      "observation": "Python official documentation covers tutorial library reference and standard modules in detail. Python official documentation covers tutorial library reference and standard modules in detail. ",
+      "duration_seconds": 0.4,
+      "tokens_estimated": 2000
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: partial",
+      "observation": ""
+    }
+  ],
+  "final_answer": "partial summary",
+  "total_duration_seconds": 0.6,
+  "total_tokens_estimated": 9500
+}

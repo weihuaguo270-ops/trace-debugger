@@ -1,0 +1,27 @@
+{
+  "session_id": "golden_overflow_step",
+  "query": "summarize long page",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:08Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "fetch",
+      "action": {
+        "name": "fetch_page",
+        "arguments": "{\"url\": \"https://x.com\"}"
+      },
+      "observation": "Error: maximum context length exceeded for this model",
+      "duration_seconds": 0.5,
+      "tokens_estimated": 100
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: failed",
+      "observation": ""
+    }
+  ],
+  "final_answer": "failed",
+  "total_duration_seconds": 0.8,
+  "total_tokens_estimated": 9000
+}

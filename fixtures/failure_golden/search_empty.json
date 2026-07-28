@@ -1,0 +1,25 @@
+{
+  "session_id": "golden_search_empty",
+  "query": "搜索 Rust 2026 趋势",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:02Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Rust 2026\"}"
+      },
+      "observation": "no hits",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 未找到",
+      "observation": ""
+    }
+  ],
+  "final_answer": "未找到",
+  "total_duration_seconds": 1.2
+}

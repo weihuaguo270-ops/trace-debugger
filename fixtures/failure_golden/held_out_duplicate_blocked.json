@@ -1,0 +1,35 @@
+{
+  "session_id": "held_dup_blocked",
+  "query": "搜索文档",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:01:06Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"docs\"}"
+      },
+      "observation": "x",
+      "duration_seconds": 0.5
+    },
+    {
+      "step": 2,
+      "thought": "blocked dup",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"docs\"}"
+      },
+      "observation": "[Harness] 已阻止重复调用 web_search（参数与上一次完全相同）。",
+      "duration_seconds": 0.1
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: use docs",
+      "observation": ""
+    }
+  ],
+  "final_answer": "use docs",
+  "total_duration_seconds": 0.8
+}

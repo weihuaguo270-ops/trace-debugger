@@ -1,0 +1,35 @@
+{
+  "session_id": "held_search_chain",
+  "query": "查找 rare topic xyz123",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:01:03Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "s1",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"xyz123 rare\"}"
+      },
+      "observation": "[]",
+      "duration_seconds": 0.9
+    },
+    {
+      "step": 2,
+      "thought": "s2",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"xyz123 alternative\"}"
+      },
+      "observation": "n/a",
+      "duration_seconds": 0.8
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: not found",
+      "observation": ""
+    }
+  ],
+  "final_answer": "not found",
+  "total_duration_seconds": 2.0
+}

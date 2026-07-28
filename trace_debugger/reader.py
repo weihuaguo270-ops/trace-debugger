@@ -6,7 +6,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Optional
 
 
 @dataclass
@@ -121,61 +121,151 @@ def load(filepath: str) -> Trajectory:
     return parse(data)
 
 
-def parse(data: dict) -> Trajectory:
-    """解析轨迹字典为 Trajectory 对象"""
-    raw_steps = data.get("steps", [])
-    steps = []
+def _parse_step(raw: dict) -> Step:
+    """Parse a single raw step dict into Step."""
+    step_num = raw.get("step", 0)
+    thought = raw.get("thought", "")
+    action = raw.get("action", {}) or {}
+    actions = raw.get("actions")
+    if (not action) and isinstance(actions, list) and actions:
+        action = actions[0] or {}
+    observation = raw.get("observation", "")
 
-    for s in raw_steps:
-        step_num = s.get("step", 0)
-        thought = s.get("thought", "")
-        action = s.get("action", {}) or {}
-        actions = s.get("actions")
-        if (not action) and isinstance(actions, list) and actions:
-            action = actions[0] or {}
-        observation = s.get("observation", "")
-        duration = s.get("duration_seconds", 0.0)
-        tokens = s.get("tokens_estimated", 0)
+    action_name = action.get("name", "") if isinstance(action, dict) else ""
+    raw_args = ""
+    if isinstance(action, dict):
+        raw_args = action.get("arguments", action.get("args", ""))
+    if isinstance(raw_args, dict):
+        action_args = json.dumps(raw_args, ensure_ascii=False)
+    else:
+        action_args = str(raw_args) if raw_args is not None else ""
 
-        action_name = action.get("name", "") if isinstance(action, dict) else ""
-        raw_args = ""
-        if isinstance(action, dict):
-            raw_args = action.get("arguments", action.get("args", ""))
-        if isinstance(raw_args, dict):
-            action_args = json.dumps(raw_args, ensure_ascii=False)
-        else:
-            action_args = str(raw_args) if raw_args is not None else ""
+    has_error = False
+    error_msg = ""
+    if observation:
+        if "error" in observation.lower() or "异常" in observation:
+            has_error = True
+            error_msg = observation[:200]
 
-        # 检测错误
-        has_error = False
-        error_msg = ""
-        if observation:
-            if "error" in observation.lower() or "异常" in observation:
-                has_error = True
-                error_msg = observation[:200]
+    return Step(
+        index=step_num,
+        thought=thought,
+        action_name=action_name,
+        action_args=action_args[:200],
+        observation=observation[:300],
+        duration=raw.get("duration_seconds", 0.0),
+        tokens=raw.get("tokens_estimated", 0),
+        has_error=has_error,
+        error_message=error_msg,
+    )
 
-        steps.append(Step(
-            index=step_num,
-            thought=thought,
-            action_name=action_name,
-            action_args=action_args[:200],
-            observation=observation[:300],
-            duration=duration,
-            tokens=tokens,
-            has_error=has_error,
-            error_message=error_msg,
-        ))
 
-    # 路径划分：当前 Harness 格式是连续记录，暂按单路径处理
-    # 后续扩展：当 ToT/orchestrator 产生多条路径时，根据特征切分
-    final_answer = data.get("final_answer", "") or ""
+def _build_paths_from_steps(
+    steps: list[Step],
+    *,
+    final_answer: str,
+) -> list[Path]:
+    """从步骤列表构建路径（单路径 fallback）。"""
     has_final = bool(final_answer.strip()) or any(s.is_final for s in steps)
-    paths = [Path(
+    return [Path(
         steps=steps,
         success=has_final,
         is_main_path=True,
         final_answer=final_answer,
     )]
+
+
+def _split_steps_by_path_id(raw_steps: list[dict]) -> list[tuple[int, list[Step]]]:
+    """按 step.path_id / step.branch_id 分组。"""
+    if not raw_steps:
+        return []
+    groups: list[tuple[int, list[Step]]] = []
+    current_id = 0
+    current_steps: list[Step] = []
+
+    for raw in raw_steps:
+        pid = raw.get("path_id", raw.get("branch_id"))
+        if pid is None:
+            pid = current_id
+        else:
+            pid = int(pid)
+        if current_steps and pid != current_id:
+            groups.append((current_id, current_steps))
+            current_steps = []
+        current_id = pid
+        current_steps.append(_parse_step(raw))
+
+    if current_steps:
+        groups.append((current_id, current_steps))
+    return groups
+
+
+def _parse_paths_array(paths_data: list[dict]) -> list[Path]:
+    """解析顶层 paths[]（Harness 多路径格式）。"""
+    paths: list[Path] = []
+    for i, pdata in enumerate(paths_data):
+        raw_steps = pdata.get("steps", [])
+        steps = [_parse_step(s) for s in raw_steps]
+        final_answer = pdata.get("final_answer", "") or ""
+        has_final = bool(final_answer.strip()) or any(s.is_final for s in steps)
+        paths.append(Path(
+            steps=steps,
+            success=pdata.get("success", has_final),
+            is_main_path=bool(pdata.get("is_main", pdata.get("is_main_path", False))),
+            final_answer=final_answer,
+        ))
+    if paths and not any(p.is_main_path for p in paths):
+        paths[-1].is_main_path = True
+    return paths
+
+
+def _resolve_paths(data: dict, steps: list[Step]) -> list[Path]:
+    """解析轨迹中的路径（支持 paths[]、path_id 分组、单路径）。"""
+    paths_data = data.get("paths")
+    if isinstance(paths_data, list) and paths_data:
+        return _parse_paths_array(paths_data)
+
+    raw_steps = data.get("steps", [])
+    if raw_steps and any(
+        raw.get("path_id") is not None or raw.get("branch_id") is not None
+        for raw in raw_steps
+    ):
+        groups = _split_steps_by_path_id(raw_steps)
+        if groups:
+            main_idx = data.get("main_path_index")
+            if main_idx is None:
+                main_idx = groups[-1][0]
+            final_answer = data.get("final_answer", "") or ""
+            paths = []
+            for path_id, path_steps in groups:
+                ans = ""
+                for s in reversed(path_steps):
+                    if s.is_final:
+                        ans = s.thought
+                        break
+                has_final = bool(ans.strip()) or any(s.is_final for s in path_steps)
+                is_main = path_id == main_idx or (
+                    main_idx is None and path_id == groups[-1][0]
+                )
+                paths.append(Path(
+                    steps=path_steps,
+                    success=has_final,
+                    is_main_path=is_main,
+                    final_answer=ans or (final_answer if is_main else ""),
+                ))
+            if paths and not any(p.is_main_path for p in paths):
+                paths[-1].is_main_path = True
+            return paths
+
+    final_answer = data.get("final_answer", "") or ""
+    return _build_paths_from_steps(steps, final_answer=final_answer)
+
+
+def parse(data: dict) -> Trajectory:
+    """解析轨迹字典为 Trajectory 对象"""
+    raw_steps = data.get("steps", [])
+    steps = [_parse_step(s) for s in raw_steps]
+    paths = _resolve_paths(data, steps)
 
     return Trajectory(
         session_id=data.get("session_id", ""),
@@ -191,6 +281,27 @@ def parse(data: dict) -> Trajectory:
             "total_tokens_estimated": data.get("total_tokens_estimated", 0),
         },
     )
+
+
+def load_recent_paths(directory: str, n: int = 5) -> tuple[list[Trajectory], list[str]]:
+    """加载最近 N 条轨迹，并返回对应文件路径。"""
+    if not os.path.exists(directory):
+        return [], []
+    files = sorted(
+        [f for f in os.listdir(directory) if f.endswith(".json")],
+        key=lambda f: os.path.getmtime(os.path.join(directory, f)),
+        reverse=True,
+    )[:n]
+    trajs: list[Trajectory] = []
+    paths: list[str] = []
+    for f in files:
+        full = os.path.join(directory, f)
+        try:
+            trajs.append(load(full))
+            paths.append(full)
+        except Exception:
+            continue
+    return trajs, paths
 
 
 def load_recent(directory: str, n: int = 5) -> list[Trajectory]:

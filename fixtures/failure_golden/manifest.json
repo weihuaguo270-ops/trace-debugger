@@ -1,0 +1,392 @@
+{
+  "schema_version": "1",
+  "description": "黄金失败集 — 7 类 taxonomy + 正例 + held-out；供证据链与 CI 门禁",
+  "n_cases": 27,
+  "cases": [
+    {
+      "id": "golden_tool_error",
+      "file": "tool_error.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "tool_error"
+        }
+      ],
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_search_empty",
+      "file": "search_empty.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_empty"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "search_empty"
+        }
+      ],
+      "notes": "verified detected=['search_empty']"
+    },
+    {
+      "id": "golden_search_timeout",
+      "file": "search_timeout.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_timeout"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "search_timeout"
+        }
+      ],
+      "notes": "verified detected=['search_timeout']"
+    },
+    {
+      "id": "golden_duplicate_with_empty",
+      "file": "duplicate_with_empty.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "duplicate",
+        "search_empty"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['duplicate', 'search_empty']"
+    },
+    {
+      "id": "golden_duplicate_only",
+      "file": "duplicate_only.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "duplicate"
+      ],
+      "must_not_detect": [
+        "search_empty"
+      ],
+      "expected_step_failures": [
+        {
+          "step": 2,
+          "type": "duplicate"
+        }
+      ],
+      "notes": "verified detected=['duplicate']"
+    },
+    {
+      "id": "golden_no_answer",
+      "file": "no_answer.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "no_answer"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['no_answer']"
+    },
+    {
+      "id": "golden_offtrack",
+      "file": "offtrack.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "llm_offtrack"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['llm_offtrack']"
+    },
+    {
+      "id": "golden_overflow_step",
+      "file": "overflow_step.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "context_overflow"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "context_overflow"
+        }
+      ],
+      "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "golden_overflow_meta",
+      "file": "overflow_meta.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "context_overflow"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "golden_pass_clean",
+      "file": "pass_clean.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "tool_error",
+        "search_empty",
+        "llm_offtrack",
+        "no_answer"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_pass_grounded_qa",
+      "file": "pass_grounded_qa.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "llm_offtrack"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_pass_multi_step",
+      "file": "pass_multi_step.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "duplicate",
+        "llm_offtrack"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_tool_error_recovered",
+      "file": "tool_error_recovered.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "tool_error"
+        }
+      ],
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_no_duplicate_diff_args",
+      "file": "no_duplicate_diff_args.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "duplicate"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "golden_multi_paths",
+      "file": "multi_paths.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "tool_error",
+          "path": 0
+        }
+      ],
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_path_id_branch",
+      "file": "path_id_branch.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "tool_error",
+          "path": 0
+        }
+      ],
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_search_empty_cn",
+      "file": "search_empty_cn.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_empty"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['search_empty']"
+    },
+    {
+      "id": "golden_search_timeout_slow",
+      "file": "search_timeout_slow.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "search_timeout"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "search_timeout"
+        }
+      ],
+      "notes": "verified detected=['search_timeout']"
+    },
+    {
+      "id": "golden_no_answer_empty_final",
+      "file": "no_answer_empty_final.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "no_answer"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['no_answer']"
+    },
+    {
+      "id": "golden_offtrack_subtle",
+      "file": "offtrack_subtle.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "llm_offtrack"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['llm_offtrack']"
+    },
+    {
+      "id": "golden_overflow_cumulative",
+      "file": "overflow_cumulative.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "context_overflow"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "held_out_pass_report",
+      "file": "held_out_pass_report.json",
+      "split": "held_out",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "llm_offtrack",
+        "tool_error"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "held_out_mixed_warn",
+      "file": "held_out_mixed_warn.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "tool_error"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "tool_error"
+        }
+      ],
+      "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "held_out_search_chain",
+      "file": "held_out_search_chain.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "search_empty"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['search_empty']"
+    },
+    {
+      "id": "held_out_offtrack_calc",
+      "file": "held_out_offtrack_calc.json",
+      "split": "held_out",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "llm_offtrack"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
+    },
+    {
+      "id": "held_out_no_answer_maxsteps",
+      "file": "held_out_no_answer_maxsteps.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "no_answer"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['no_answer']"
+    },
+    {
+      "id": "held_out_duplicate_blocked",
+      "file": "held_out_duplicate_blocked.json",
+      "split": "held_out",
+      "category": "negative",
+      "expected_failures": [
+        "duplicate",
+        "search_empty"
+      ],
+      "must_not_detect": [],
+      "expected_step_failures": [],
+      "notes": "verified detected=['duplicate', 'search_empty']"
+    }
+  ]
+}

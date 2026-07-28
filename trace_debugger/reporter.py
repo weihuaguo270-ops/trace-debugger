@@ -7,11 +7,8 @@
 """
 from __future__ import annotations
 import json
-import time
-from typing import Optional
 
-from .reader import Trajectory
-from .analyzer import TrajectoryAnalysis, FailureType
+from .analyzer import TrajectoryAnalysis
 
 
 def format_report(analysis: TrajectoryAnalysis) -> str:
@@ -65,22 +62,22 @@ def format_report(analysis: TrajectoryAnalysis) -> str:
         for i, s in enumerate(analysis.fix_suggestions, 1):
             lines.append(f"  {i}. {s}")
         lines.append("")
-        lines.append("  是否需要修复这些问题后重新输出？")
-        lines.append(f"  输入 y 确认修复，n 忽略，v 查看详细步骤")
+        lines.append("  （后续可用 tdebug judge 或 --record 归档，供人工/ eval 迭代）")
         lines.append("")
 
     lines.append("=" * 55)
     return "\n".join(lines)
 
 
-def format_json(analysis: TrajectoryAnalysis) -> str:
-    """格式化为 JSON"""
-    return json.dumps({
+def analysis_to_dict(analysis: TrajectoryAnalysis) -> dict:
+    """结构化分析结果（供 JSON 输出与下游系统消费）。"""
+    return {
         "session_id": analysis.session_id,
         "query": analysis.query,
         "model": analysis.model,
         "total_duration": analysis.total_duration,
         "total_steps": analysis.total_steps,
+        "num_paths": analysis.num_paths,
         "overall_assessment": analysis.overall_assessment,
         "needs_fix": analysis.needs_fix,
         "fix_suggestions": analysis.fix_suggestions,
@@ -93,10 +90,27 @@ def format_json(analysis: TrajectoryAnalysis) -> str:
                 "tools_used": pa.tools_used,
                 "failures": pa.failure_types,
                 "details": pa.failure_details,
+                "steps": [
+                    {
+                        "step_index": sa.step_index,
+                        "action": sa.action,
+                        "success": sa.success,
+                        "duration": sa.duration,
+                        "failure_type": sa.failure_type,
+                        "failure_detail": sa.failure_detail,
+                        "suggestion": sa.suggestion,
+                    }
+                    for sa in pa.step_analyses
+                ],
             }
             for pa in analysis.paths
         ],
-    }, ensure_ascii=False, indent=2)
+    }
+
+
+def format_json(analysis: TrajectoryAnalysis) -> str:
+    """格式化为 JSON"""
+    return json.dumps(analysis_to_dict(analysis), ensure_ascii=False, indent=2)
 
 
 def build_judge_prompt(analysis: TrajectoryAnalysis) -> str:

@@ -387,6 +387,16 @@ class Analyzer:
                 return True
         return False
 
+    def analyze_step(
+        self,
+        step: Step,
+        *,
+        cum_tokens: int = 0,
+        traj: Optional[Trajectory] = None,
+    ) -> StepAnalysis:
+        """分析单步（供运行时 StepWatcher 调用）。"""
+        return self._analyze_step(step, cum_tokens=cum_tokens, traj=traj)
+
     def _analyze_step(
         self,
         step: Step,

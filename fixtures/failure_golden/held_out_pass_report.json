@@ -1,0 +1,35 @@
+{
+  "session_id": "held_pass_report",
+  "query": "写一份关于 AI 行业趋势的简短报告",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:01:01Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search trends",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"AI industry trends 2026\"}"
+      },
+      "observation": "AI industry trends in 2026 show strong growth in agents and enterprise adoption worldwide.",
+      "duration_seconds": 1.1
+    },
+    {
+      "step": 2,
+      "thought": "search china",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"中国 AI 市场 2026 趋势\"}"
+      },
+      "observation": "中国 AI 市场在 2026 年继续保持增长，企业级 Agent 与自动化需求显著上升。",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: 2026年 AI 行业趋势包括 Agent 普及与企业采用加速。",
+      "observation": ""
+    }
+  ],
+  "final_answer": "2026年 AI 行业趋势包括 Agent 普及、多模态模型与企业采用加速。",
+  "total_duration_seconds": 2.5
+}

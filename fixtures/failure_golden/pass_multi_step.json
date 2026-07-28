@@ -1,0 +1,35 @@
+{
+  "session_id": "golden_pass_multi",
+  "query": "Explain ML pipeline",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:12Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search ml",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"ML pipeline steps\"}"
+      },
+      "observation": "Machine learning is a subset of artificial intelligence focused on learning from data and patterns. Machine learning is a subset of artificial intelligence focused on learning from data and patterns. ",
+      "duration_seconds": 1.2
+    },
+    {
+      "step": 2,
+      "thought": "search eval",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"ML model evaluation\"}"
+      },
+      "observation": "Model evaluation uses metrics like accuracy precision recall on held-out data sets.",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: ML pipeline includes data prep, training, evaluation.",
+      "observation": ""
+    }
+  ],
+  "final_answer": "An ML pipeline includes data preparation, model training, and evaluation.",
+  "total_duration_seconds": 3.0
+}

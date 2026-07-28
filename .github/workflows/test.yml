@@ -39,7 +39,11 @@ jobs:
         --cov=trace_debugger
         --cov-report=term-missing
         --cov-fail-under=50
-    - name: Publish failure snapshot (fixture)
+    - name: Golden failure suite (evidence chain)
+      run: python -m pytest tests/test_failure_golden.py -v --tb=short
+    - name: Publish golden evidence snapshot
+      run: python examples/publish_golden_evidence.py --stem golden_evidence_baseline --out-dir /tmp/tdebug_golden_docs
+    - name: Publish failure snapshot (legacy bundle)
       run: python examples/publish_failure_snapshot.py --dir examples/failure_bundle --stem ci_failure_smoke --out-dir /tmp/tdebug_docs
 
   test-windows:

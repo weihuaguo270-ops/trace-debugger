@@ -1,0 +1,15 @@
+{
+  "session_id": "golden_offtrack_subtle",
+  "query": "撰写量子计算在金融科技中的应用综述",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:20Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "FINAL ANSWER: 推荐三款适合夏季跑步的运动鞋，透气轻便。",
+      "observation": ""
+    }
+  ],
+  "final_answer": "推荐三款适合夏季跑步的运动鞋，透气轻便，适合日常慢跑与健身训练。",
+  "total_duration_seconds": 0.4
+}

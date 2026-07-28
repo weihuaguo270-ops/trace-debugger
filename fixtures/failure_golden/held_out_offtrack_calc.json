@@ -1,0 +1,25 @@
+{
+  "session_id": "held_offtrack_calc",
+  "query": "计算 15 的平方是多少",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:01:04Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "calc",
+      "action": {
+        "name": "calculator",
+        "arguments": "{\"expression\": \"15**2\"}"
+      },
+      "observation": "225",
+      "duration_seconds": 0.1
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 15 的平方是 225",
+      "observation": ""
+    }
+  ],
+  "final_answer": "15 的平方是 225。",
+  "total_duration_seconds": 0.3
+}

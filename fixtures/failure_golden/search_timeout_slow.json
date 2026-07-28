@@ -1,0 +1,25 @@
+{
+  "session_id": "golden_timeout_slow",
+  "query": "slow web search",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:18Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"slow query\"}"
+      },
+      "observation": "Machine learning is a subset of artificial intelligence focused on learning from data and patterns. Machine learning is a subset of artificial intelligence focused on learning from data and patterns. ",
+      "duration_seconds": 22.0
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: found",
+      "observation": ""
+    }
+  ],
+  "final_answer": "found",
+  "total_duration_seconds": 22.5
+}

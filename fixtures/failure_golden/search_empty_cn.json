@@ -1,0 +1,25 @@
+{
+  "session_id": "golden_search_cn",
+  "query": "搜索行业报告",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:17Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "搜索",
+      "action": {
+        "name": "网络搜索",
+        "arguments": "{\"q\": \"AI\"}"
+      },
+      "observation": "无",
+      "duration_seconds": 0.8
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 无结果",
+      "observation": ""
+    }
+  ],
+  "final_answer": "无结果",
+  "total_duration_seconds": 1.0
+}

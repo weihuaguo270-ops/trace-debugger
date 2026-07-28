@@ -1,0 +1,51 @@
+{
+  "session_id": "golden_multi_paths",
+  "query": "explore options",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:15Z",
+  "steps": [],
+  "paths": [
+    {
+      "path_id": 0,
+      "is_main": false,
+      "success": false,
+      "steps": [
+        {
+          "step": 1,
+          "thought": "bad branch",
+          "action": {
+            "name": "calculator",
+            "arguments": "{}"
+          },
+          "observation": "{\"error\": \"invalid\"}",
+          "duration_seconds": 0.2
+        }
+      ]
+    },
+    {
+      "path_id": 1,
+      "is_main": true,
+      "success": true,
+      "final_answer": "When exploring options, AI trends are growing in 2026.",
+      "steps": [
+        {
+          "step": 1,
+          "thought": "good branch",
+          "action": {
+            "name": "web_search",
+            "arguments": "{\"query\": \"AI trends 2026\"}"
+          },
+          "observation": "Machine learning is a subset of artificial intelligence focused on learning from data and patterns. Machine learning is a subset of artificial intelligence focused on learning from data and patterns. ",
+          "duration_seconds": 1.0
+        },
+        {
+          "step": 2,
+          "thought": "FINAL ANSWER: exploring options shows AI trends growing.",
+          "observation": ""
+        }
+      ]
+    }
+  ],
+  "final_answer": "When exploring options, AI trends are growing in 2026 with enterprise adoption.",
+  "total_duration_seconds": 1.5
+}

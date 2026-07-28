@@ -1,0 +1,35 @@
+{
+  "session_id": "golden_no_dup",
+  "query": "Research AI and ML",
+  "model": "mock-gpt",
+  "timestamp": "2026-07-28T00:00:14Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "search ai",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"AI trends\"}"
+      },
+      "observation": "Machine learning is a subset of artificial intelligence focused on learning from data and patterns. Machine learning is a subset of artificial intelligence focused on learning from data and patterns. ",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 2,
+      "thought": "search ml",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"ML trends\"}"
+      },
+      "observation": "Machine learning is a subset of artificial intelligence focused on learning from data and patterns. Machine learning is a subset of artificial intelligence focused on learning from data and patterns. ",
+      "duration_seconds": 1.0
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: AI and ML both evolving rapidly.",
+      "observation": ""
+    }
+  ],
+  "final_answer": "AI and ML are both evolving rapidly in 2026.",
+  "total_duration_seconds": 2.5
+}
