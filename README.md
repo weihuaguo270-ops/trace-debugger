@@ -159,20 +159,21 @@ Analyzer(
 | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | 接入任意 Harness + react-agent 参考集成 |
 | [schemas/README.md](schemas/README.md) | Format B 互操作规则 |
 | [docs/GOLDEN_FAILURE_INDEX.md](docs/GOLDEN_FAILURE_INDEX.md) | 黄金集索引 |
-| [docs/RISKS.md](docs/RISKS.md) | **风险登记**（准确率 / 安全 / 可靠性 / 竞争） |
+| [docs/RISKS.md](docs/RISKS.md) | 风险与边界（准确率 / 安全 / 可靠性 / 定位） |
 | [SECURITY.md](SECURITY.md) | 数据处理与漏洞报告 |
 
 ---
 
 ## 诚实边界
 
-- **准确率**：7 类均为启发式，非 ground truth；`llm_offtrack` 在跨语言/摘要/代码/创意任务上易误判，需持续校准（见 [docs/RISKS.md](docs/RISKS.md) R1）
-- **数据安全**：`--record` 会写入 query/thought/工具参数/observation；**无内置脱敏与 TTL**（企业上线前必阅 [SECURITY.md](SECURITY.md)）
-- **运行模型**：本地 JSONL 追加，**无并发锁/轮转**；适合开发与 CI，非高并发生产存储（R3）
-- **产品定位**：坚持轻量、本地、框架无关、规则门禁；**不扩张为 Langfuse/LangSmith 类 APM**（R4）
-- 不自动修复 Agent；优化靠人工或外部 eval
+我们有意把 scope 收窄，避免对外过度承诺：
 
-完整风险登记：[docs/RISKS.md](docs/RISKS.md)
+- **准确率**：7 类规则是 CI 门禁，不是判决书。`llm_offtrack` 曾在 100 条真实轨迹上误报过时间/计算类短问答（6 次→改规则后 1 次），跨语言、摘要、代码、创意任务仍可能误判 → [docs/RISKS.md](docs/RISKS.md) §1
+- **数据安全**：`--record` 会写入 query、thought、工具参数与 observation；**当前无脱敏/TTL**，企业集成必须在 adapter 层处理 → [SECURITY.md](SECURITY.md)
+- **运行方式**：本地 JSONL 追加，无锁、无轮转；适合开发与 CI，**不直接承接生产高并发写入** → RISKS §3
+- **产品定位**：只做轻量、本地、框架无关的失败治理；**不扩张为完整 APM**，与 Langfuse 等互补而非替代 → RISKS §4
+
+完整说明：[docs/RISKS.md](docs/RISKS.md)
 
 ---
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4 (2026-07-29)
+
+### Changed
+- **docs/RISKS.md** / **SECURITY.md** / README「诚实边界」：项目负责人决策口吻（含 100 条轨迹 offtrack 6→1 案例）；去除 risk-register 模板化写法
+
 ## 0.2.3 (2026-07-29)
 
 ### Added
