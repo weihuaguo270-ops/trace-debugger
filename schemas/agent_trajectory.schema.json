@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weihuaguo270-ops/trace-debugger/schemas/agent_trajectory.schema.json",
+  "title": "Agent Trajectory (Format B)",
+  "description": "Canonical wire format for trace-debugger: offline analysis, failure recording, and StepWatcher runtime tags. Compatible producers include any ReAct-style Agent harness; react-agent is a reference integration.",
+  "type": "object",
+  "required": ["session_id", "query", "steps", "final_answer"],
+  "additionalProperties": true,
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique run / session id"
+    },
+    "query": {
+      "type": "string",
+      "description": "User query for this run"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model id used by the agent"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO-8601 timestamp when recording started"
+    },
+    "system_prompt_preview": {
+      "type": "string",
+      "description": "Truncated system prompt for debugging"
+    },
+    "total_steps": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_duration_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "total_tokens_estimated": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "final_answer": {
+      "type": "string",
+      "description": "Agent final answer (may be empty if the run failed)"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Format B wire version major (optional; absent ⇒ treat as \"1\")",
+      "pattern": "^[0-9]+(\\.[0-9]+)*$"
+    },
+    "main_path_index": {
+      "type": "integer",
+      "description": "When steps use path_id/branch_id grouping, which path id is the main output path"
+    },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/step" },
+      "description": "Flat step list; may be empty when only paths[] is populated"
+    },
+    "paths": {
+      "type": "array",
+      "description": "Multi-path trajectories (e.g. branching search). Each path has its own steps.",
+      "items": { "$ref": "#/$defs/path" }
+    }
+  },
+  "$defs": {
+    "toolCall": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Tool / action name"
+        },
+        "arguments": {
+          "description": "Preferred: JSON string of tool args",
+          "oneOf": [{ "type": "string" }, { "type": "object" }]
+        },
+        "args": {
+          "description": "Alias for arguments (object or string)",
+          "oneOf": [{ "type": "string" }, { "type": "object" }]
+        }
+      }
+    },
+    "failureBlock": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "label": { "type": "string" },
+        "summary": { "type": "string" },
+        "detail": { "type": "string" },
+        "severity": { "type": "string" },
+        "suggestion": { "type": "string" },
+        "context": { "type": "object" }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["step"],
+      "additionalProperties": true,
+      "properties": {
+        "step": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-based step number. Do not emit 0."
+        },
+        "path_id": {
+          "type": "integer",
+          "description": "Branch id when flat steps[] encodes multiple paths"
+        },
+        "branch_id": {
+          "type": "integer",
+          "description": "Alias for path_id"
+        },
+        "thought": { "type": "string" },
+        "observation": { "type": "string" },
+        "duration_seconds": { "type": "number", "minimum": 0 },
+        "tokens_estimated": { "type": "integer", "minimum": 0 },
+        "action": { "$ref": "#/$defs/toolCall" },
+        "actions": {
+          "type": "array",
+          "description": "Multi-tool parallel calls; reader uses the first entry",
+          "items": { "$ref": "#/$defs/toolCall" },
+          "minItems": 1
+        },
+        "failure_tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Heuristic failure types from trace-debugger / StepWatcher"
+        },
+        "failure_label": { "type": "string" },
+        "failure_summary": { "type": "string" },
+        "failure_detail": { "type": "string" },
+        "failure_severity": { "type": "string" },
+        "failure_context": { "type": "object" },
+        "failure": { "$ref": "#/$defs/failureBlock" },
+        "suggestion": { "type": "string" }
+      }
+    },
+    "path": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "path_id": { "type": "integer" },
+        "is_main": { "type": "boolean" },
+        "is_main_path": { "type": "boolean" },
+        "success": { "type": "boolean" },
+        "final_answer": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/step" }
+        }
+      }
+    }
+  }
+}

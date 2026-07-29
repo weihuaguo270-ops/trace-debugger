@@ -1,10 +1,10 @@
-"""Harness 集成示例 — 执行中逐步检测并记录失败
+"""StepWatcher 集成示例 — 任意 Agent Harness 的两个 hook 点
 
-演示 react-agent Harness 应如何在两个 hook 点调用 StepWatcher：
-  1. after_tool_observation → on_step()
-  2. on_trajectory_save     → on_finish() + to_trajectory_dict()
+1. 每步 observation 返回后 → on_step()
+2. 任务结束、落盘轨迹前   → on_finish() + to_trajectory_dict()
 
-在 react-agent 仓中，将 MOCK_RUN 替换为真实 Agent 循环即可。
+本示例用 mock Agent 循环演示，不依赖 react-agent 或其他框架。
+参考集成见 docs/INTEGRATIONS.md。
 """
 
 from __future__ import annotations
@@ -90,7 +90,7 @@ def main() -> int:
         traj, logs = run_with_watcher("写一份 AI 趋势简报", record_path)
 
         print("=" * 55)
-        print("  Harness StepWatcher 集成演示")
+        print("  StepWatcher 集成演示（框架无关）")
         print("=" * 55)
         for line in logs:
             print(line)
@@ -104,10 +104,11 @@ def main() -> int:
                 ev = json.loads(line)
                 print(f"    {ev['event_type']} step={ev.get('step_index')} type={ev.get('failure_type')}")
 
-        print("\n  react-agent 集成要点:")
-        print("    1. Harness.after_observation(step) → watcher.on_step(...)")
-        print("    2. Harness.save_trajectory()       → watcher.on_finish(...)")
-        print("    3. 落盘时用 watcher.to_trajectory_dict() 保留 failure_tags")
+        print("\n  集成要点（任意 Harness）:")
+        print("    1. after_observation → watcher.on_step(...)")
+        print("    2. before_save       → watcher.on_finish(...)")
+        print("    3. 落盘时用 watcher.to_trajectory_dict() 保留 failure 字段")
+        print("    4. 可选 react-agent 参考: docs/INTEGRATIONS.md")
         print("=" * 55)
     return 0
 

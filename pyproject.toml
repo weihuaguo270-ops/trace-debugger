@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trace-debugger"
-version = "0.2.1"
-description = "Harness 轨迹复盘与失败治理 — 启发式分类、JSONL 记录、聚合统计、StepWatcher 运行时检测"
+version = "0.2.2"
+description = "Agent 轨迹失败治理 — Format B 解析、启发式检测、JSONL 记录、聚合统计、StepWatcher"
 readme = "README.md"
 requires-python = ">=3.10"
 
@@ -17,6 +17,9 @@ test = [
 dev = [
     "mypy>=1.8",
     "pip-audit>=2.6",
+]
+schema = [
+    "jsonschema>=4.0",
 ]
 
 [project.scripts]

@@ -14,6 +14,13 @@ DEFAULT_RECORD_PATH = ".tdebug/failures.jsonl"
 RECORD_SCHEMA_VERSION = "2"
 
 
+def resolve_record_path(explicit: Optional[str] = None) -> str:
+    """Resolve failure JSONL path: explicit arg > TDEBUG_RECORD_PATH > default."""
+    if explicit:
+        return explicit
+    return os.environ.get("TDEBUG_RECORD_PATH", DEFAULT_RECORD_PATH)
+
+
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 

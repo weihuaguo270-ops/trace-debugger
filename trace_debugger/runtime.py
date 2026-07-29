@@ -1,9 +1,8 @@
 """runtime — Agent 执行过程中的实时失败检测与记录
 
-供 react-agent Harness 在每步 observation 返回后调用 StepWatcher.on_step()，
-任务结束时调用 on_finish() 补记路径级失败（duplicate / no_answer / offtrack 等）。
-
-集成示例见 examples/harness_step_watcher.py
+供任意 Harness 在每步 observation 返回后调用 StepWatcher.on_step()，
+任务结束时调用 on_finish()。集成示例见 examples/harness_step_watcher.py
+与 docs/INTEGRATIONS.md。
 """
 from __future__ import annotations
 
@@ -13,9 +12,9 @@ from typing import Any, Optional
 from .analyzer import Analyzer, StepAnalysis, TrajectoryAnalysis
 from .reader import Step, Trajectory, parse
 from .record import (
-    DEFAULT_RECORD_PATH,
     append_events,
     append_failure_events,
+    resolve_record_path,
     step_failure_event,
 )
 
@@ -105,7 +104,7 @@ class StepWatcher:
     session_id: str
     query: str
     model: str
-    record_path: str = DEFAULT_RECORD_PATH
+    record_path: str = field(default_factory=resolve_record_path)
     source_file: str = ""
     path_index: int = 0
     auto_record: bool = True
@@ -258,7 +257,7 @@ class StepWatcher:
         return parse(data)
 
     def to_trajectory_dict(self) -> dict[str, Any]:
-        """转为 Harness Format B 轨迹 dict（含 failure_tags）。"""
+        """转为 Format B 轨迹 dict（含 failure_tags）。"""
         step_analysis_map: dict[int, StepAnalysis] = {
             sa.step_index: sa for sa in self._step_results
         }

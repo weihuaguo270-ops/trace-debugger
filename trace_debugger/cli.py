@@ -17,6 +17,7 @@ from .record import (
     format_failure_stats,
     failure_stats_from_log,
 )
+from .validate import format_validation_report, validate_trajectory_file
 
 
 def main():
@@ -66,6 +67,9 @@ def main():
             stats = failure_stats_from_log(record_path, session_id=session)
             _write_text(flags["stats_json_out"], json.dumps(stats, ensure_ascii=False, indent=2))
             print(f"\n[已写入统计 JSON] {flags['stats_json_out']}")
+    elif cmd == "validate":
+        filepath, flags = _parse_analyze_args(argv[1:])
+        _cmd_validate(filepath, flags)
     elif cmd.endswith(".json"):
         filepath, flags = _parse_analyze_args(argv)
         _cmd_analyze(filepath, flags)
@@ -84,6 +88,7 @@ def _print_help():
     print("  tdebug judge <file.json> [选项]   生成 LLM Judge 分析 prompt")
     print("  tdebug failures [jsonl] [选项]    失败 digest 或 --stats 聚合统计")
     print("  tdebug stats [jsonl] [选项]       按失败类型聚合（同 failures --stats）")
+    print("  tdebug validate <轨迹.json> [选项]  校验 Format B（可选 jsonschema）")
     print("  tdebug scan <directory> [N] [选项]  扫描最新 N 条轨迹")
     print()
     print("选项（analyze / judge）:")
@@ -93,6 +98,9 @@ def _print_help():
     print("  --session ID       failures/stats：只统计指定 session")
     print("  --stats            failures 模式：输出聚合统计而非明细")
     print("  --stats-json-out PATH  将聚合统计写入 JSON")
+    print()
+    print("选项（validate）:")
+    print("  --schema           使用 jsonschema 严格校验（需 pip install trace-debugger[schema]）")
     print()
     print("选项（scan）:")
     print("  --json-out PATH    写入扫描快照 JSON（可归档、可对比）")
@@ -132,6 +140,9 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
             i += 2
         elif a == "--stats":
             flags["stats"] = True
+            i += 1
+        elif a == "--schema":
+            flags["schema"] = True
             i += 1
         elif a == "--stats-json-out" and i + 1 < len(args):
             flags["stats_json_out"] = args[i + 1]
@@ -227,6 +238,13 @@ def _cmd_judge(filepath: str, flags: dict):
         n = append_failure_events(analysis, flags["record"], source_file=filepath)
         if n:
             print(f"[已记录 {n} 条失败事件] {flags['record']}")
+
+
+def _cmd_validate(filepath: str, flags: dict):
+    errors = validate_trajectory_file(filepath, use_schema=bool(flags.get("schema")))
+    _safe_print(format_validation_report(errors, path=filepath))
+    if errors:
+        sys.exit(1)
 
 
 def _cmd_replay(filepath: str):

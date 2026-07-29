@@ -1,6 +1,6 @@
-"""reader — 读取并解析 Harness 轨迹 JSON
+"""reader — 读取并解析 Agent Trajectory JSON (Format B)
 
-支持 react-agent 和 LangGraph 版两种轨迹格式。
+Canonical schema: schemas/agent_trajectory.schema.json
 """
 from __future__ import annotations
 import json

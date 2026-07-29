@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.2 (2026-07-29)
+
+### Added
+- **可移植集成层** `trace_debugger.harness`：`RunContext`、`StepEvent`、`FailureHarness`、离线 `build/enrich`
+- **Adapter 样板** `examples/adapters/`（graph-style + react-loop）+ `tests/test_adapters.py`
+- **`trace_debugger.validate`** + `tdebug validate`（`--schema` 需 `pip install trace-debugger[schema]`）
+- **Analyzer 配置**：`final_answer_markers`、`search_tool_names`、`search_tool_substrings`
+- **`TDEBUG_RECORD_PATH`** 环境变量
+- 演示 `examples/portable_harness_demo.py`
+- **Canonical schema** `schemas/agent_trajectory.schema.json` + `schemas/README.md`
+- **集成指南** `docs/INTEGRATIONS.md`
+
+### Changed
+- README / 定位改为**独立 Agent 失败治理工具**；react-agent 降为参考集成
+- `docs/FAILURE_INDEX.md`：golden 证据置顶，react-agent 案例降为附录
+
 ## 0.2.1 (2026-07-28)
 
 ### Fixed

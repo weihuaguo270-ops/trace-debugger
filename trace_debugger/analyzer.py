@@ -90,9 +90,18 @@ def looks_like_overflow_text(text: str) -> bool:
     return any(re.search(p, low, flags=re.I) for p in _OVERFLOW_PATTERNS)
 
 
-def is_search_tool(name: str) -> bool:
+def is_search_tool(name: str, *, substrings: tuple[str, ...] = ("search",), extra_names: tuple[str, ...] = ()) -> bool:
     n = (name or "").lower()
-    return "search" in n or "搜索" in name
+    if any(sub in n for sub in substrings):
+        return True
+    if "搜索" in (name or ""):
+        return True
+    return (name or "") in extra_names or n in {x.lower() for x in extra_names}
+
+
+def is_final_thought(thought: str, markers: tuple[str, ...]) -> bool:
+    upper = (thought or "").upper()
+    return any(m.upper() in upper for m in markers if m)
 
 
 def failure_distribution(analyses: list[TrajectoryAnalysis]) -> dict[str, int]:
@@ -171,11 +180,27 @@ class Analyzer:
         step_token_warn: int = 4096,
         offtrack_overlap: float = 0.15,
         timeout_seconds: float = 20.0,
+        final_answer_markers: tuple[str, ...] = ("FINAL ANSWER",),
+        search_tool_substrings: tuple[str, ...] = ("search",),
+        search_tool_names: tuple[str, ...] = (),
     ):
         self.token_budget = token_budget
         self.step_token_warn = step_token_warn
         self.offtrack_overlap = offtrack_overlap
         self.timeout_seconds = timeout_seconds
+        self.final_answer_markers = final_answer_markers
+        self.search_tool_substrings = search_tool_substrings
+        self.search_tool_names = search_tool_names
+
+    def step_is_final(self, step: Step) -> bool:
+        return is_final_thought(step.thought, self.final_answer_markers)
+
+    def tool_is_search(self, name: str) -> bool:
+        return is_search_tool(
+            name,
+            substrings=self.search_tool_substrings,
+            extra_names=self.search_tool_names,
+        )
 
     def analyze(self, traj: Trajectory) -> TrajectoryAnalysis:
         """分析完整轨迹"""
@@ -256,7 +281,7 @@ class Analyzer:
             prev_key = key
 
         # 路径级：未给出最终答案
-        has_final_marker = any(s.is_final for s in path.steps)
+        has_final_marker = any(self.step_is_final(s) for s in path.steps)
         has_final_text = bool((path.final_answer or "").strip()) or bool(
             (traj.final_answer or "").strip()
         )
@@ -326,7 +351,7 @@ class Analyzer:
         answer = (path.final_answer or traj.final_answer or "").strip()
         if not answer:
             for s in reversed(path.steps):
-                if s.is_final:
+                if self.step_is_final(s):
                     answer = s.thought
                     break
         if not answer or not traj.query.strip():
@@ -434,7 +459,7 @@ class Analyzer:
                 failure_type = FailureType.TOOL_ERROR
                 failure_detail = f"{step.action_name} 调用失败: {step.error_message[:100]}"
                 suggestion = f"检查 {step.action_name} 的参数或重试"
-            elif is_search_tool(step.action_name) and (
+            elif self.tool_is_search(step.action_name) and (
                 not step.observation or len(step.observation) < 20
             ):
                 failure_type = FailureType.SEARCH_EMPTY

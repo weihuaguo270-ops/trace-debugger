@@ -1,14 +1,14 @@
-"""Trace Debugger — Agent 执行轨迹复盘分析工具
+"""Trace Debugger — Agent 轨迹失败治理
 
-读取 Harness 记录的轨迹 JSON，分析 Agent 执行过程中的每一条路径：
-  - 哪些路走通了？哪些路走不通？
-  - 走不通的原因是什么？（工具报错 / 搜索无结果 / LLM 跑偏 / 超时）
-  - 最终方案是否真的可靠？是否遗漏了更好的路？
+读取 Agent Trajectory (Format B) JSON，分析执行过程中的失败行为：
+  - 7 类启发式失败分类
+  - JSONL / 可读日志 / 会话摘要
+  - 运行时 StepWatcher（可嵌入任意 Harness）
 
-与 react-agent 框架的关系：
-  Agent 执行 → Harness StepWatcher（实时）→ 失败 JSONL + 轨迹 JSON → Trace Debugger 复盘
+Schema: schemas/agent_trajectory.schema.json
+集成: docs/INTEGRATIONS.md（含 react-agent 参考集成）
 """
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 from trace_debugger.analyzer import (
     Analyzer,
@@ -17,6 +17,8 @@ from trace_debugger.analyzer import (
     StepAnalysis,
     FailureType,
     failure_distribution,
+    is_final_thought,
+    is_search_tool,
 )
 from trace_debugger.reader import Trajectory, Path, Step
 from trace_debugger.reporter import format_report, format_json, build_judge_prompt, analysis_to_dict
@@ -30,6 +32,22 @@ from trace_debugger.record import (
     failure_stats_from_log,
     aggregate_failure_stats,
     DEFAULT_RECORD_PATH,
+    resolve_record_path,
 )
 from trace_debugger.runtime import StepWatcher, failure_tags_from_step
+from trace_debugger.harness import (
+    FailureHarness,
+    RunContext,
+    StepEvent,
+    SCHEMA_PATH,
+    analyze_trajectory_dict,
+    build_trajectory_dict,
+    enrich_trajectory_dict,
+    normalize_tool_input,
+)
 from trace_debugger.golden import load_manifest, run_golden_suite, GoldenCase
+from trace_debugger.validate import (
+    format_validation_report,
+    validate_trajectory_dict,
+    validate_trajectory_file,
+)
