@@ -159,15 +159,20 @@ Analyzer(
 | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | 接入任意 Harness + react-agent 参考集成 |
 | [schemas/README.md](schemas/README.md) | Format B 互操作规则 |
 | [docs/GOLDEN_FAILURE_INDEX.md](docs/GOLDEN_FAILURE_INDEX.md) | 黄金集索引 |
-| [docs/FAILURE_INDEX.md](docs/FAILURE_INDEX.md) | 失败分布周报 |
+| [docs/RISKS.md](docs/RISKS.md) | **风险登记**（准确率 / 安全 / 可靠性 / 竞争） |
+| [SECURITY.md](SECURITY.md) | 数据处理与漏洞报告 |
 
 ---
 
 ## 诚实边界
 
-- 启发式检测，非 ground truth
-- 不自动修复；优化靠人工或外部 eval
-- 不替代 LangSmith / 生产 APM
+- **准确率**：7 类均为启发式，非 ground truth；`llm_offtrack` 在跨语言/摘要/代码/创意任务上易误判，需持续校准（见 [docs/RISKS.md](docs/RISKS.md) R1）
+- **数据安全**：`--record` 会写入 query/thought/工具参数/observation；**无内置脱敏与 TTL**（企业上线前必阅 [SECURITY.md](SECURITY.md)）
+- **运行模型**：本地 JSONL 追加，**无并发锁/轮转**；适合开发与 CI，非高并发生产存储（R3）
+- **产品定位**：坚持轻量、本地、框架无关、规则门禁；**不扩张为 Langfuse/LangSmith 类 APM**（R4）
+- 不自动修复 Agent；优化靠人工或外部 eval
+
+完整风险登记：[docs/RISKS.md](docs/RISKS.md)
 
 ---
 

@@ -1,4 +1,8 @@
-"""record — 失败事件持久化与扫描快照对比"""
+"""record — 失败事件持久化与扫描快照对比
+
+注意：事件可能含 query、thought、action_args、observation（见 step_failure_event）。
+无内置脱敏/TTL/访问控制 — 企业集成前请阅 docs/RISKS.md R2 与 SECURITY.md。
+"""
 from __future__ import annotations
 
 import json

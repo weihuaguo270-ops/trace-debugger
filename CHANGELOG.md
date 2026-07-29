@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.3 (2026-07-29)
+
+### Added
+- **风险登记** [docs/RISKS.md](docs/RISKS.md)：准确率 / 数据安全 / 运行可靠性 / 产品竞争
+- **SECURITY.md** 扩充：record 数据范围、部署建议、集成方责任
+
+### Changed
+- README「诚实边界」链接 RISKS 四类风险摘要
+- `record.py` 模块 docstring 增加数据安全提示
+
 ## 0.2.2 (2026-07-29)
 
 ### Added
