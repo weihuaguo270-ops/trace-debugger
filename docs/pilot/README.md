@@ -14,6 +14,8 @@
 | Phase 2 baseline | ✅ | [BASELINE.md](./BASELINE.md) · `pilot_baseline.json` · `pilot_baseline_no_mock.json` |
 | Phase 3 回归工作流 | ✅ | [PHASE3.md](./PHASE3.md) · Run A/B 完成 |
 | Phase 4 拦截案例 | ✅ | [cases/regression_gate_20260730.md](../cases/regression_gate_20260730.md) |
+| Phase 5 耗时验证 | ✅ | [PHASE5.md](./PHASE5.md) · [phase5_timing_results.json](./phase5_timing_results.json) |
+| 能力 manifest | ✅ | [CAPABILITY_MANIFEST.md](./CAPABILITY_MANIFEST.md) · [CAPABILITY_HELD_OUT_RUN.md](./CAPABILITY_HELD_OUT_RUN.md) |
 
 ---
 

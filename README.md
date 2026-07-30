@@ -71,13 +71,14 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 | 黄金集 + CI | 27/27 — 规则回归 |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 
-| 试点（v0.2.5） | 链接 |
+| 试点（v0.2.6） | 链接 |
 |----------------|------|
-| react-agent Phase 0–4 | [docs/pilot/README.md](docs/pilot/README.md) |
+| Phase 0–5 + 能力 manifest | [docs/pilot/README.md](docs/pilot/README.md) |
+| held-out 基线 7/80 | [docs/pilot/CAPABILITY_HELD_OUT_RUN.md](docs/pilot/CAPABILITY_HELD_OUT_RUN.md) |
 | 发版前决策案例 | [docs/cases/regression_gate_20260730.md](docs/cases/regression_gate_20260730.md) |
-| 业务证明自评 ~55% | [docs/VALUE.md](docs/VALUE.md) |
+| 业务证明自评 ~65% | [docs/VALUE.md](docs/VALUE.md) |
 
-仍缺：复盘耗时、非模拟 PR hold、外部团队复现。
+仍缺：真人秒表、非模拟 PR hold、外部团队复现。
 
 Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 
@@ -131,7 +132,7 @@ tdebug judge offtrack.json --prompt-out judge.txt
 我们有意收窄 scope，避免对外过度承诺：
 
 - **准确率**：规则是 CI 门禁，不是判决书；`llm_offtrack` 曾有真实批次假阳性（6→1 校准）→ [RISKS.md](docs/RISKS.md) §1
-- **业务价值**：试点 Phase 0–4 完成；[发版前 compare 案例](docs/cases/regression_gate_20260730.md) → [VALUE.md](docs/VALUE.md)
+- **业务价值**：试点 Phase 0–5 + held-out 能力轨；[VALUE.md](docs/VALUE.md) · [CAPABILITY_MANIFEST.md](docs/pilot/CAPABILITY_MANIFEST.md)
 - **数据安全**：`--record` 落盘 query/thought；企业须 adapter 脱敏 → [SECURITY.md](SECURITY.md)
 - **定位**：失败治理门禁，**不**替代完整 APM
 

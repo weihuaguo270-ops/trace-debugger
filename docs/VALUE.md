@@ -58,21 +58,20 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 
 - Format B 打标签、报告、JSONL 记录 — 黄金集 27/27 + CI
 - react-agent 100 条轨迹上做过 offtrack 校准（6→1，见 [RISKS.md](./RISKS.md)）
-- **react-agent 试点 Phase 0–4 跑完**（[pilot/README.md](./pilot/README.md)）：
-  - 冻结 `pilot_baseline` / `pilot_baseline_no_mock`
-  - 无害重扫 diff=0；劣化模拟能触发 THRESHOLDS
-  - [发版前 compare 决策记录](./cases/regression_gate_20260730.md)（含一次假阳性纠正）
+- **react-agent 试点 Phase 0–5**（[pilot/README.md](./pilot/README.md)）：
+  - 冻结 baseline + no_mock；Run A/B；[决策案例](./cases/regression_gate_20260730.md)
+  - [Phase 5 耗时](./pilot/PHASE5.md)：10 条失败轨迹，人工代理模型 10/10 tdebug 更快（待秒表）
 
 ### 还没有数据支撑的
 
 | 问题 | 状态 |
 |------|------|
-| 复盘耗时降了多少 | 没做 before/after |
+| 复盘耗时降了多少 | ⚠️ [Phase 5 人工代理模型](./pilot/PHASE5.md) 10/10 更快；**缺真人秒表** |
 | 接入后 Agent 失败率是否下降 | 没做 |
 | 真实生产 PR 被 hold | 只有试点案例；案例 B 是模拟 |
-| 比 grep JSON 省多少人力 | 没测 |
+| 比 grep JSON 省多少人力 | 同上，代理估计非实测 |
 
-**自评：** 功能 ~80%，场景 ~75%（试点流程通了），业务量化 ~**55%**——比 v0.2.4 的 ~40% 多了一轮试点证据，但还不能当「已拦截线上回归」卖。
+**自评：** 功能 ~80%，场景 ~75%，业务量化 ~**65%**（Phase 0–5 收口；耗时为模型估计，PR hold 仍缺生产记录）。
 
 ---
 
@@ -88,11 +87,14 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 
 ## 接下来做什么
 
-试点 Phase 0–4 已收口。优先级：
+试点 Phase 0–5 已收口。剩余：
 
-1. （可选）Phase 5：抽 5–10 次 failure 调查，记接入 tdebug 前后耗时
-2. 等下一版 react-agent 真实 prompt/工具变更，补一条**非模拟** hold/review 案例
-3. `tdebug scan --exclude-model mock` 可以单独 PR，不挡发版
+1. **真人秒表**（可选）
+2. **held-out 成功标准 L2/L3**（接 react-agent eval）
+3. 真实 PR hold 案例
+4. `tdebug scan --exclude-model mock`
+
+**能力 / 回归分离：** [CAPABILITY_MANIFEST.md](./pilot/CAPABILITY_MANIFEST.md)
 
 **案例与数据：** [cases/regression_gate_20260730.md](./cases/regression_gate_20260730.md) · [pilot/METRICS_LOG.md](./pilot/METRICS_LOG.md)
 
@@ -103,5 +105,5 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 | 日期 | 说明 |
 |------|------|
 | 2026-07-29 | 初版；主定位定为回归门禁 |
-| 2026-07-30 | 试点 Phase 0–4、案例、自评 55% |
+| 2026-07-30 | 试点 Phase 0–5、案例、自评 65%（Phase 5 代理耗时） |
 | 2026-07-30 | v0.2.5：改项目负责人口吻 |

@@ -1,0 +1,1134 @@
+{
+  "report_id": "capability_held_out_run_20260730",
+  "timestamp": "2026-07-30",
+  "react_agent_trajectories": "../react-agent/src/react_agent/trajectories",
+  "trace_debugger": "v0.2.5",
+  "manifest": "docs/pilot/capability_manifest.json",
+  "held_out": {
+    "split": "held_out",
+    "n": 80,
+    "missing": [],
+    "fail_sessions": 7,
+    "fail_rate_pct": 8.8,
+    "distribution": {
+      "llm_offtrack": 2,
+      "tool_error": 5,
+      "duplicate": 3
+    },
+    "step_bucket": {
+      "mid_3-4": 24,
+      "short_1-2": 50,
+      "long_5-6": 2,
+      "long_7+": 4
+    },
+    "outcome": {
+      "pass": 73,
+      "fail": 7
+    }
+  },
+  "dev": {
+    "split": "dev",
+    "n": 50,
+    "missing": [],
+    "fail_sessions": 9,
+    "fail_rate_pct": 18.0,
+    "distribution": {
+      "llm_offtrack": 2,
+      "tool_error": 7,
+      "duplicate": 4
+    },
+    "step_bucket": {
+      "mid_3-4": 12,
+      "short_1-2": 31,
+      "long_7+": 3,
+      "long_5-6": 4
+    },
+    "outcome": {
+      "pass": 41,
+      "fail": 9
+    }
+  },
+  "held_out_trajectories": [
+    {
+      "file": "traj_20260713_100847_vyfq.json",
+      "session_id": "20260713_100847_vyfq",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "中国的首都是什么？"
+    },
+    {
+      "file": "traj_20260713_103129_y50i.json",
+      "session_id": "20260713_103129_y50i",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "法国的首都是什么？回答一个字即可"
+    },
+    {
+      "file": "traj_20260713_103942_37cz.json",
+      "session_id": "20260713_103942_37cz",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "请总结以下内容的核心观点：人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工"
+    },
+    {
+      "file": "traj_20260713_113138_9wke.json",
+      "session_id": "20260713_113138_9wke",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "搜索 '2025 年诺贝尔物理学奖' 的信息"
+    },
+    {
+      "file": "traj_20260713_113622_rdoh.json",
+      "session_id": "20260713_113622_rdoh",
+      "steps": 4,
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "assessment": "[WARN] 有少量问题（1/4 步），可考虑优化",
+      "query_preview": "搜索一下今天北京的温度"
+    },
+    {
+      "file": "traj_20260713_132209_orky.json",
+      "session_id": "20260713_132209_orky",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "Python 和 Java 的主要区别是什么？列举 3 点"
+    },
+    {
+      "file": "traj_20260713_132301_obgn.json",
+      "session_id": "20260713_132301_obgn",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "请总结以下内容的核心观点：人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工"
+    },
+    {
+      "file": "traj_20260713_134508_n1x8.json",
+      "session_id": "20260713_134508_n1x8",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "请使用计算器工具计算 (23+45)*2"
+    },
+    {
+      "file": "traj_20260713_134515_ch8g.json",
+      "session_id": "20260713_134515_ch8g",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "现在几点了？请调用时间工具回答"
+    },
+    {
+      "file": "traj_20260713_134727_941u.json",
+      "session_id": "20260713_134727_941u",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "法国的首都是什么？请只回答城市名"
+    },
+    {
+      "file": "traj_20260713_134734_ysew.json",
+      "session_id": "20260713_134734_ysew",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "请用计算器计算 1234*5678，只根据工具结果回答最终数字"
+    },
+    {
+      "file": "traj_20260713_135337_2ckr.json",
+      "session_id": "20260713_135337_2ckr",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "法国的首都是什么？请只回答城市名"
+    },
+    {
+      "file": "traj_20260713_135752_q2dd.json",
+      "session_id": "20260713_135752_q2dd",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "（相关记忆：日期：2026年7月13日（星期一）） （相关记忆：风力：白天北风二三级，夜间北风一二级） （相关记忆：明日（7月14日）夜间天气：转为雷雨天气）鲁"
+    },
+    {
+      "file": "traj_20260713_135905_h68o.json",
+      "session_id": "20260713_135905_h68o",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "日本的首都是哪座城市？请只回答城市名"
+    },
+    {
+      "file": "traj_20260713_140155_b1tm.json",
+      "session_id": "20260713_140155_b1tm",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：日期：2026年7月13日（星期一）） （相关记忆：风力：白天北风二三级，夜间北风一二级）2025 年诺贝尔物理学奖得主是谁？如果不确定请说明不确定"
+    },
+    {
+      "file": "traj_20260713_140449_81qn.json",
+      "session_id": "20260713_140449_81qn",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "计算 (23 + 45) * 2 等于多少"
+    },
+    {
+      "file": "traj_20260713_140549_014n.json",
+      "session_id": "20260713_140549_014n",
+      "steps": 5,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，5 步无错误",
+      "query_preview": "搜索AI Agent的维基百科词条，打开第一条结果，然后总结内容（用中文）"
+    },
+    {
+      "file": "traj_20260713_140901_bax8.json",
+      "session_id": "20260713_140901_bax8",
+      "steps": 4,
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "assessment": "[WARN] 有少量问题（1/4 步），可考虑优化",
+      "query_preview": "请解释一下机器学习中的过拟合是什么"
+    },
+    {
+      "file": "traj_20260713_141618_7b6d.json",
+      "session_id": "20260713_141618_7b6d",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "如果所有的 A 都是 B，所有的 B 都是 C，那么 A 和 C 的关系是什么？"
+    },
+    {
+      "file": "traj_20260713_141621_ocd7.json",
+      "session_id": "20260713_141621_ocd7",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "切换上下文管理策略为 truncate"
+    },
+    {
+      "file": "traj_20260713_141640_kmub.json",
+      "session_id": "20260713_141640_kmub",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "切换成 research_assistant 角色"
+    },
+    {
+      "file": "traj_20260713_180932_krhd.json",
+      "session_id": "20260713_180932_krhd",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分）德国的首都是哪座城市？请只回答城市名"
+    },
+    {
+      "file": "traj_20260715_160827_n851.json",
+      "session_id": "20260715_160827_n851",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分） （相关记忆：预警：高温黄色预警） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_160929_ucjv.json",
+      "session_id": "20260715_160929_ucjv",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 奖金：1100万瑞典克朗（约合人民币834万元），由三人平分） （相关记忆：- 颁奖时间：2"
+    },
+    {
+      "file": "traj_20260715_161002_727l.json",
+      "session_id": "20260715_161002_727l",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结"
+    },
+    {
+      "file": "traj_20260715_161304_fvjs.json",
+      "session_id": "20260715_161304_fvjs",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结"
+    },
+    {
+      "file": "traj_20260715_161420_zx8l.json",
+      "session_id": "20260715_161420_zx8l",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_161454_x3jp.json",
+      "session_id": "20260715_161454_x3jp",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结"
+    },
+    {
+      "file": "traj_20260715_161516_uh7e.json",
+      "session_id": "20260715_161516_uh7e",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_162835_zooo.json",
+      "session_id": "20260715_162835_zooo",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_162858_32jo.json",
+      "session_id": "20260715_162858_32jo",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_162926_r88p.json",
+      "session_id": "20260715_162926_r88p",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_163307_kzr8.json",
+      "session_id": "20260715_163307_kzr8",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_163456_onct.json",
+      "session_id": "20260715_163456_onct",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_163541_eldn.json",
+      "session_id": "20260715_163541_eldn",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 奖金：1100万瑞典克朗（约合"
+    },
+    {
+      "file": "traj_20260716_085511_3c23.json",
+      "session_id": "20260716_085511_3c23",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结"
+    },
+    {
+      "file": "traj_20260716_085855_0rdv.json",
+      "session_id": "20260716_085855_0rdv",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 奖金：1100万瑞典克朗（约合"
+    },
+    {
+      "file": "traj_20260716_090523_71ag.json",
+      "session_id": "20260716_090523_71ag",
+      "steps": 4,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/4 步），建议检查",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260716_090839_ya5b.json",
+      "session_id": "20260716_090839_ya5b",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_091135_opop.json",
+      "session_id": "20260716_091135_opop",
+      "steps": 4,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/4 步），建议检查",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_091213_5mcs.json",
+      "session_id": "20260716_091213_5mcs",
+      "steps": 3,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260716_091231_wv54.json",
+      "session_id": "20260716_091231_wv54",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260716_091854_uemv.json",
+      "session_id": "20260716_091854_uemv",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260716_091933_icsm.json",
+      "session_id": "20260716_091933_icsm",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092012_nbdt.json",
+      "session_id": "20260716_092012_nbdt",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092418_tnku.json",
+      "session_id": "20260716_092418_tnku",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092442_f2tk.json",
+      "session_id": "20260716_092442_f2tk",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092609_otsi.json",
+      "session_id": "20260716_092609_otsi",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260716_092627_fkb4.json",
+      "session_id": "20260716_092627_fkb4",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：（无具体事实信息提取））请"
+    },
+    {
+      "file": "traj_20260716_092721_nfjf.json",
+      "session_id": "20260716_092721_nfjf",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092957_16nk.json",
+      "session_id": "20260716_092957_16nk",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_093302_hm66.json",
+      "session_id": "20260716_093302_hm66",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_181132_xt2j.json",
+      "session_id": "20260716_181132_xt2j",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "法国的首都是什么？请只回答城市名"
+    },
+    {
+      "file": "traj_20260716_181133_hog6.json",
+      "session_id": "20260716_181133_hog6",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "计算 1234 × 5678 等于多少？"
+    },
+    {
+      "file": "traj_20260716_181206_aaz2.json",
+      "session_id": "20260716_181206_aaz2",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "一个池塘里有一片荷叶，每天面积翻一倍。 第 30 天荷叶覆盖整个池塘。 问：第几天荷叶覆盖一半的池塘？"
+    },
+    {
+      "file": "traj_20260716_181210_nx7d.json",
+      "session_id": "20260716_181210_nx7d",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "鲁迅的《狂人日记》是哪一年发表的？"
+    },
+    {
+      "file": "traj_20260716_181227_hxr9.json",
+      "session_id": "20260716_181227_hxr9",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "请总结以下内容的核心观点：人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工"
+    },
+    {
+      "file": "traj_20260717_095358_5m45.json",
+      "session_id": "20260717_095358_5m45",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：（无具体事实信息提取）） （相关记忆：当前时间为2026-07-16 0"
+    },
+    {
+      "file": "traj_20260717_095424_de5d.json",
+      "session_id": "20260717_095424_de5d",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260717_095541_sxna.json",
+      "session_id": "20260717_095541_sxna",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：100/"
+    },
+    {
+      "file": "traj_20260717_095606_oba4.json",
+      "session_id": "20260717_095606_oba4",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：100/"
+    },
+    {
+      "file": "traj_20260717_095625_e1yt.json",
+      "session_id": "20260717_095625_e1yt",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260717_100124_uz3j.json",
+      "session_id": "20260717_100124_uz3j",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：作者: K.A. Applegate） （相关记忆：- 专业领域: 战略与绩效改进（strategy and performance improve"
+    },
+    {
+      "file": "traj_20260717_100152_twfi.json",
+      "session_id": "20260717_100152_twfi",
+      "steps": 8,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，8 步无错误",
+      "query_preview": "（相关记忆：作者: K.A. Applegate） （相关记忆：- 获奖理由：发现了电路中的宏观量子力学隧穿效应和能量量子化） （相关记忆：当前时间为2026-"
+    },
+    {
+      "file": "traj_20260726_091250_6z6v.json",
+      "session_id": "20260726_091250_6z6v",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "计算 1234 × 5678 等于多少？"
+    },
+    {
+      "file": "traj_20260726_091317_3guk.json",
+      "session_id": "20260726_091317_3guk",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "Python 和 Java 的主要区别是什么？列举 3 点"
+    },
+    {
+      "file": "traj_20260726_091332_5jqp.json",
+      "session_id": "20260726_091332_5jqp",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "一个池塘里有一片荷叶，每天面积翻一倍。 第 30 天荷叶覆盖整个池塘。 问：第几天荷叶覆盖一半的池塘？"
+    },
+    {
+      "file": "traj_20260726_091341_2r40.json",
+      "session_id": "20260726_091341_2r40",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "鲁迅的《狂人日记》是哪一年发表的？"
+    },
+    {
+      "file": "traj_20260726_091344_o6vi.json",
+      "session_id": "20260726_091344_o6vi",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "搜索 '2025 年诺贝尔物理学奖' 的信息"
+    },
+    {
+      "file": "traj_20260727_202840_xhld.json",
+      "session_id": "20260727_202840_xhld",
+      "steps": 4,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，4 步无错误",
+      "query_preview": "搜索一下今天北京的温度"
+    },
+    {
+      "file": "traj_20260727_202912_ymrp.json",
+      "session_id": "20260727_202912_ymrp",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "鲁迅的《狂人日记》是哪一年发表的？"
+    },
+    {
+      "file": "traj_20260727_215048_9o7f.json",
+      "session_id": "20260727_215048_9o7f",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260727_215258_5coq.json",
+      "session_id": "20260727_215258_5coq",
+      "steps": 7,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，7 步无错误",
+      "query_preview": "（相关记忆：- 核心函数: _make_label()） （相关记忆：- 循环模式: \"Think → Act → Observe → Think...\" 的迭"
+    },
+    {
+      "file": "traj_20260727_215357_5mic.json",
+      "session_id": "20260727_215357_5mic",
+      "steps": 8,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，8 步无错误",
+      "query_preview": "（相关记忆：- 循环模式: \"Think → Act → Observe → Think...\" 的迭代推理-行动闭环） （相关记忆：- 标签格式: R1, R"
+    },
+    {
+      "file": "traj_20260727_215541_dkzn.json",
+      "session_id": "20260727_215541_dkzn",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：- `llm_config.json` 通常与 `llm.mnn`、`tokenizer.txt` 等文件放在同一目录下） （相关记忆：- 核心函数"
+    },
+    {
+      "file": "traj_20260727_215701_pr0y.json",
+      "session_id": "20260727_215701_pr0y",
+      "steps": 7,
+      "failure_types": [
+        "tool_error"
+      ],
+      "assessment": "[WARN] 有少量问题（1/7 步），可考虑优化",
+      "query_preview": "（相关记忆：- 开源框架AutoGen、CrewAI、LangGraph等GitHub星标均突破5万） （相关记忆：- 循环模式: \"Think → Act →"
+    },
+    {
+      "file": "traj_20260727_215814_co8z.json",
+      "session_id": "20260727_215814_co8z",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：风力：白天北风二三级，夜间北风一二级） （相关记忆：明日（7月14日）夜间天气：转为雷雨天气） （相关记忆：当前时间为2026-07-16 08:5"
+    },
+    {
+      "file": "traj_20260727_220426_46q8.json",
+      "session_id": "20260727_220426_46q8",
+      "steps": 5,
+      "failure_types": [
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/5 步），建议检查",
+      "query_preview": "（相关记忆：- CPU 密集任务应使用 `asyncio.to_thread()` 卸到其他线程/进程） （相关记忆：- 决策不可解释被监管处罚15起） （相关"
+    },
+    {
+      "file": "traj_20260727_220817_icvd.json",
+      "session_id": "20260727_220817_icvd",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：- 医疗Agent影像辅助诊断在三甲医院试点） （相关记忆：- 循环模式: \"Think → Act → Observe → Think...\" 的"
+    },
+    {
+      "file": "traj_20260727_220846_27fb.json",
+      "session_id": "20260727_220846_27fb",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 文件读写推荐使用 `aiofiles`） （相关记忆：- 循环模式: \"Think → Act →"
+    }
+  ],
+  "dev_trajectories": [
+    {
+      "file": "traj_20260713_111026_qbpq.json",
+      "session_id": "20260713_111026_qbpq",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "搜索一下今天北京的温度"
+    },
+    {
+      "file": "traj_20260713_113058_oou8.json",
+      "session_id": "20260713_113058_oou8",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "Python 和 Java 的主要区别是什么？列举 3 点"
+    },
+    {
+      "file": "traj_20260713_113624_zw1t.json",
+      "session_id": "20260713_113624_zw1t",
+      "steps": 3,
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "query_preview": "鲁迅的《狂人日记》是哪一年发表的？"
+    },
+    {
+      "file": "traj_20260713_130045_betl.json",
+      "session_id": "20260713_130045_betl",
+      "steps": 2,
+      "failure_types": [
+        "llm_offtrack"
+      ],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "query_preview": "Python 和 Java 的主要区别是什么？列举 3 点"
+    },
+    {
+      "file": "traj_20260713_132528_5blf.json",
+      "session_id": "20260713_132528_5blf",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "法国的首都是什么？请只回答城市名"
+    },
+    {
+      "file": "traj_20260713_132603_7ti9.json",
+      "session_id": "20260713_132603_7ti9",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "一个池塘里有一片荷叶，每天面积翻一倍。 第 30 天荷叶覆盖整个池塘。 问：第几天荷叶覆盖一半的池塘？"
+    },
+    {
+      "file": "traj_20260713_132605_h70n.json",
+      "session_id": "20260713_132605_h70n",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "鲁迅的《狂人日记》是哪一年发表的？"
+    },
+    {
+      "file": "traj_20260713_134441_9wxj.json",
+      "session_id": "20260713_134441_9wxj",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "法国的首都是什么？请只回答城市名"
+    },
+    {
+      "file": "traj_20260713_134502_wx3l.json",
+      "session_id": "20260713_134502_wx3l",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "在标准大气压下，纯水的沸点是多少摄氏度？请只回答数字"
+    },
+    {
+      "file": "traj_20260713_135613_62c6.json",
+      "session_id": "20260713_135613_62c6",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "（相关记忆：日期：2026年7月13日（星期一）） （相关记忆：明日（7月14日）夜间天气：转为雷雨天气） （相关记忆：风力：白天北风二三级，夜间北风一二级）小"
+    },
+    {
+      "file": "traj_20260713_135841_8gir.json",
+      "session_id": "20260713_135841_8gir",
+      "steps": 1,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，1 步无错误",
+      "query_preview": "日本的首都是哪座城市？请只回答城市名"
+    },
+    {
+      "file": "traj_20260713_141231_683e.json",
+      "session_id": "20260713_141231_683e",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "计算 (123+456)*2 和 789/3 分别是多少"
+    },
+    {
+      "file": "traj_20260713_141323_jayb.json",
+      "session_id": "20260713_141323_jayb",
+      "steps": 7,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[WARN] 有少量问题（2/7 步），可考虑优化",
+      "query_preview": "搜索AI Agent的维基百科词条，打开第一条结果，然后总结内容（用中文）"
+    },
+    {
+      "file": "traj_20260713_141630_cob7.json",
+      "session_id": "20260713_141630_cob7",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "同时帮我查一下今天的时间，并计算 50*30"
+    },
+    {
+      "file": "traj_20260715_160905_2ipu.json",
+      "session_id": "20260715_160905_2ipu",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 颁奖时间：2025年10月7日） （相关记忆：明日（7月14日）夜间天气：转为雷雨天气）请调"
+    },
+    {
+      "file": "traj_20260715_161028_9ywv.json",
+      "session_id": "20260715_161028_9ywv",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260715_161352_6yhp.json",
+      "session_id": "20260715_161352_6yhp",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 执行结果数值：15） （相关记忆：- 颁奖时间：2025年10月7日）请调用 get_tim"
+    },
+    {
+      "file": "traj_20260715_163052_6rck.json",
+      "session_id": "20260715_163052_6rck",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 颁奖时间：2025年10月7日"
+    },
+    {
+      "file": "traj_20260715_163141_4kcs.json",
+      "session_id": "20260715_163141_4kcs",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 奖金：1100万瑞典克朗（约合"
+    },
+    {
+      "file": "traj_20260715_163520_wjdf.json",
+      "session_id": "20260715_163520_wjdf",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：（无具体事实信息可提取））这是一个"
+    },
+    {
+      "file": "traj_20260716_085549_kc5z.json",
+      "session_id": "20260716_085549_kc5z",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：日期：2026年7月13日（星期一）） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结"
+    },
+    {
+      "file": "traj_20260716_085625_9n9t.json",
+      "session_id": "20260716_085625_9n9t",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：日期：2026年7月13日（星期一"
+    },
+    {
+      "file": "traj_20260716_085838_5tlo.json",
+      "session_id": "20260716_085838_5tlo",
+      "steps": 3,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 执行结果数值：15） （相关记忆：（无具体事实信息可提取））请用 e"
+    },
+    {
+      "file": "traj_20260716_085910_4emy.json",
+      "session_id": "20260716_085910_4emy",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 执行结果数值：15） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：- 奖金：1100万瑞典克朗（约合"
+    },
+    {
+      "file": "traj_20260716_091155_m5d2.json",
+      "session_id": "20260716_091155_m5d2",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 助手执行的代码功能：计算 1+2+"
+    },
+    {
+      "file": "traj_20260716_091346_8k1t.json",
+      "session_id": "20260716_091346_8k1t",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_091449_n9jc.json",
+      "session_id": "20260716_091449_n9jc",
+      "steps": 3,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：（无具体事实性信息可提取，"
+    },
+    {
+      "file": "traj_20260716_091629_e9p5.json",
+      "session_id": "20260716_091629_e9p5",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_091655_54dv.json",
+      "session_id": "20260716_091655_54dv",
+      "steps": 3,
+      "failure_types": [
+        "duplicate",
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/3 步），建议检查",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_091735_cfrm.json",
+      "session_id": "20260716_091735_cfrm",
+      "steps": 3,
+      "failure_types": [
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：100/"
+    },
+    {
+      "file": "traj_20260716_092348_3wiw.json",
+      "session_id": "20260716_092348_3wiw",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092703_xtc0.json",
+      "session_id": "20260716_092703_xtc0",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_092840_4oli.json",
+      "session_id": "20260716_092840_4oli",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260716_093041_n8x4.json",
+      "session_id": "20260716_093041_n8x4",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：（无具体事实信息提取）） （相关记忆：100/4的计算结果为25.0）不"
+    },
+    {
+      "file": "traj_20260717_095521_6e9h.json",
+      "session_id": "20260717_095521_6e9h",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：100/4的计算结果为25.0） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260717_095946_ccq1.json",
+      "session_id": "20260717_095946_ccq1",
+      "steps": 8,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，8 步无错误",
+      "query_preview": "（相关记忆：作者: K.A. Applegate） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-"
+    },
+    {
+      "file": "traj_20260717_100100_zz8f.json",
+      "session_id": "20260717_100100_zz8f",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：作者: K.A. Applegate） （相关记忆：当前时间为2026-07-16 08:59:46） （相关记忆：- 专业领域: 战略与绩效改进（"
+    },
+    {
+      "file": "traj_20260726_091256_t7n3.json",
+      "session_id": "20260726_091256_t7n3",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "搜索一下今天北京的温度"
+    },
+    {
+      "file": "traj_20260727_202826_w6wo.json",
+      "session_id": "20260727_202826_w6wo",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "法国的首都是什么？请只回答城市名"
+    },
+    {
+      "file": "traj_20260727_202834_zb0u.json",
+      "session_id": "20260727_202834_zb0u",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "计算 1234 × 5678 等于多少？"
+    },
+    {
+      "file": "traj_20260727_202904_xi8z.json",
+      "session_id": "20260727_202904_xi8z",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "一个池塘里有一片荷叶，每天面积翻一倍。 第 30 天荷叶覆盖整个池塘。 问：第几天荷叶覆盖一半的池塘？"
+    },
+    {
+      "file": "traj_20260727_202923_v7sd.json",
+      "session_id": "20260727_202923_v7sd",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "鲁迅的《狂人日记》是哪一年发表的？"
+    },
+    {
+      "file": "traj_20260727_202944_f2xz.json",
+      "session_id": "20260727_202944_f2xz",
+      "steps": 5,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，5 步无错误",
+      "query_preview": "搜索 '2025 年诺贝尔物理学奖' 的信息"
+    },
+    {
+      "file": "traj_20260727_203011_y077.json",
+      "session_id": "20260727_203011_y077",
+      "steps": 3,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "query_preview": "请总结以下内容的核心观点：人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工智能正在改变各个行业。人工"
+    },
+    {
+      "file": "traj_20260727_214831_nhyi.json",
+      "session_id": "20260727_214831_nhyi",
+      "steps": 2,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，2 步无错误",
+      "query_preview": "（相关记忆：100/4的计算结果为25.0） （相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：当前时间为2026-07-"
+    },
+    {
+      "file": "traj_20260727_215142_1ctq.json",
+      "session_id": "20260727_215142_1ctq",
+      "steps": 4,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，4 步无错误",
+      "query_preview": "（相关记忆：- 助手执行的代码功能：计算 1+2+3+4+5 并打印结果） （相关记忆：作者: K.A. Applegate） （相关记忆：- 曾咨询过的组织:"
+    },
+    {
+      "file": "traj_20260727_215931_kjs8.json",
+      "session_id": "20260727_215931_kjs8",
+      "steps": 5,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，5 步无错误",
+      "query_preview": "（相关记忆：- Agent自进化能力月均性能提升15%） （相关记忆：- CPU 密集任务应使用 `asyncio.to_thread()` 卸到其他线程/进程"
+    },
+    {
+      "file": "traj_20260727_220517_h8zm.json",
+      "session_id": "20260727_220517_h8zm",
+      "steps": 6,
+      "failure_types": [
+        "tool_error"
+      ],
+      "assessment": "[WARN] 有少量问题（1/6 步），可考虑优化",
+      "query_preview": "（相关记忆：- CPU 密集任务应使用 `asyncio.to_thread()` 卸到其他线程/进程） （相关记忆：- 决策不可解释被监管处罚15起） （相关"
+    },
+    {
+      "file": "traj_20260727_220616_o20u.json",
+      "session_id": "20260727_220616_o20u",
+      "steps": 6,
+      "failure_types": [
+        "tool_error"
+      ],
+      "assessment": "[FAIL] 执行问题较多（2/6 步），建议检查",
+      "query_preview": "（相关记忆：- 核心函数: _make_label()） （相关记忆：因此，根据规则：） （相关记忆：作者: K.A. Applegate）根据观测总结（cas"
+    },
+    {
+      "file": "traj_20260727_221000_9vtd.json",
+      "session_id": "20260727_221000_9vtd",
+      "steps": 8,
+      "failure_types": [],
+      "assessment": "[PASS] 执行顺利，8 步无错误",
+      "query_preview": "（相关记忆：- 日期：2026年7月16日（周四）） （相关记忆：- 循环模式: \"Think → Act → Observe → Think...\" 的迭代推"
+    }
+  ]
+}

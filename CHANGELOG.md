@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.6 (2026-07-30)
+
+### Added
+
+- **Phase 5** — [docs/pilot/PHASE5.md](docs/pilot/PHASE5.md) failure 调查耗时；`scripts/phase5_timing_study.py`
+- **能力评估 manifest** — dev 50 / held-out 80 分离；[CAPABILITY_MANIFEST.md](docs/pilot/CAPABILITY_MANIFEST.md)
+- **held-out 首轮统计** — 7/80（8.8%）；[CAPABILITY_HELD_OUT_RUN.md](docs/pilot/CAPABILITY_HELD_OUT_RUN.md)
+- **scripts/build_capability_manifest.py** · **scripts/run_capability_eval.py**
+
+### Changed
+
+- **docs/VALUE.md** — 业务自评 ~65%；能力/回归双轨说明
+- **docs/pilot/** — METRICS_LOG、README 更新
+
 ## 0.2.5 (2026-07-30)
 
 ### Added

@@ -28,6 +28,8 @@
 
 | 日期 | 阶段 | react-agent | tdebug | N | distribution | fail_sessions | compare 基准 | 最大 delta | 触发规则 | 决策 | 备注 |
 |------|------|-------------|--------|---|--------------|---------------|--------------|------------|----------|------|------|
+| 2026-07-30 | capability | `bbe48ee` | v0.2.5 | 80 ho | off:2,tool:5,dup:3 | 7/80 (8.8%) | — | — | — | pass | [CAPABILITY_HELD_OUT_RUN.md](./CAPABILITY_HELD_OUT_RUN.md) 能力轨 baseline |
+| 2026-07-30 | Phase 5 | `bbe48ee` | v0.2.5 | 10 cases | — | — | — | — | — | pass | [PHASE5.md](./PHASE5.md) 人工代理 10/10 更快；缺秒表 |
 | 2026-07-30 | Phase 4 | `bbe48ee` | `42fe027` | — | — | — | — | — | — | pass | [regression_gate_20260730](../cases/regression_gate_20260730.md) 案例 A+B |
 | 2026-07-30 | Phase 3 Run A | `bbe48ee` | `42fe027` | 100 | 同 baseline | 36/100 | pilot_baseline | 0 | — | pass | [PHASE3.md](./PHASE3.md) |
 | 2026-07-30 | Phase 3 Run B | `bbe48ee` | `42fe027` | 100 | +offtrack:4 | 40/100 (+4pp) | pilot_baseline | +4 offtrack | A | review | 劣化模拟 offtrack=0.45 |
