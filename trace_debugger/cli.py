@@ -18,6 +18,7 @@ from .record import (
     failure_stats_from_log,
 )
 from .validate import format_validation_report, validate_trajectory_file
+from .harness_health import evaluate_regression_gate, build_findings_report
 
 
 def main():
