@@ -16,6 +16,7 @@ Any ReAct-style Agent that emits this JSON can use offline analysis (`tdebug`), 
 4. Required top-level: `session_id`, `query`, `steps`, `final_answer`.
 5. **Multi-path**: either top-level `paths[]`, or flat `steps[]` with `path_id` / `branch_id`.
 6. **Failure tags** (optional, usually from StepWatcher): `failure_tags`, `failure_summary`, `failure`, etc.
+7. **Task Episode** (optional): `task_episode_id`, `acceptance_criteria[]` — align eval cases with scan/compare and Process Reward.
 
 ## Producers
 
@@ -32,6 +33,8 @@ Any ReAct-style Agent that emits this JSON can use offline analysis (`tdebug`), 
 - `trace_debugger.runtime.StepWatcher` — runtime detection + JSONL record
 
 Fixtures: `fixtures/failure_golden/` (27 cases, CI gate).
+
+Related schemas: [`findings.schema.json`](findings.schema.json) · [`intervention_ledger.schema.json`](intervention_ledger.schema.json) (Harness Health, v0.2.7+).
 
 ## Legacy alias
 

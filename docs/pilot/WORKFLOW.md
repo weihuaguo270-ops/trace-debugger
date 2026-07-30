@@ -21,12 +21,15 @@ cd trace-debugger
 
 tdebug scan ../react-agent/src/react_agent/trajectories 100 \
   --json-out docs/snapshots/pilot_latest.json \
-  --compare docs/snapshots/pilot_baseline.json
+  --compare docs/snapshots/pilot_baseline.json \
+  --findings-out docs/snapshots/pilot_latest_findings.json \
+  --project-root .
 ```
 
-1. 看终端 **distribution delta** 与 **含失败轨迹数**
+1. 看终端 **distribution delta**、**含失败轨迹数**、**门禁判定**（`pass` / `review` / `hold`）
 2. 对照 [THRESHOLDS.md](./THRESHOLDS.md) 判定 pass / review / hold
-3. 追加一行到 [METRICS_LOG.md](./METRICS_LOG.md)
+3. 可选：检查 `pilot_latest_findings.json` 中 `findings[].repair_boundary`
+4. 追加一行到 [METRICS_LOG.md](./METRICS_LOG.md)
 
 ---
 

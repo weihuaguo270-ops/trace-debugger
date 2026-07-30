@@ -67,6 +67,9 @@ delta_pp  = current_fail_rate - baseline_fail_rate
 1. 各类型 `base / cur / delta` → 对照 **规则 A**
 2. `含失败轨迹数: X → Y (+Z)` → 换算占比后对照 **规则 B**
 3. `扫描轨迹总数` 变化 → 若 `n` 不一致，先对齐 N 再比（试点固定 N=100）
+4. `门禁判定: PASS|REVIEW|HOLD` → 与 `--findings-out` 中 `gate_decision` 一致
+
+结构化 findings 见 [HARNESS_HEALTH.md](../../../react-agent/docs/HARNESS_HEALTH.md)（`schemas/findings.schema.json`）。
 
 ---
 

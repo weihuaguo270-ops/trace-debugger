@@ -16,11 +16,16 @@ Agent 团队把运行轨迹接入 trace-debugger 之后：
 1. **自动识别** 7 类常见失败（工具报错、搜索空结果、重复调用等）
 2. **形成记录** — JSONL + 可读 log，便于复盘
 3. **发版前对比** — `tdebug scan` + `--compare` 发现失败分布是否变差
-4. **CI 门禁** — 黄金集 27 条 + 可选分布快照
+4. **结构化 findings** — `--findings-out` 输出门禁判定 + 修复边界（Harness Health，v0.2.7+）
+5. **CI 门禁** — 黄金集 27 条 + 可选分布快照
 
 ```bash
 pip install -e .
-tdebug scan trajectories/ 50 --json-out snapshots/latest.json --compare snapshots/baseline.json
+tdebug scan trajectories/ 50 \
+  --json-out snapshots/latest.json \
+  --compare snapshots/baseline.json \
+  --findings-out snapshots/latest_findings.json \
+  --project-root .
 python -m pytest tests/test_failure_golden.py   # CI 同款
 ```
 
@@ -70,12 +75,14 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 | 7 类启发式 + CLI | `tdebug` / `stats` / `validate` |
 | 黄金集 + CI | 27/27 — 规则回归 |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
+| **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |
 
-| 试点（v0.2.6） | 链接 |
+| 试点（v0.2.7） | 链接 |
 |----------------|------|
 | Phase 0–5 + 能力 manifest | [docs/pilot/README.md](docs/pilot/README.md) |
 | held-out 基线 7/80 | [docs/pilot/CAPABILITY_HELD_OUT_RUN.md](docs/pilot/CAPABILITY_HELD_OUT_RUN.md) |
 | 发版前决策案例 | [docs/cases/regression_gate_20260730.md](docs/cases/regression_gate_20260730.md) |
+| 干预 ledger（Learning Capture） | [docs/intervention_ledger.json](docs/intervention_ledger.json) |
 | 业务证明自评 ~65% | [docs/VALUE.md](docs/VALUE.md) |
 
 仍缺：真人秒表、非模拟 PR hold、外部团队复现。
@@ -89,6 +96,7 @@ Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 | 命令 | 说明 |
 |------|------|
 | `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 回归对比 |
+| `tdebug scan … --findings-out findings.json` | Harness Health：门禁判定 + 修复建议 |
 | `tdebug <file.json>` | 单条分析 |
 | `tdebug stats [jsonl]` | 失败类型聚合 |
 | `tdebug validate <file.json>` | Format B 校验 |
@@ -102,7 +110,7 @@ tdebug failures .tdebug/failures.jsonl
 tdebug judge offtrack.json --prompt-out judge.txt
 ```
 
-选项：`--json-out` · `--record` · `--compare` · `--session` · `--schema`（validate）
+选项：`--json-out` · `--findings-out` · `--project-root` · `--record` · `--compare` · `--session` · `--schema`（validate）
 
 </details>
 
@@ -121,6 +129,9 @@ tdebug judge offtrack.json --prompt-out judge.txt
 | 文档 | 说明 |
 |------|------|
 | [docs/VALUE.md](docs/VALUE.md) | **价值、主场景、业务证明缺口、下一步** |
+| [docs/pilot/WORKFLOW.md](docs/pilot/WORKFLOW.md) | 试点 scan + compare + findings 工作流 |
+| [docs/intervention_ledger.json](docs/intervention_ledger.json) | 纵向干预记录（Learning Capture） |
+| [schemas/findings.schema.json](schemas/findings.schema.json) | findings.json 契约 |
 | [docs/RISKS.md](docs/RISKS.md) | 风险与边界 |
 | [docs/GOLDEN_FAILURE_INDEX.md](docs/GOLDEN_FAILURE_INDEX.md) | 黄金集 |
 | [SECURITY.md](SECURITY.md) | 数据安全 |

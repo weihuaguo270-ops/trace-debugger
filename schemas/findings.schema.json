@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weihuaguo270-ops/trace-debugger/schemas/findings.schema.json",
+  "title": "Harness Health Findings Report",
+  "description": "Structured regression findings tied to Agent Work Loop dimensions (Better Harness-inspired)",
+  "type": "object",
+  "required": ["report_id", "timestamp", "model", "gate_decision", "findings"],
+  "properties": {
+    "report_id": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "model": { "type": "string", "description": "Evaluation model version, e.g. agent-work-loop-v1" },
+    "gate_decision": { "type": "string", "enum": ["pass", "review", "hold"] },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "evidence_state"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "evidence_state": {
+            "type": "string",
+            "enum": ["present", "wired", "exercised", "outcome_supported", "missing", "unobserved", "not_applicable"]
+          },
+          "mechanism_count": { "type": "integer", "minimum": 0 },
+          "findings_count": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "dimension", "title", "evidence_state"],
+        "properties": {
+          "id": { "type": "string" },
+          "dimension": { "type": "string" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+          "gate": { "type": "string", "enum": ["pass", "review", "hold"] },
+          "title": { "type": "string" },
+          "detail": { "type": "string" },
+          "impact": { "type": "string" },
+          "evidence_state": { "type": "string" },
+          "repair_boundary": { "type": "string" },
+          "validation_route": { "type": "string" },
+          "evidence": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "mechanisms": { "type": "array" },
+    "scan": { "type": "object" },
+    "compare": { "type": "object" }
+  }
+}

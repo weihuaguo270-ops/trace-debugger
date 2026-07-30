@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.7 (2026-07-30)
+
+### Added
+
+- **Harness Health** — `trace_debugger/harness_health.py`：Agent Work Loop 五维、证据状态、THRESHOLDS 门禁 → `findings.json`
+- **CLI** — `tdebug scan … --findings-out` · `--project-root`；compare 时输出 `门禁判定`
+- **Schema** — `schemas/findings.schema.json` · `schemas/intervention_ledger.schema.json`
+- **Format B** — 轨迹可选 `task_episode_id` · `acceptance_criteria`（scan 快照透传）
+- **docs/intervention_ledger.json** — 纵向干预记录（offtrack 6→1 等）
+- **react-agent/docs/HARNESS_HEALTH.md** — 五维映射与使用说明
+
 ## 0.2.6 (2026-07-30)
 
 ### Added

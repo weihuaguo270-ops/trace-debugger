@@ -49,6 +49,15 @@
       "description": "Format B wire version major (optional; absent ⇒ treat as \"1\")",
       "pattern": "^[0-9]+(\\.[0-9]+)*$"
     },
+    "task_episode_id": {
+      "type": "string",
+      "description": "Stable id for the eval task / acceptance boundary (maps to eval case id when present)"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Human-readable done conditions for this Task Episode (e.g. tests pass, no llm_offtrack)"
+    },
     "main_path_index": {
       "type": "integer",
       "description": "When steps use path_id/branch_id grouping, which path id is the main output path"

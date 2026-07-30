@@ -279,6 +279,8 @@ def parse(data: dict) -> Trajectory:
         metadata={
             "system_prompt_preview": data.get("system_prompt_preview", ""),
             "total_tokens_estimated": data.get("total_tokens_estimated", 0),
+            "task_episode_id": data.get("task_episode_id", ""),
+            "acceptance_criteria": data.get("acceptance_criteria") or [],
         },
     )
 

@@ -8,7 +8,7 @@
 Schema: schemas/agent_trajectory.schema.json
 集成: docs/INTEGRATIONS.md（含 react-agent 参考集成）
 """
-__version__ = "0.2.6"
+__version__ = "0.2.7"
 
 from trace_debugger.analyzer import (
     Analyzer,
@@ -44,6 +44,11 @@ from trace_debugger.harness import (
     build_trajectory_dict,
     enrich_trajectory_dict,
     normalize_tool_input,
+)
+from trace_debugger.harness_health import (
+    build_findings_report,
+    evaluate_regression_gate,
+    probe_project_mechanisms,
 )
 from trace_debugger.golden import load_manifest, run_golden_suite, GoldenCase
 from trace_debugger.validate import (

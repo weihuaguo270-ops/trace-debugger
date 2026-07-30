@@ -1,0 +1,49 @@
+{
+  "schema_version": "1",
+  "interventions": [
+    {
+      "id": "offtrack-calibration-20260716",
+      "date": "2026-07-16",
+      "dimension": "change-validation",
+      "change": "offtrack analyzer 校准：减少工具落地短 QA 假阳性",
+      "repair_boundary": "trace-debugger/trace_debugger/analyzer.py",
+      "comparable_sample": "react-agent 100 条真实轨迹同批重扫",
+      "before": { "llm_offtrack": 6 },
+      "after": { "llm_offtrack": 1 },
+      "outcome_state": "outcome_supported",
+      "evidence": [
+        "react-agent/docs/flywheel_closed_loop_20260716.md",
+        "react-agent/docs/P0_EVIDENCE_MAP.md"
+      ]
+    },
+    {
+      "id": "step-watcher-integration-20260715",
+      "date": "2026-07-15",
+      "dimension": "change-validation",
+      "change": "Harness StepWatcher 实时失败记录接入 react-agent",
+      "repair_boundary": "react-agent/src/react_agent/harness/step_watcher_bridge.py",
+      "comparable_sample": "StepWatcher golden 6/6 + 跨仓 e2e",
+      "before": { "runtime_failure_tags": "absent" },
+      "after": { "runtime_failure_tags": "present_on_steps" },
+      "outcome_state": "exercised",
+      "evidence": [
+        "react-agent/docs/step_watcher_evidence_baseline.md"
+      ]
+    },
+    {
+      "id": "pilot-baseline-freeze-20260730",
+      "date": "2026-07-30",
+      "dimension": "reliable-delivery",
+      "change": "试点 Phase 2 冻结 baseline + THRESHOLDS v1 门禁",
+      "repair_boundary": "trace-debugger/docs/pilot/",
+      "comparable_sample": "pilot N=100 scan/compare",
+      "before": { "regression_gate": "ad_hoc" },
+      "after": { "regression_gate": "THRESHOLDS_v1" },
+      "outcome_state": "wired",
+      "evidence": [
+        "trace-debugger/docs/pilot/BASELINE.md",
+        "trace-debugger/docs/cases/regression_gate_20260730.md"
+      ]
+    }
+  ]
+}

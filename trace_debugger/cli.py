@@ -104,6 +104,8 @@ def _print_help():
     print()
     print("选项（scan）:")
     print("  --json-out PATH    写入扫描快照 JSON（可归档、可对比）")
+    print("  --findings-out PATH  写入 Harness Health findings.json（需 --compare 时含门禁判定）")
+    print("  --project-root PATH  探测项目机制（golden/baseline/ledger）用于 findings")
     print("  --record [PATH]    为每条轨迹追加失败事件到 JSONL")
     print("  --compare PATH     与历史快照对比失败分布变化")
     print()
@@ -131,6 +133,12 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
                 i += 1
         elif a == "--compare" and i + 1 < len(args):
             flags["compare"] = args[i + 1]
+            i += 2
+        elif a == "--findings-out" and i + 1 < len(args):
+            flags["findings_out"] = args[i + 1]
+            i += 2
+        elif a == "--project-root" and i + 1 < len(args):
+            flags["project_root"] = args[i + 1]
             i += 2
         elif a == "--prompt-out" and i + 1 < len(args):
             flags["prompt_out"] = args[i + 1]
@@ -340,3 +348,16 @@ def _cmd_scan(directory: str, n: int, flags: dict):
             sys.exit(1)
         baseline = load_snapshot(flags["compare"])
         _safe_print("\n" + compare_snapshots(snapshot, baseline))
+        gate = evaluate_regression_gate(snapshot, baseline)
+        _safe_print(f"\n  门禁判定: {gate['decision'].upper()}  触发规则: {gate['triggered_rules'] or '无'}")
+
+    if flags.get("findings_out"):
+        baseline = None
+        if flags.get("compare") and os.path.exists(flags["compare"]):
+            baseline = load_snapshot(flags["compare"])
+        project_root = flags.get("project_root") or os.getcwd()
+        findings = build_findings_report(
+            snapshot, baseline, project_root=project_root,
+        )
+        _write_text(flags["findings_out"], json.dumps(findings, ensure_ascii=False, indent=2))
+        print(f"\n[已写入 findings] {flags['findings_out']}  gate={findings['gate_decision']}")

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weihuaguo270-ops/trace-debugger/schemas/intervention_ledger.schema.json",
+  "title": "Harness Intervention Ledger",
+  "description": "Longitudinal record of harness improvements and outcome-supported validation",
+  "type": "object",
+  "required": ["schema_version", "interventions"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "interventions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "date", "dimension", "change", "outcome_state"],
+        "properties": {
+          "id": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "dimension": { "type": "string" },
+          "change": { "type": "string" },
+          "repair_boundary": { "type": "string" },
+          "comparable_sample": { "type": "string" },
+          "before": { "type": "object" },
+          "after": { "type": "object" },
+          "outcome_state": {
+            "type": "string",
+            "enum": ["present", "wired", "exercised", "outcome_supported", "missing", "unobserved"]
+          },
+          "evidence": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

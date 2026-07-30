@@ -572,6 +572,12 @@ def build_scan_snapshot(
         }
         if source_files and i < len(source_files):
             row["file"] = os.path.basename(source_files[i])
+        ep = (traj.metadata or {}).get("task_episode_id")
+        if ep:
+            row["task_episode_id"] = ep
+        ac = (traj.metadata or {}).get("acceptance_criteria")
+        if ac:
+            row["acceptance_criteria"] = ac
         rows.append(row)
     return {
         "report_id": f"tdebug_scan_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
