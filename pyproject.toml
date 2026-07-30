@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "trace-debugger"
 version = "0.2.6"
-description = "Agent 轨迹失败治理 — Format B 解析、启发式检测、JSONL 记录、聚合统计、StepWatcher"
+description = "Agent 回归测试与失败治理门禁 — Format B 轨迹、scan/compare baseline、7 类启发式检测、golden CI"
 readme = "README.md"
 requires-python = ">=3.10"
 
