@@ -25,6 +25,14 @@ tdebug validate fixtures/failure_golden/tool_error.json
 tdebug validate fixtures/failure_golden/tool_error.json --schema   # 需 [schema] 可选依赖
 ```
 
+## 试点回归门禁（react-agent Phase 0–4）
+
+| 文档 | 说明 |
+|------|------|
+| [pilot/README.md](./pilot/README.md) | 试点配置、baseline、工作流 |
+| [cases/regression_gate_20260730.md](./cases/regression_gate_20260730.md) | **发版前 compare 决策案例**（假阳性纠正 + review） |
+| [snapshots/pilot_baseline.json](./snapshots/pilot_baseline.json) | 冻结 baseline（脱敏摘要） |
+
 ## 附录：参考集成案例（react-agent）
 
 以下报告来自 [react-agent](https://github.com/weihuaguo270-ops/react-agent) 参考运行时本地轨迹，**非本仓可复现前提**：
@@ -43,4 +51,4 @@ python examples/publish_failure_snapshot.py --dir ../react-agent/src/react_agent
 ## 诚实边界
 
 - 分类为规则/启发式，**不是** LLM-as-Judge
-- 对外引用请优先 **golden 证据集**；react-agent 案例仅说明参考集成效果
+- 对外引用请优先 **golden 证据集** + **[回归门禁案例](./cases/regression_gate_20260730.md)**；react-agent 历史周报仅说明参考集成

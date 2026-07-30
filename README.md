@@ -2,97 +2,84 @@
 
 [![CI](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml/badge.svg)](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Agent 轨迹失败治理工具** — 读标准 JSON 轨迹，做启发式失败检测、记录、聚合统计与复盘；可嵌入任意 ReAct 类 Harness 的运行时 hook。
+**面向中小型 Agent 团队的本地失败治理工具** — 把难以阅读的执行轨迹，变成可统计、可复盘、**可进 CI** 的失败信号。
 
-> 独立项目：不依赖 LangChain / LangGraph / LangSmith，也不依赖特定 Agent 运行时。  
-> [react-agent](https://github.com/weihuaguo270-ops/react-agent) 是**参考集成**，不是前置条件。
+> **主定位：Agent 回归测试与失败治理门禁**（非完整 APM、非云 tracing）  
+> 独立项目 · 框架无关 · [react-agent](https://github.com/weihuaguo270-ops/react-agent) 仅为参考集成
 
 ---
 
-## 要解决什么问题
+## 主场景（优先用这个讲清楚价值）
 
-Agent 跑完只留下 JSON 轨迹，失败行为分散、难复盘、难汇总。本工具提供一条可本地运行的闭环：
+Agent 团队把运行轨迹接入 trace-debugger 之后：
 
-| 环节 | 能力 |
-|------|------|
-| **检测** | 7 类启发式失败分类（非 LLM Judge） |
-| **记录** | JSONL 事件流 + 可读 `.log` + 会话 Markdown 摘要 |
-| **复盘** | 单条报告、逐步回放、Judge prompt |
-| **聚合** | 按失败类型统计（次数、占比、高频工具） |
-| **对比** | 扫描快照 vs 历史 baseline |
+1. **自动识别** 7 类常见失败（工具报错、搜索空结果、重复调用等）
+2. **形成记录** — JSONL + 可读 log，便于复盘
+3. **发版前对比** — `tdebug scan` + `--compare` 发现失败分布是否变差
+4. **CI 门禁** — 黄金集 27 条 + 可选分布快照
 
-**输入**：符合 [Format B](schemas/agent_trajectory.schema.json) 的轨迹 JSON  
-**输出**：根因标签、失败日志、分布表、可读 digest
+```bash
+pip install -e .
+tdebug scan trajectories/ 50 --json-out snapshots/latest.json --compare snapshots/baseline.json
+python -m pytest tests/test_failure_golden.py   # CI 同款
+```
+
+输入：[Format B](schemas/agent_trajectory.schema.json) 轨迹 JSON · 输出：失败标签、分布表、回归 diff
+
+完整价值说明（含**已证明 / 未证明**）：[docs/VALUE.md](docs/VALUE.md)
+
+---
+
+## 何时选本项目
+
+| 选 trace-debugger | 选 Langfuse / LangSmith 等 |
+|-------------------|----------------------------|
+| 只需本地 JSON 轨迹 + 失败分类 | 需要生产链路 tracing、团队看板 |
+| 要极低成本建 **回归基线 + CI 门禁** | 要云 SaaS、采样、告警一体化 |
+| 规则可解释、可 git 验证 | 深度集成特定 Agent SDK 栈 |
 
 ---
 
 ## 给谁用
 
-| 角色 | 典型用法 |
-|------|---------|
-| **Agent 开发者** | 任意 Harness 落盘 JSON → `tdebug` 复盘；可选 `StepWatcher` 边跑边记 |
-| **项目负责人** | `failures.log`、`sessions/*.md`、周报与 golden 证据 |
-| **CI / 质量门禁** | 黄金集 27 条、`publish_golden_evidence`、失败分布快照 |
+| 角色 | 在主场景里的作用 |
+|------|------------------|
+| **Agent 开发者** | 接入轨迹 / adapter；本地 `tdebug` 查单条 |
+| **质量 / 测试** | 维护 baseline、`--compare`、CI golden |
+| **项目负责人** | 看失败分布与周报；判断能否发版 |
 
 ---
 
-## 与其他工具的关系
+## 辅助能力（非主卖点）
 
-| 工具 | 关系 |
-|------|------|
-| **LangSmith** | 不同路线：LangSmith 服务 LangChain 生态的云 tracing；本工具是**本地、Schema 驱动、无账号**的失败治理 |
-| **react-agent** | 第一个官方参考集成（Harness + StepWatcher），[见集成指南](docs/INTEGRATIONS.md) |
-| **llm-eval-engine** | 下游：`tdebug judge` 导出 prompt，可接 Process Reward |
+<details>
+<summary>运行时 StepWatcher、单条复盘、Judge prompt</summary>
 
----
+- **运行时**：`FailureHarness` + `StepEvent` — 边跑边记，见 [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)
+- **调试**：`tdebug replay`、`tdebug judge`（导出 prompt 接 eval）
+- **演示**：`examples/portable_harness_demo.py`、`examples/adapters/`
 
-## 典型工作流
-
-### 1. 离线：已有轨迹 JSON
-
-```bash
-pip install -e .
-tdebug fixtures/failure_golden/tool_error.json
-tdebug scan fixtures/failure_golden 27 --record
-tdebug stats .tdebug/failures.jsonl
-```
-
-### 2. 运行时：嵌入你的 Agent 循环
-
-推荐用 **`FailureHarness`** + **`StepEvent`**（框架无关，只需写适配器）：
-
-```python
-from trace_debugger.harness import FailureHarness, RunContext, StepEvent
-
-harness = FailureHarness(RunContext(session_id, query, model))
-harness.after_observation(StepEvent(step_index=1, tool_name="search", tool_input={...}, observation="..."))
-harness.finish(final_answer=answer, total_duration=elapsed)
-```
-
-演示：`python examples/portable_harness_demo.py` · 指南：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)  
-环境变量：`TDEBUG_RECORD_PATH`
-
-### 3. 集成 react-agent（可选）
-
-```bash
-pip install -e ../trace-debugger   # 在 react-agent 仓内
-# 见 docs/INTEGRATIONS.md
-```
+</details>
 
 ---
 
-## 交付状态
+## 交付与证据
 
-| 能力 | 状态 |
-|------|------|
-| Format B 解析（含多路径） | ✅ |
-| 7 类失败启发式 + CLI | ✅ |
-| 失败记录 v2 + `tdebug stats` | ✅ |
-| StepWatcher 运行时 | ✅ |
-| 黄金证据集 27 条 + CI | ✅ **100%** |
-| 自动修复 Agent | ❌ 不在范围 |
+| 已交付 | 说明 |
+|--------|------|
+| 7 类启发式 + CLI | `tdebug` / `stats` / `validate` |
+| 黄金集 + CI | 27/27 — 规则回归 |
+| 发版 compare | `--compare` + 试点 baseline / 案例 |
 
-证据：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
+| 试点（v0.2.5） | 链接 |
+|----------------|------|
+| react-agent Phase 0–4 | [docs/pilot/README.md](docs/pilot/README.md) |
+| 发版前决策案例 | [docs/cases/regression_gate_20260730.md](docs/cases/regression_gate_20260730.md) |
+| 业务证明自评 ~55% | [docs/VALUE.md](docs/VALUE.md) |
+
+仍缺：复盘耗时、非模拟 PR hold、外部团队复现。
+
+Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 
 ---
 
@@ -100,55 +87,31 @@ pip install -e ../trace-debugger   # 在 react-agent 仓内
 
 | 命令 | 说明 |
 |------|------|
-| `tdebug <file.json>` | 分析轨迹 |
-| `tdebug replay <file.json>` | 逐步回放 |
-| `tdebug judge <file.json>` | 生成 Judge prompt |
-| `tdebug scan <目录> [N]` | 批量扫描 |
-| `tdebug failures [jsonl]` | 失败 digest |
-| `tdebug stats [jsonl]` | 按类型聚合 |
-| `tdebug validate <file.json>` | 校验 Format B（`--schema` 严格模式） |
-
-常用选项：`--json-out` · `--record [PATH]` · `--compare PATH` · `--session ID` · `--stats-json-out`
+| `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 回归对比 |
+| `tdebug <file.json>` | 单条分析 |
+| `tdebug stats [jsonl]` | 失败类型聚合 |
+| `tdebug validate <file.json>` | Format B 校验 |
 
 <details>
-<summary>命令示例</summary>
+<summary>完整命令与选项</summary>
 
 ```bash
-tdebug fixtures/failure_golden/tool_error.json --json-out report.json --record
+tdebug fixtures/failure_golden/tool_error.json --record
 tdebug failures .tdebug/failures.jsonl
-tdebug stats .tdebug/failures.jsonl --stats-json-out stats.json
-tdebug scan fixtures/failure_golden 27 --compare docs/snapshots/prev.json
+tdebug judge offtrack.json --prompt-out judge.txt
 ```
+
+选项：`--json-out` · `--record` · `--compare` · `--session` · `--schema`（validate）
 
 </details>
 
 ---
 
-## 轨迹格式
+## 轨迹格式与集成
 
-Canonical schema：**[schemas/agent_trajectory.schema.json](schemas/agent_trajectory.schema.json)**
-
-要点：
-
-- `step` **1-based**；字段 `thought` / `action` / `observation`
-- 多路径：`paths[]` 或 step 上 `path_id` / `branch_id`
-- 失败标记（可选）：`failure_tags`、`failure_summary`、`failure` 块
-
-Fixtures：
-
-- `fixtures/failure_golden/` — 27 条标准证据集 + `manifest.json`
-- `examples/failure_bundle/` — 5 条快速演示
-- `examples/adapters/` — graph / react 两种框架 adapter 样板
-
-**Analyzer 可配置**（跨 Agent 语义差异）：
-
-```python
-Analyzer(
-    final_answer_markers=("FINAL ANSWER", "ANSWER:"),
-    search_tool_names=("tavily_query", "web_lookup"),
-    search_tool_substrings=("search", "query"),
-)
-```
+- Schema：[schemas/agent_trajectory.schema.json](schemas/agent_trajectory.schema.json)
+- 集成：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) · Adapters：[examples/adapters/](examples/adapters/)
+- Analyzer 可配置：`final_answer_markers`、`search_tool_names` 等
 
 ---
 
@@ -156,27 +119,24 @@ Analyzer(
 
 | 文档 | 说明 |
 |------|------|
-| [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | 接入任意 Harness + react-agent 参考集成 |
-| [schemas/README.md](schemas/README.md) | Format B 互操作规则 |
-| [docs/GOLDEN_FAILURE_INDEX.md](docs/GOLDEN_FAILURE_INDEX.md) | 黄金集索引 |
-| [docs/RISKS.md](docs/RISKS.md) | 风险与边界（准确率 / 安全 / 可靠性 / 定位） |
-| [SECURITY.md](SECURITY.md) | 数据处理与漏洞报告 |
+| [docs/VALUE.md](docs/VALUE.md) | **价值、主场景、业务证明缺口、下一步** |
+| [docs/RISKS.md](docs/RISKS.md) | 风险与边界 |
+| [docs/GOLDEN_FAILURE_INDEX.md](docs/GOLDEN_FAILURE_INDEX.md) | 黄金集 |
+| [SECURITY.md](SECURITY.md) | 数据安全 |
 
 ---
 
 ## 诚实边界
 
-我们有意把 scope 收窄，避免对外过度承诺：
+我们有意收窄 scope，避免对外过度承诺：
 
-- **准确率**：7 类规则是 CI 门禁，不是判决书。`llm_offtrack` 曾在 100 条真实轨迹上误报过时间/计算类短问答（6 次→改规则后 1 次），跨语言、摘要、代码、创意任务仍可能误判 → [docs/RISKS.md](docs/RISKS.md) §1
-- **数据安全**：`--record` 会写入 query、thought、工具参数与 observation；**当前无脱敏/TTL**，企业集成必须在 adapter 层处理 → [SECURITY.md](SECURITY.md)
-- **运行方式**：本地 JSONL 追加，无锁、无轮转；适合开发与 CI，**不直接承接生产高并发写入** → RISKS §3
-- **产品定位**：只做轻量、本地、框架无关的失败治理；**不扩张为完整 APM**，与 Langfuse 等互补而非替代 → RISKS §4
-
-完整说明：[docs/RISKS.md](docs/RISKS.md)
+- **准确率**：规则是 CI 门禁，不是判决书；`llm_offtrack` 曾有真实批次假阳性（6→1 校准）→ [RISKS.md](docs/RISKS.md) §1
+- **业务价值**：试点 Phase 0–4 完成；[发版前 compare 案例](docs/cases/regression_gate_20260730.md) → [VALUE.md](docs/VALUE.md)
+- **数据安全**：`--record` 落盘 query/thought；企业须 adapter 脱敏 → [SECURITY.md](SECURITY.md)
+- **定位**：失败治理门禁，**不**替代完整 APM
 
 ---
 
 ## License
 
-MIT — [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CHANGELOG.md](CHANGELOG.md)
+MIT — [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md)
