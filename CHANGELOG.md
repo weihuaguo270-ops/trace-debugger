@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+（下一批变更写在这里。）
+
+## 0.3.0 (2026-08-11)
+
+### Added
+
+- Format B Schema 支持 input_artifacts、output_artifacts 和步骤级 artifacts
+- Artifact 字段限制为引用和技术元数据，禁止内嵌 data/base64 内容
+
+### Changed
+
+- README 明确 Trace Debugger 只保存和校验媒体引用，不负责媒体语义评分
+
 ## 0.2.7 (2026-07-30)
 
 ### Added

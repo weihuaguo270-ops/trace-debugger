@@ -149,6 +149,11 @@ tdebug judge offtrack.json --prompt-out judge.txt
 
 ---
 
+## Artifact 轨迹字段
+
+Format B 支持 input_artifacts、output_artifacts 和步骤级 artifacts。
+Trace Debugger 将这些字段作为轨迹引用保存和校验，不计算图片、视频或音频的语义质量。
+
 ## License
 
 MIT — [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md)
