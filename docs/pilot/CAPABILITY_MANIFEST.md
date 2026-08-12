@@ -1,7 +1,7 @@
 # 能力评估 Manifest（dev / held-out 分离）
 
 **日期：** 2026-07-30  
-**维护：** trace-debugger 试点 · 项目负责人视角  
+**维护：** trace-debugger 试点
 
 我们把 **「能力评估」** 和 **「失败治理回归」** 拆开，避免 Agent 变成「特化于 trajectories 日志的 Agent」。
 

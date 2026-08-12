@@ -1,7 +1,7 @@
 # 回归门禁案例：react-agent 试点
 
 **案例 ID：** `regression_gate_20260730`  
-**记录人：** trace-debugger 维护方（项目负责人视角）  
+**记录人：** trace-debugger 维护方
 **项目：** [react-agent](https://github.com/weihuaguo270-ops/react-agent) 参考集成  
 **版本：** trace-debugger v0.2.5 · 试点 Phase 0–4  
 
@@ -106,4 +106,4 @@ python scripts/build_pilot_scan.py --from-snapshot docs/snapshots/pilot_baseline
 | 日期 | 说明 |
 |------|------|
 | 2026-07-30 | 初稿 |
-| 2026-07-30 | v0.2.5：项目负责人口吻 |
+| 2026-07-30 | v0.2.5：统一案例记录口径 |
