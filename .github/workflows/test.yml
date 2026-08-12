@@ -18,6 +18,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      TDEBUG_DATA_DIR: /tmp/trace-debugger-data
     strategy:
       matrix:
         python-version: ["3.10", "3.11"]
@@ -41,6 +43,8 @@ jobs:
         --cov-fail-under=50
     - name: Golden failure suite (evidence chain)
       run: python -m pytest tests/test_failure_golden.py -v --tb=short
+    - name: Portable Episode import
+      run: python -m pytest tests/test_episode_import.py -q
     - name: Publish golden evidence snapshot
       run: python examples/publish_golden_evidence.py --stem golden_evidence_baseline --out-dir /tmp/tdebug_golden_docs
     - name: Publish failure snapshot (legacy bundle)

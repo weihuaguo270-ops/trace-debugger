@@ -56,3 +56,8 @@ from trace_debugger.validate import (
     validate_trajectory_dict,
     validate_trajectory_file,
 )
+from trace_debugger.episode import (
+    EPISODE_SCHEMA_VERSION,
+    ImportedEpisode,
+    import_evaluation_episode,
+)

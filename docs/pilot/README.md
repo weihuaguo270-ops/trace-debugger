@@ -50,7 +50,7 @@ react-agent 是**参考集成与证据来源**，不是 trace-debugger 的运行
 
 | 字段 | 值 |
 |------|-----|
-| **目录（绝对路径）** | `D:\agent_learning\react-agent\src\react_agent\trajectories` |
+| **目录（绝对路径）** | `${WORKSPACE_ROOT}/react-agent\src\react_agent\trajectories` |
 | **相对路径（自 trace-debugger 根）** | `../react-agent/src/react_agent/trajectories` |
 | **格式** | Format B JSON（`traj_YYYYMMDD_HHMMSS_xxxx.json`） |
 | **写入方** | react-agent `harness/recorder.py` |

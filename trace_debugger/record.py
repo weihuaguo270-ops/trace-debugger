@@ -14,7 +14,20 @@ from typing import Any, Optional
 from .analyzer import FailureType, StepAnalysis, TrajectoryAnalysis, failure_distribution
 from .reader import Trajectory
 
-DEFAULT_RECORD_PATH = ".tdebug/failures.jsonl"
+def _default_record_path() -> str:
+    override = os.environ.get("TDEBUG_DATA_DIR")
+    if override:
+        return str(Path(override).expanduser().resolve() / "failures.jsonl")
+    if os.name == "nt":
+        base = os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA")
+        if base:
+            return str(Path(base) / "trace-debugger" / "failures.jsonl")
+    xdg = os.environ.get("XDG_DATA_HOME")
+    base = Path(xdg).expanduser() if xdg else Path.home() / ".local" / "share"
+    return str(base / "trace-debugger" / "failures.jsonl")
+
+
+DEFAULT_RECORD_PATH = _default_record_path()
 RECORD_SCHEMA_VERSION = "2"
 
 
@@ -22,7 +35,7 @@ def resolve_record_path(explicit: Optional[str] = None) -> str:
     """Resolve failure JSONL path: explicit arg > TDEBUG_RECORD_PATH > default."""
     if explicit:
         return explicit
-    return os.environ.get("TDEBUG_RECORD_PATH", DEFAULT_RECORD_PATH)
+    return os.environ.get("TDEBUG_RECORD_PATH", _default_record_path())
 
 
 def _utc_now() -> str:

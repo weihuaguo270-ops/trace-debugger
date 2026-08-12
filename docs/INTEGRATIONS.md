@@ -2,6 +2,19 @@
 
 trace-debugger 通过 **Format B JSON** 与任意 Agent 解耦。推荐用本仓提供的可移植层 `trace_debugger.harness`，只需实现「你的 step → `StepEvent`」映射。
 
+如果上游同时需要业务终态验证和发布分栏，可直接传入
+`evaluation-episode/v1` envelope：
+
+```python
+from trace_debugger import import_evaluation_episode, analyze_trajectory_dict
+
+episode = import_evaluation_episode(payload)
+analysis = analyze_trajectory_dict(episode.trajectory)
+```
+
+导入器会保留 `framework`、`agent_version`、`split` 和 `state_verification`，
+但不会重新计算业务终态；该验证由业务 Verifier 或 llm-eval-engine 负责。
+
 ---
 
 ## 可移植集成（推荐）

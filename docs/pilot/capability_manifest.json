@@ -1,7 +1,7 @@
 {
   "meta": {
     "created": "2026-07-30",
-    "source_dir": "D:/agent_learning/react-agent/src/react_agent/trajectories",
+    "source_dir": "${WORKSPACE_ROOT}/react-agent/src/react_agent/trajectories",
     "seed": 20260730,
     "excluded": [
       "model:mock"

@@ -421,7 +421,7 @@
   ],
   "report_id": "golden_evidence_20260728_115720",
   "timestamp": "2026-07-28T11:57:20.892681+00:00",
-  "source_dir": "D:/agent_learning/trace-debugger/fixtures/failure_golden",
+  "source_dir": "${WORKSPACE_ROOT}/trace-debugger/fixtures/failure_golden",
   "distribution": {
     "tool_error": 5,
     "search_empty": 5,

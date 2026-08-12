@@ -4,6 +4,24 @@
 
 （下一批变更写在这里。）
 
+## 0.4.0 (2026-08-12)
+
+### Added
+
+- EvaluationEpisode v1 import without the producing Agent SDK
+- Framework, Agent version, split, and state-verification evidence preservation
+- Portable failure-log directory with `TDEBUG_DATA_DIR` and explicit overrides
+- Linux portability checks
+
+### Changed
+
+- Default failure logs use the platform user-data directory
+- Historical evidence paths use `${WORKSPACE_ROOT}`
+
+### Verified
+
+- Full regression: 75 passed
+
 ## 0.3.0 (2026-08-11)
 
 ### Added
