@@ -25,13 +25,14 @@ tdebug validate fixtures/failure_golden/tool_error.json
 tdebug validate fixtures/failure_golden/tool_error.json --schema   # 需 [schema] 可选依赖
 ```
 
-## 试点回归门禁（react-agent Phase 0–4）
+## 试点回归门禁（react-agent Phase 0–5）
 
 | 文档 | 说明 |
 |------|------|
 | [pilot/README.md](./pilot/README.md) | 试点配置、baseline、工作流 |
 | [cases/regression_gate_20260730.md](./cases/regression_gate_20260730.md) | **发版前 compare 决策案例**（假阳性纠正 + review） |
 | [snapshots/pilot_baseline.json](./snapshots/pilot_baseline.json) | 冻结 baseline（脱敏摘要） |
+| [pilot/PHASE5.md](./pilot/PHASE5.md) | 调查耗时代理估计；不作为真人效率结论 |
 
 ## 附录：参考集成案例（react-agent）
 

@@ -1,4 +1,4 @@
-# react-agent 试点（Phase 0–4）
+# react-agent 试点（Phase 0–5）
 
 我们在 sibling 项目 [react-agent](https://github.com/weihuaguo270-ops/react-agent) 上跑完一轮**发版前 compare 试点**，配置、快照和决策记录都在本目录。  
 主场景说明见 [VALUE.md](../VALUE.md)。
@@ -108,6 +108,7 @@ Phase 2 建立 baseline 前，`--compare` 可改为 `--compare docs/snapshots/td
 | Phase 2 | [BASELINE.md](./BASELINE.md) + 双 baseline + [WORKFLOW.md](./WORKFLOW.md) |
 | Phase 3 | [PHASE3.md](./PHASE3.md) + Run A/B 快照 |
 | Phase 4 | [regression_gate_20260730.md](../cases/regression_gate_20260730.md) |
+| Phase 5 | [PHASE5.md](./PHASE5.md) + `phase5_timing_results.json` |
 
 ---
 
@@ -116,3 +117,4 @@ Phase 2 建立 baseline 前，`--compare` 可改为 `--compare docs/snapshots/td
 | 日期 | 说明 |
 |------|------|
 | 2026-07-30 | Phase 0：定点 react-agent、N=100、阈值与指标表 |
+| 2026-07-30 | Phase 1–5 收口；Phase 5 为参数化调查耗时估计，不是真人秒表结论 |

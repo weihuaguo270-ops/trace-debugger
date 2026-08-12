@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-（下一批变更写在这里。）
+### Documentation
+
+- Added Episode v1 and portable failure-log capabilities to the project overview
+- Aligned the react-agent pilot index with the completed Phase 0-5 scope
 
 ## 0.4.0 (2026-08-12)
 

@@ -89,8 +89,10 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 | 黄金集 + CI | 27/27 — 规则回归 |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 | **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |
+| **跨 Agent Episode** (v0.4.0) | 导入 `evaluation-episode/v1`，保留框架、Agent 版本、split 与业务终态校验证据；无需安装轨迹生产方 SDK |
+| **可移植数据目录** (v0.4.0) | failure log 默认写入平台用户数据目录；`TDEBUG_DATA_DIR` / `TDEBUG_RECORD_PATH` 可覆盖 |
 
-| 试点（v0.2.7） | 链接 |
+| 试点与当前集成 | 链接 |
 |----------------|------|
 | Phase 0–5 + 能力 manifest | [docs/pilot/README.md](docs/pilot/README.md) |
 | held-out 基线 7/80 | [docs/pilot/CAPABILITY_HELD_OUT_RUN.md](docs/pilot/CAPABILITY_HELD_OUT_RUN.md) |
@@ -133,6 +135,8 @@ tdebug judge offtrack.json --prompt-out judge.txt
 
 - Schema：[schemas/agent_trajectory.schema.json](schemas/agent_trajectory.schema.json)
 - 集成：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) · Adapters：[examples/adapters/](examples/adapters/)
+- Episode：`evaluation-episode/v1` 可由不同 Agent SDK 导出后离线导入；本仓不依赖 LangGraph、OpenAI Agents SDK 或生产方 Python 包
+- 运行数据：[docs/PORTABILITY.md](docs/PORTABILITY.md)；默认不再写入已安装包目录
 - Analyzer 可配置：`final_answer_markers`、`search_tool_names` 等
 
 ---
@@ -147,6 +151,8 @@ tdebug judge offtrack.json --prompt-out judge.txt
 | [schemas/findings.schema.json](schemas/findings.schema.json) | findings.json 契约 |
 | [docs/RISKS.md](docs/RISKS.md) | 风险与边界 |
 | [docs/GOLDEN_FAILURE_INDEX.md](docs/GOLDEN_FAILURE_INDEX.md) | 黄金集 |
+| [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | Format B、Episode 与运行时 Hook 接入 |
+| [docs/PORTABILITY.md](docs/PORTABILITY.md) | failure log 路径和 SDK 解耦约定 |
 | [SECURITY.md](SECURITY.md) | 数据安全 |
 
 ---
