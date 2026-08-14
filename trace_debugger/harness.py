@@ -51,6 +51,7 @@ class StepEvent:
     error_message: str = ""
 
     def tool_args_str(self) -> str:
+        """将工具参数序列化为 Format B 使用的字符串。"""
         return normalize_tool_input(self.tool_input)
 
 
@@ -210,6 +211,7 @@ class FailureHarness:
         total_duration: float = 0.0,
         metadata: Optional[dict[str, Any]] = None,
     ) -> TrajectoryAnalysis:
+        """结束运行，记录路径级失败并返回完整轨迹分析。"""
         return self._watcher.on_finish(
             final_answer=final_answer,
             total_duration=total_duration,
@@ -217,10 +219,12 @@ class FailureHarness:
         )
 
     def trajectory_dict(self) -> dict[str, Any]:
+        """返回当前运行的 Format B 轨迹快照。"""
         data = self._watcher.to_trajectory_dict()
         data.setdefault("timestamp", self.context.timestamp)
         return data
 
     @property
     def record_path(self) -> str:
+        """返回 FailureHarness 实际使用的失败事件文件。"""
         return self._watcher.record_path

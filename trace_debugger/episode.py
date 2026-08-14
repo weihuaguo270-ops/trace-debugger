@@ -14,6 +14,8 @@ EPISODE_SCHEMA_VERSION = "evaluation-episode/v1"
 
 @dataclass(frozen=True)
 class ImportedEpisode:
+    """从跨框架 EvaluationEpisode 提取的只读调试证据。"""
+
     episode_id: str
     framework: str
     agent_version: str

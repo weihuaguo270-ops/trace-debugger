@@ -14,6 +14,8 @@ DEFAULT_GOLDEN_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "failure
 
 @dataclass
 class GoldenCase:
+    """一个轨迹夹具及其必须命中、不得命中的失败断言。"""
+
     id: str
     file: str
     split: str
@@ -25,6 +27,7 @@ class GoldenCase:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GoldenCase":
+        """从 manifest 条目构建用例，缺省值保持旧清单兼容。"""
         return cls(
             id=data["id"],
             file=data["file"],
@@ -39,12 +42,15 @@ class GoldenCase:
 
 @dataclass
 class GoldenManifest:
+    """带 schema 版本的失败回归集清单。"""
+
     schema_version: str
     description: str
     cases: list[GoldenCase]
 
     @classmethod
     def load(cls, path: Optional[Path] = None) -> "GoldenManifest":
+        """从指定路径或内置夹具目录加载清单。"""
         root = path or (DEFAULT_GOLDEN_DIR / "manifest.json")
         with open(root, encoding="utf-8") as f:
             data = json.load(f)
@@ -56,11 +62,13 @@ class GoldenManifest:
 
 
 def load_manifest(manifest_path: Optional[str] = None) -> GoldenManifest:
+    """加载默认或显式指定的 Golden 清单。"""
     path = Path(manifest_path) if manifest_path else DEFAULT_GOLDEN_DIR / "manifest.json"
     return GoldenManifest.load(path)
 
 
 def analyze_case(case: GoldenCase, *, golden_dir: Optional[Path] = None) -> TrajectoryAnalysis:
+    """加载一个 Golden 轨迹并运行默认分析器。"""
     base = golden_dir or DEFAULT_GOLDEN_DIR
     return Analyzer().analyze(load(str(base / case.file)))
 
