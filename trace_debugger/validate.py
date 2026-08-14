@@ -48,6 +48,7 @@ def validate_trajectory_file(
     use_schema: bool = False,
     schema_path: Optional[Path] = None,
 ) -> list[str]:
+    """加载并校验一个轨迹文件，读取或格式错误均作为消息返回。"""
     p = Path(path)
     if not p.is_file():
         return [f"file not found: {path}"]
@@ -62,6 +63,7 @@ def validate_trajectory_file(
 
 
 def format_validation_report(errors: list[str], *, path: str = "") -> str:
+    """将校验错误格式化为稳定的终端报告。"""
     if not errors:
         prefix = f"{path}: " if path else ""
         return f"{prefix}OK — Format B validation passed"

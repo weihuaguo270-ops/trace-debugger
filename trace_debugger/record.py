@@ -50,10 +50,12 @@ def _preview(text: str, limit: int = 160) -> str:
 
 
 def failure_label(failure_type: str) -> str:
+    """返回稳定失败类型对应的展示标签。"""
     return FailureType.LABELS.get(failure_type, failure_type)
 
 
 def failure_severity(failure_type: str, *, event_type: str = "step_failure") -> str:
+    """将失败类型映射为报告严重级别，不改变分类结果。"""
     if failure_type in (FailureType.NO_FINAL_ANSWER, FailureType.LLM_OFFTRACK):
         return "fail"
     if failure_type in (FailureType.CONTEXT_OVERFLOW, FailureType.SEARCH_TIMEOUT):
@@ -70,6 +72,7 @@ def build_failure_summary(
     action: str = "",
     event_type: str = "step_failure",
 ) -> str:
+    """生成包含失败类型、步骤和动作的单行摘要。"""
     label = failure_label(failure_type)
     if event_type == "path_failure":
         return f"路径级 · {label}"
@@ -88,6 +91,7 @@ def build_failure_context(
     observation: str = "",
     duration: float = 0.0,
 ) -> dict[str, Any]:
+    """提取用于定位失败的最小轨迹上下文。"""
     ctx: dict[str, Any] = {}
     if action:
         ctx["action"] = action
@@ -163,11 +167,13 @@ def format_event_readable(ev: dict[str, Any]) -> str:
 
 
 def readable_log_path(record_path: str) -> Path:
+    """返回机器可读 JSONL 对应的人类可读日志路径。"""
     p = Path(record_path)
     return p.with_name(p.stem + ".log")
 
 
 def session_summary_path(record_path: str, session_id: str) -> Path:
+    """返回指定会话的独立摘要文件路径。"""
     base = Path(record_path).parent / "sessions"
     safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in session_id)
     return base / f"{safe}.md"
@@ -249,6 +255,7 @@ def write_session_summary(
 
 
 def load_failure_events(record_path: str, *, session_id: Optional[str] = None) -> list[dict[str, Any]]:
+    """按写入顺序读取有效事件，并可限定到单个会话。"""
     path = Path(record_path)
     if not path.is_file():
         return []
@@ -606,6 +613,7 @@ def build_scan_snapshot(
 
 
 def load_snapshot(path: str) -> dict[str, Any]:
+    """加载一次扫描快照，供回归对比使用。"""
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 

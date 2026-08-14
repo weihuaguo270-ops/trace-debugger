@@ -86,6 +86,7 @@ def content_tokens(text: str) -> set[str]:
 
 
 def looks_like_overflow_text(text: str) -> bool:
+    """按已知中英文服务错误文案识别上下文溢出信号。"""
     if not text:
         return False
     low = text.lower()
@@ -93,6 +94,7 @@ def looks_like_overflow_text(text: str) -> bool:
 
 
 def is_search_tool(name: str, *, substrings: tuple[str, ...] = ("search",), extra_names: tuple[str, ...] = ()) -> bool:
+    """按可配置名称规则判断工具是否属于搜索类。"""
     n = (name or "").lower()
     if any(sub in n for sub in substrings):
         return True
@@ -102,6 +104,7 @@ def is_search_tool(name: str, *, substrings: tuple[str, ...] = ("search",), extr
 
 
 def is_final_thought(thought: str, markers: tuple[str, ...]) -> bool:
+    """按调用方提供的大小写不敏感标记识别终答思考。"""
     upper = (thought or "").upper()
     return any(m.upper() in upper for m in markers if m)
 
@@ -195,9 +198,11 @@ class Analyzer:
         self.search_tool_names = search_tool_names
 
     def step_is_final(self, step: Step) -> bool:
+        """按当前分析器终答标记判断步骤。"""
         return is_final_thought(step.thought, self.final_answer_markers)
 
     def tool_is_search(self, name: str) -> bool:
+        """按当前分析器搜索工具配置判断名称。"""
         return is_search_tool(
             name,
             substrings=self.search_tool_substrings,

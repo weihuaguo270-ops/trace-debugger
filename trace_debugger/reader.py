@@ -24,18 +24,22 @@ class Step:
 
     @property
     def is_action(self) -> bool:
+        """返回该步是否包含工具动作。"""
         return bool(self.action_name)
 
     @property
     def is_final(self) -> bool:
+        """按兼容格式中的 FINAL ANSWER 标记识别终答步骤。"""
         return "FINAL ANSWER" in self.thought.upper()
 
     @property
     def is_thought(self) -> bool:
+        """返回该步是否为非终答的有效思考。"""
         return bool(self.thought.strip()) and not self.is_final
 
     @property
     def summary(self) -> str:
+        """生成用于终端和报告的截断单行摘要。"""
         if self.is_final:
             return f"输出答案: {self.thought[:80]}"
         if self.is_action:
@@ -59,18 +63,22 @@ class Path:
 
     @property
     def num_steps(self) -> int:
+        """返回路径中的步骤数。"""
         return len(self.steps)
 
     @property
     def tools_used(self) -> list[str]:
+        """按调用顺序返回工具名，保留重复调用。"""
         return [s.action_name for s in self.steps if s.action_name]
 
     @property
     def has_errors(self) -> bool:
+        """返回路径是否含解析器识别出的工具错误。"""
         return any(s.has_error for s in self.steps)
 
     @property
     def error_summary(self) -> list[str]:
+        """返回路径内各错误步骤的截断消息。"""
         return [s.error_message for s in self.steps if s.has_error]
 
 
@@ -89,14 +97,17 @@ class Trajectory:
 
     @property
     def num_steps(self) -> int:
+        """返回顶层轨迹步骤数。"""
         return len(self.steps)
 
     @property
     def num_paths(self) -> int:
+        """返回解析后的执行路径数。"""
         return len(self.paths)
 
     @property
     def main_path(self) -> Optional[Path]:
+        """返回显式主路径；旧数据未标记时回退到最后一条。"""
         for p in self.paths:
             if p.is_main_path:
                 return p
@@ -104,6 +115,7 @@ class Trajectory:
 
     @property
     def failed_paths(self) -> list[Path]:
+        """返回失败的非主路径，避免把最终输出路径重复计为失败分支。"""
         return [p for p in self.paths if not p.success and not p.is_main_path]
 
 
