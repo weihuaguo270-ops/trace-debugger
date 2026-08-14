@@ -14,7 +14,7 @@
 | 业务环节 | 项目交付 | 决策用途 |
 |----------|----------|----------|
 | 运行采集 | Format B 轨迹、StepWatcher、Artifact 引用 | 保留可复盘的执行证据 |
-| 失败识别 | 7 类可解释启发式、JSONL findings、统计聚合 | 定位工具、检索、策略和轨迹问题 |
+| 失败识别 | 8 类可解释启发式、JSONL findings、统计聚合 | 定位工具、检索、验收、策略和轨迹问题 |
 | 版本比较 | baseline、`scan --compare`、golden CI | 检查发版后失败分布是否退化 |
 | 发布协作 | 可读报告、修复边界、intervention ledger | 支持 review/hold 与后续复盘 |
 
@@ -26,7 +26,7 @@
 
 Agent 团队把运行轨迹接入 trace-debugger 之后：
 
-1. **自动识别** 7 类常见失败（工具报错、搜索空结果、重复调用等）
+1. **自动识别** 8 类常见失败（工具报错、验收失败、搜索空结果、重复调用等）
 2. **形成记录** — JSONL + 可读 log，便于复盘
 3. **发版前对比** — `tdebug scan` + `--compare` 发现失败分布是否变差
 4. **结构化 findings** — `--findings-out` 输出门禁判定 + 修复边界（Harness Health，v0.2.7+）
@@ -85,7 +85,7 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 
 | 已交付 | 说明 |
 |--------|------|
-| 7 类启发式 + CLI | `tdebug` / `stats` / `validate` |
+| 8 类启发式 + CLI | `tdebug` / `stats` / `validate` |
 | 黄金集 + CI | 27/27 — 规则回归 |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 | **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |

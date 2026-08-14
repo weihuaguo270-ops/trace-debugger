@@ -22,6 +22,7 @@ from .reader import Trajectory, Path, Step
 class FailureType:
     """失败原因分类"""
     TOOL_ERROR = "tool_error"           # 工具调用报错
+    ACCEPTANCE_FAILED = "acceptance_failed"  # 验收测试失败
     SEARCH_EMPTY = "search_empty"       # 搜索无结果
     SEARCH_TIMEOUT = "search_timeout"   # 搜索超时
     LLM_OFFTRACK = "llm_offtrack"      # LLM 跑偏（答非所问）
@@ -32,6 +33,7 @@ class FailureType:
 
     LABELS = {
         "tool_error": "工具调用报错",
+        "acceptance_failed": "验收测试失败",
         "search_empty": "搜索无有效结果",
         "search_timeout": "搜索超时",
         "llm_offtrack": "LLM 偏离用户意图",
@@ -318,6 +320,8 @@ class Analyzer:
         # offtrack / overflow 视为「完成但有问题」仍可能 path.success=True from parse
         if FailureType.LLM_OFFTRACK in failure_types:
             path_ok = False
+        if FailureType.ACCEPTANCE_FAILED in failure_types:
+            path_ok = False
 
         summary_parts = []
         if path_ok and not failure_types:
@@ -455,7 +459,16 @@ class Analyzer:
             suggestion = "压缩上下文或启用摘要/窗口滑动"
 
         if not failure_type and step.is_action:
-            if step.has_error:
+            observation = (step.observation or "").strip().lower()
+            if step.action_name in {
+                "run_acceptance_tests",
+                "run_tests",
+                "pytest",
+            } and observation in {"failed", "test_failed", "failure"}:
+                failure_type = FailureType.ACCEPTANCE_FAILED
+                failure_detail = f"{step.action_name} 返回验收失败"
+                suggestion = "保留失败测试输出，修复候选变更后重新执行验收"
+            elif step.has_error:
                 failure_type = FailureType.TOOL_ERROR
                 failure_detail = f"{step.action_name} 调用失败: {step.error_message[:100]}"
                 suggestion = f"检查 {step.action_name} 的参数或重试"
@@ -527,6 +540,7 @@ class Analyzer:
     def _suggestion_for(self, failure_type: str) -> str:
         mapping = {
             FailureType.TOOL_ERROR: "检查工具参数是否正确，或增加参数校验",
+            FailureType.ACCEPTANCE_FAILED: "检查失败断言和候选差异，修复后重新验收",
             FailureType.SEARCH_EMPTY: "调整搜索词策略，先确认需求再搜索",
             FailureType.SEARCH_TIMEOUT: "限制搜索范围或添加缓存层",
             FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束，或增加意图校验",
