@@ -18,7 +18,9 @@
 | 版本比较 | baseline、`scan --compare`、golden CI | 检查发版后失败分布是否退化 |
 | 发布协作 | 可读报告、修复边界、intervention ledger | 支持 review/hold 与后续复盘 |
 
-**当前阶段：** 适合本地或 CI 的低成本回归门禁，不是完整 APM、云 tracing 或自动修复系统；真实团队接入仍需脱敏、权限、时序存储和外部复现验证。
+**当前阶段：** 适合本地或 CI 的低成本回归门禁。已在独立 GitHub 沙箱中复现验收失败，输出
+`acceptance_failed` 并交给评测引擎形成 `hold`；这属于 `external_real_sandbox`，不是生产团队接入。
+项目仍不是完整 APM、云 tracing 或自动修复系统；真实团队接入仍需脱敏、权限和时序存储。
 
 ---
 
@@ -100,7 +102,10 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 | 干预 ledger（Learning Capture） | [docs/intervention_ledger.json](docs/intervention_ledger.json) |
 | 业务证明自评 ~65% | [docs/VALUE.md](docs/VALUE.md) |
 
-仍缺：真人秒表、非模拟 PR hold、外部团队复现。
+外部沙箱证据：[`agent-delivery-sandbox`](https://github.com/weihuaguo270-ops/agent-delivery-sandbox)
+已完成非模拟 PR 的接受、拒绝、回滚，以及 `acceptance_failed -> hold` 故障回流。
+
+仍缺：真人执行耗时基线、生产团队接入复现、长期时序数据和告警闭环。
 
 Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 
