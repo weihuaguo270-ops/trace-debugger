@@ -43,7 +43,7 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 **Agent 回归测试与失败治理门禁**
 
 ```
-轨迹 JSON → 7 类失败标签 → JSONL / log 记录
+轨迹 JSON → 8 类失败标签 → JSONL / log 记录
     → 发版前 scan + --compare baseline
     → CI golden 27 条
 ```

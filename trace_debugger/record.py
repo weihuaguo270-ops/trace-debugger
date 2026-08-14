@@ -526,6 +526,7 @@ def failure_events_from_analysis(
 def _suggestion_for_type(failure_type: str) -> str:
     mapping = {
         FailureType.TOOL_ERROR: "检查工具参数是否正确，或增加参数校验",
+        FailureType.ACCEPTANCE_FAILED: "检查失败断言和候选差异，修复后重新验收",
         FailureType.SEARCH_EMPTY: "调整搜索词策略，先确认需求再搜索",
         FailureType.SEARCH_TIMEOUT: "限制搜索范围或添加缓存层",
         FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束，或增加意图校验",

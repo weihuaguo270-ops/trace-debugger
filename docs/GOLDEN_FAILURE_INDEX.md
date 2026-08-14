@@ -13,7 +13,7 @@
 
 ## Taxonomy 覆盖
 
-7 类失败均有独立负例：`tool_error` · `search_empty` · `search_timeout` · `duplicate` · `no_answer` · `llm_offtrack` · `context_overflow`
+原有 7 类失败均有独立 golden 负例：`tool_error` · `search_empty` · `search_timeout` · `duplicate` · `no_answer` · `llm_offtrack` · `context_overflow`。`acceptance_failed` 由真实交付故障轨迹对应的独立回归测试覆盖，尚未并入历史 golden manifest。
 
 另含：正例（无失败）、多路径、中文搜索工具、工具错误后恢复、Harness 阻止重复等。
 

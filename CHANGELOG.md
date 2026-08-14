@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 0.5.0 (2026-08-14)
+
+### Added
+
+- `acceptance_failed` classification for failed delivery test and release-validation steps
+- Regression coverage from the real GitHub delivery sandbox fault-injection trajectory
+
+### Changed
+
+- Acceptance failures now fail the path instead of being reported as a successful tool step
+
 ### Documentation
 
 - Added Episode v1 and portable failure-log capabilities to the project overview
