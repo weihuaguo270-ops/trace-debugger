@@ -8,7 +8,7 @@
 Schema: schemas/agent_trajectory.schema.json
 集成: docs/INTEGRATIONS.md（含 react-agent 参考集成）
 """
-__version__ = "0.3.0"
+__version__ = "0.5.1"
 
 from trace_debugger.analyzer import (
     Analyzer,

@@ -22,6 +22,9 @@
 `acceptance_failed` 并交给评测引擎形成 `hold`；这属于 `external_real_sandbox`，不是生产团队接入。
 项目仍不是完整 APM、云 tracing 或自动修复系统；真实团队接入仍需脱敏、权限和时序存储。
 
+**2026-08-20 文档更新：** 当前版本补齐 Format B、Episode v1、失败分类、Harness、验证和
+Artifact 证据契约索引，使轨迹接入、扫描、比较和发布门禁能够按同一流程复现。
+
 ---
 
 ## 主场景（优先用这个讲清楚价值）

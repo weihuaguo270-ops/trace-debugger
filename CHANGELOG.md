@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 0.5.1 (2026-08-20)
+
+### Documentation and contracts
+
+- Documented the current Format B, Episode v1, failure taxonomy, validation, harness,
+  artifact-analysis, golden-evidence, and intervention-ledger contracts.
+
+### Verified
+
+- Existing full regression remains green: 75 passed.
+
 ## 0.5.0 (2026-08-14)
 
 ### Added
