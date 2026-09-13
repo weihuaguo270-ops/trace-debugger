@@ -4,19 +4,20 @@
 
 **面向中小型 Agent 团队的本地失败治理工具** — 把难以阅读的执行轨迹，变成可统计、可复盘、**可进 CI** 的失败信号。
 
-> **主定位：Agent 回归测试与失败治理门禁**（非完整 APM、非云 tracing）  
+> **主定位：Agent 轨迹失败检测与规则回归**（确定性失败信号；非完整 APM、非云 tracing）  
+> 发版最终裁决在 [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) · 分工见 [docs/POSITIONING_AND_DIVISION.md](docs/POSITIONING_AND_DIVISION.md)  
 > 独立项目 · 框架无关 · [react-agent](https://github.com/weihuaguo270-ops/react-agent) 仅为参考集成
 
 ## 业务目标
 
-本项目是 **Agent 发布前的失败治理门禁**：接入标准轨迹后，可以判断“哪里坏了、是否比上一版变差、能否安全发版”，而不是把日志堆成一个不可行动的总分。
+本项目是 **Agent 轨迹失败检测与规则回归**工具：接入标准轨迹后，判断「哪里出现硬失败、失败分布是否比上一版变差」，并产出可供 [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) 消费的失败证据；**不**自行做最终发版裁决。
 
 | 业务环节 | 项目交付 | 决策用途 |
 |----------|----------|----------|
 | 运行采集 | Format B 轨迹、StepWatcher、Artifact 引用 | 保留可复盘的执行证据 |
 | 失败识别 | 8 类可解释启发式、JSONL findings、统计聚合 | 定位工具、检索、验收、策略和轨迹问题 |
-| 版本比较 | baseline、`scan --compare`、golden CI | 检查发版后失败分布是否退化 |
-| 发布协作 | 可读报告、修复边界、intervention ledger | 支持 review/hold 与后续复盘 |
+| 版本比较 | baseline、`scan --compare`、golden CI | 检查规则层失败分布是否退化 |
+| 下游交接 | failures / findings 导出 | 供评测仓 failure-gate 与复盘使用 |
 
 **当前阶段：** 适合本地或 CI 的低成本回归门禁。已在独立 GitHub 沙箱中复现验收失败，输出
 `acceptance_failed` 并交给评测引擎形成 `hold`；这属于 `external_real_sandbox`，不是生产团队接入。
@@ -118,9 +119,12 @@ Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 
 | 命令 | 说明 |
 |------|------|
-| `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 回归对比 |
+| `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 规则回归对比（含率差） |
+| `tdebug scan … --failures-out failures.json` | **failure-gate/v1**：供 llm-eval-engine 消费 |
 | `tdebug scan … --findings-out findings.json` | Harness Health：门禁判定 + 修复建议 |
-| `tdebug <file.json>` | 单条分析 |
+| `tdebug scan … --task-type qa\|code\|creative` | 任务类型分析配置 |
+| `tdebug … --contracts` | 启用 tool contract → `tool_error` |
+| `tdebug <file.json>` | 单条分析（含步骤证据） |
 | `tdebug stats [jsonl]` | 失败类型聚合 |
 | `tdebug validate <file.json>` | Format B 校验 |
 
@@ -153,6 +157,7 @@ tdebug judge offtrack.json --prompt-out judge.txt
 
 | 文档 | 说明 |
 |------|------|
+| [docs/POSITIONING_AND_DIVISION.md](docs/POSITIONING_AND_DIVISION.md) | **与 llm-eval-engine 定位分工（避免重复）** |
 | [docs/VALUE.md](docs/VALUE.md) | **价值、主场景、业务证明缺口、下一步** |
 | [docs/pilot/WORKFLOW.md](docs/pilot/WORKFLOW.md) | 试点 scan + compare + findings 工作流 |
 | [docs/intervention_ledger.json](docs/intervention_ledger.json) | 纵向干预记录（Learning Capture） |

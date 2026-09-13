@@ -7,9 +7,11 @@ from pathlib import Path
 from typing import Any, Optional
 
 from .analyzer import Analyzer, TrajectoryAnalysis
+from .profiles import resolve_analyzer
 from .reader import load, parse
 
 DEFAULT_GOLDEN_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "failure_golden"
+DEFAULT_FP_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "failure_fp"
 
 
 @dataclass
@@ -24,6 +26,7 @@ class GoldenCase:
     must_not_detect: list[str] = field(default_factory=list)
     expected_step_failures: list[dict[str, Any]] = field(default_factory=list)
     notes: str = ""
+    task_type: str = "default"
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GoldenCase":
@@ -37,6 +40,7 @@ class GoldenCase:
             must_not_detect=list(data.get("must_not_detect") or []),
             expected_step_failures=list(data.get("expected_step_failures") or []),
             notes=data.get("notes", ""),
+            task_type=data.get("task_type") or "default",
         )
 
 
@@ -68,9 +72,10 @@ def load_manifest(manifest_path: Optional[str] = None) -> GoldenManifest:
 
 
 def analyze_case(case: GoldenCase, *, golden_dir: Optional[Path] = None) -> TrajectoryAnalysis:
-    """加载一个 Golden 轨迹并运行默认分析器。"""
+    """加载一个 Golden 轨迹并运行对应 task_type 分析器。"""
     base = golden_dir or DEFAULT_GOLDEN_DIR
-    return Analyzer().analyze(load(str(base / case.file)))
+    analyzer = resolve_analyzer(case.task_type)
+    return analyzer.analyze(load(str(base / case.file)))
 
 
 def validate_case(analysis: TrajectoryAnalysis, case: GoldenCase) -> list[str]:
@@ -82,6 +87,20 @@ def validate_case(analysis: TrajectoryAnalysis, case: GoldenCase) -> list[str]:
     expected = set(case.expected_failures)
     must_not = set(case.must_not_detect)
     errors: list[str] = []
+
+    # false_positive cases: only enforce must_not (+ optional exact expected if set)
+    if case.category == "false_positive":
+        forbidden = detected & must_not
+        if forbidden:
+            errors.append(f"forbidden failures detected: {sorted(forbidden)}")
+        if expected and detected != expected:
+            missing = expected - detected
+            extra = detected - expected
+            if missing:
+                errors.append(f"missing failures: {sorted(missing)}")
+            if extra:
+                errors.append(f"unexpected failures: {sorted(extra)}")
+        return errors
 
     if detected != expected:
         missing = expected - detected
@@ -124,7 +143,6 @@ def run_golden_suite(
     """运行黄金集并返回证据报告结构。"""
     manifest = load_manifest(manifest_path)
     golden_dir = Path(manifest_path).parent if manifest_path else DEFAULT_GOLDEN_DIR
-    _analyzer = analyzer or Analyzer()
 
     rows = []
     passed = 0
@@ -133,6 +151,7 @@ def run_golden_suite(
         if split and case.split != split:
             continue
         traj = load(str(golden_dir / case.file))
+        _analyzer = analyzer or resolve_analyzer(case.task_type)
         analysis = _analyzer.analyze(traj)
         errors = validate_case(analysis, case)
         ok = not errors
@@ -146,6 +165,7 @@ def run_golden_suite(
             "file": case.file,
             "split": case.split,
             "category": case.category,
+            "task_type": case.task_type,
             "expected_failures": case.expected_failures,
             "detected_failures": detected,
             "pass": ok,
@@ -164,3 +184,12 @@ def run_golden_suite(
         "pass_rate": round(passed / total, 4) if total else 0.0,
         "cases": rows,
     }
+
+
+def run_false_positive_suite(
+    *,
+    manifest_path: Optional[str] = None,
+) -> dict[str, Any]:
+    """Run fixtures/failure_fp — assert historical FPs stay clean."""
+    path = Path(manifest_path) if manifest_path else DEFAULT_FP_DIR / "manifest.json"
+    return run_golden_suite(manifest_path=str(path))

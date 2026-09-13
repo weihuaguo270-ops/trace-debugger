@@ -7,7 +7,9 @@
 
 ## 一句话
 
-> trace-debugger 是面向中小型 Agent 团队的本地失败治理工具：把难读的执行轨迹变成可统计、可复盘、可进 CI 的失败信号。
+> trace-debugger 是面向中小型 Agent 团队的本地轨迹失败检测与规则回归工具：把难读的执行轨迹变成可统计、可复盘、可进 CI 的确定性失败信号；发版最终裁决交给 llm-eval-engine。
+
+与评测仓的分工：[POSITIONING_AND_DIVISION.md](./POSITIONING_AND_DIVISION.md)。
 
 ---
 

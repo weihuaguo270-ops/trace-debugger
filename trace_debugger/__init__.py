@@ -1,14 +1,15 @@
-"""Trace Debugger — Agent 轨迹失败治理
+"""Trace Debugger — Agent 轨迹失败检测与规则回归
 
 读取 Agent Trajectory (Format B) JSON，分析执行过程中的失败行为：
-  - 7 类启发式失败分类
+  - 8 类启发式失败分类 + 步骤证据链
   - JSONL / 可读日志 / 会话摘要
+  - failure-gate/v1 导出（供 llm-eval-engine）
   - 运行时 StepWatcher（可嵌入任意 Harness）
 
 Schema: schemas/agent_trajectory.schema.json
-集成: docs/INTEGRATIONS.md（含 react-agent 参考集成）
+集成: docs/INTEGRATIONS.md · 分工: docs/POSITIONING_AND_DIVISION.md
 """
-__version__ = "0.5.1"
+__version__ = "0.6.0"
 
 from trace_debugger.analyzer import (
     Analyzer,
@@ -26,6 +27,7 @@ from trace_debugger.record import (
     append_failure_events,
     append_events,
     build_scan_snapshot,
+    build_failures_export,
     compare_snapshots,
     step_failure_event,
     format_failure_stats,
@@ -50,7 +52,14 @@ from trace_debugger.harness_health import (
     evaluate_regression_gate,
     probe_project_mechanisms,
 )
-from trace_debugger.golden import load_manifest, run_golden_suite, GoldenCase
+from trace_debugger.profiles import resolve_analyzer, PROFILE_NAMES
+from trace_debugger.evidence import EvidenceItem, evidence_chain_from_analysis
+from trace_debugger.golden import (
+    load_manifest,
+    run_golden_suite,
+    run_false_positive_suite,
+    GoldenCase,
+)
 from trace_debugger.validate import (
     format_validation_report,
     validate_trajectory_dict,

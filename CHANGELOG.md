@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 0.6.0 (2026-09-13)
+
+### Added
+
+- Step-level `evidence` / `evidence_chain` on analysis and scan exports
+- Task-type profiles: `--task-type default|qa|code|creative` (`profiles.py`)
+- Tool contracts: `--contracts` / `--contracts-file` → `tool_error` + `tool_contract.*`
+- Stable `failure-gate/v1` export: `--failures-out` + `schemas/failures.schema.json`
+- Compare rate columns + gate **rule R** (type rate delta; works when `n` differs)
+- False-positive fixture set `fixtures/failure_fp/` + CI tests
+
+### Changed
+
+- Scan snapshots include `distribution_rates`, `task_type`, per-traj `evidence_chain`
+- Findings compare block includes `stability`; findings entries populate `evidence`
+
 ## 0.5.1 (2026-08-20)
 
 ### Documentation and contracts

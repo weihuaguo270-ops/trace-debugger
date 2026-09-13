@@ -47,36 +47,65 @@ def evaluate_regression_gate(
     current: dict[str, Any],
     baseline: dict[str, Any],
 ) -> dict[str, Any]:
-    """Apply THRESHOLDS v1 rules A/B; return decision + triggered rules + findings."""
+    """Apply THRESHOLDS v1.1 rules A/B/R; return decision + triggered rules + findings."""
+    from .record import distribution_rates
+
     cur_dist = current.get("distribution") or {}
     base_dist = baseline.get("distribution") or {}
+    cur_n = int(current.get("n_trajectories") or 0)
+    base_n = int(baseline.get("n_trajectories") or 0)
+    cur_rates = current.get("distribution_rates") or distribution_rates(cur_dist, cur_n)
+    base_rates = baseline.get("distribution_rates") or distribution_rates(base_dist, base_n)
     all_types = sorted(set(cur_dist) | set(base_dist))
 
     triggered: list[str] = []
     findings: list[dict[str, Any]] = []
     decision: GateDecision = "pass"
+    rate_delta_pp: dict[str, float] = {}
 
     for ft in all_types:
         b = base_dist.get(ft, 0)
         c = cur_dist.get(ft, 0)
         delta = c - b
+        br = float(base_rates.get(ft, 0.0)) * 100.0
+        cr = float(cur_rates.get(ft, 0.0)) * 100.0
+        dpp = cr - br
+        rate_delta_pp[ft] = round(dpp, 2)
+
         if delta >= 2:
             triggered.append("A")
             findings.append(_finding_distribution(
                 ft, b, c, delta, severity="high", gate="hold",
+                evidence=[f"count {b}→{c}", f"rate {br:.1f}%→{cr:.1f}%"],
             ))
             decision = "hold"
         elif delta == 1:
             triggered.append("A-notice")
             findings.append(_finding_distribution(
                 ft, b, c, delta, severity="medium", gate="review",
+                evidence=[f"count {b}→{c}", f"rate {br:.1f}%→{cr:.1f}%"],
             ))
             if decision == "pass":
                 decision = "review"
 
-    _, cur_n, cur_rate = _fail_session_stats(current)
-    _, base_n, base_rate = _fail_session_stats(baseline)
-    delta_pp = cur_rate - base_rate if cur_n == base_n else None
+        # Rule R — rate-normalized type rise (works when n differs)
+        if dpp >= 10:
+            triggered.append("R")
+            findings.append(_finding_type_rate(
+                ft, br, cr, dpp, severity="high", gate="hold",
+            ))
+            decision = "hold"
+        elif dpp >= 5:
+            triggered.append("R")
+            findings.append(_finding_type_rate(
+                ft, br, cr, dpp, severity="medium", gate="review",
+            ))
+            if decision == "pass":
+                decision = "review"
+
+    _, cur_n_stat, cur_rate = _fail_session_stats(current)
+    _, base_n_stat, base_rate = _fail_session_stats(baseline)
+    delta_pp = cur_rate - base_rate if cur_n_stat == base_n_stat else None
 
     if delta_pp is not None:
         if delta_pp >= 10:
@@ -100,10 +129,16 @@ def evaluate_regression_gate(
             "baseline_pct": round(base_rate, 2),
             "current_pct": round(cur_rate, 2),
             "delta_pp": round(delta_pp, 2) if delta_pp is not None else None,
-            "n_aligned": cur_n == base_n,
+            "n_aligned": cur_n_stat == base_n_stat,
         },
         "distribution_delta": {
             ft: cur_dist.get(ft, 0) - base_dist.get(ft, 0) for ft in all_types
+        },
+        "stability": {
+            "n_aligned": cur_n == base_n,
+            "baseline_n": base_n,
+            "current_n": cur_n,
+            "distribution_rate_delta_pp": rate_delta_pp,
         },
         "findings": findings,
     }
@@ -117,6 +152,7 @@ def _finding_distribution(
     *,
     severity: str,
     gate: GateDecision,
+    evidence: Optional[list[str]] = None,
 ) -> dict[str, Any]:
     return {
         "id": f"regression-distribution-{ft}",
@@ -128,7 +164,35 @@ def _finding_distribution(
         "detail": f"distribution[{ft}]: {base} → {cur} ({delta:+d})",
         "impact": "回归门禁规则 A：单类型计数异常上升",
         "repair_boundary": "trace-debugger/analyzer 或 react-agent prompt/工具",
-        "validation_route": "tdebug scan --compare + golden 27/27 + METRICS_LOG",
+        "validation_route": "tdebug scan --compare + golden/FP CI + METRICS_LOG",
+        "evidence": evidence or [f"distribution[{ft}]: {base} → {cur}"],
+    }
+
+
+def _finding_type_rate(
+    ft: str,
+    base_pct: float,
+    cur_pct: float,
+    delta_pp: float,
+    *,
+    severity: str,
+    gate: GateDecision,
+) -> dict[str, Any]:
+    return {
+        "id": f"regression-type-rate-{ft}",
+        "dimension": "change-validation",
+        "severity": severity,
+        "gate": gate,
+        "title": f"失败类型 {ft} 占比上升 {delta_pp:+.1f}pp",
+        "evidence_state": "exercised",
+        "detail": f"rate[{ft}]: {base_pct:.1f}% → {cur_pct:.1f}% ({delta_pp:+.1f}pp)",
+        "impact": "回归门禁规则 R：单类型率差异常（n 不对齐时仍生效）",
+        "repair_boundary": "trace-debugger/analyzer 或 Agent prompt/工具",
+        "validation_route": "tdebug scan --compare（看 rate 列）+ failure-gate 导出",
+        "evidence": [
+            f"rate[{ft}]: {base_pct:.1f}% → {cur_pct:.1f}%",
+            f"delta_pp={delta_pp:+.1f}",
+        ],
     }
 
 
@@ -189,6 +253,13 @@ def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
         "change-validation",
         "失败 golden 27 条",
         "fixtures/failure_golden/manifest.json",
+        wired_hint=".github/workflows/test.yml",
+    )
+    _add(
+        "false-positive-fixtures",
+        "change-validation",
+        "假阳性回归集",
+        "fixtures/failure_fp/manifest.json",
         wired_hint=".github/workflows/test.yml",
     )
     _add(
@@ -298,5 +369,6 @@ def build_findings_report(
             "triggered_rules": gate["triggered_rules"] if gate else [],
             "fail_rate": gate["fail_rate"] if gate else {},
             "distribution_delta": gate["distribution_delta"] if gate else {},
+            "stability": gate.get("stability") if gate else {},
         }
     return report

@@ -137,6 +137,27 @@ FailureHarness(context, analyzer=analyzer)
 
 ## llm-eval-engine（可选下游）
 
+本仓产出失败信号；**发布裁决与 Judge 执行**在对端。分工见 [POSITIONING_AND_DIVISION.md](./POSITIONING_AND_DIVISION.md)。
+
+稳定交接（**failure-gate/v1**）：
+
+```bash
+tdebug scan trajectories/ 50 \
+  --failures-out snapshots/failures.json \
+  --compare snapshots/baseline.json \
+  --findings-out snapshots/findings.json \
+  --task-type qa
+```
+
+- `--failures-out` → `schemas/failures.schema.json`（`schema_version=failure-gate/v1`）  
+  字段含 `distribution`、`distribution_rates`、`trajectories[].evidence_chain`  
+- 对端示例：`run_cross_agent_release.py ... --failure-gate snapshots/failures.json`
+
+仅导出 Judge prompt（不执行）：
+
 ```bash
 tdebug judge run.json --prompt-out judge.txt
 ```
+
+任务类型：`--task-type default|qa|code|creative`（creative/code 关闭词重叠 offtrack）。  
+Tool contract：`--contracts` / `--contracts-file`（映射为 `tool_error` + `tool_contract.*` 证据）。

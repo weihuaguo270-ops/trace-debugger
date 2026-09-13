@@ -12,7 +12,10 @@ from pathlib import Path
 from typing import Any, Optional
 
 from .analyzer import FailureType, StepAnalysis, TrajectoryAnalysis, failure_distribution
+from .evidence import evidence_chain_from_analysis
 from .reader import Trajectory
+
+FAILURE_GATE_SCHEMA_VERSION = "failure-gate/v1"
 
 def _default_record_path() -> str:
     override = os.environ.get("TDEBUG_DATA_DIR")
@@ -568,6 +571,13 @@ def append_failure_events(
     return n
 
 
+def distribution_rates(distribution: dict[str, int], n: int) -> dict[str, float]:
+    """Per-type rate = count / n_trajectories (0 if n=0)."""
+    if not n:
+        return {k: 0.0 for k in distribution}
+    return {k: round(v / n, 6) for k, v in distribution.items()}
+
+
 def build_scan_snapshot(
     directory: str,
     n: int,
@@ -575,9 +585,11 @@ def build_scan_snapshot(
     analyses: list[TrajectoryAnalysis],
     *,
     source_files: Optional[list[str]] = None,
+    task_type: str = "default",
 ) -> dict[str, Any]:
     """构建可归档、可对比的扫描快照。"""
     dist = failure_distribution(analyses)
+    n_rows = len(analyses)
     rows = []
     for i, (traj, analysis) in enumerate(zip(trajs, analyses)):
         fails = sorted({ft for pa in analysis.paths for ft in pa.failure_types})
@@ -590,6 +602,7 @@ def build_scan_snapshot(
             "failure_labels": fail_labels,
             "failure_summary": "、".join(fail_labels) if fail_labels else "无",
             "num_steps": traj.num_steps,
+            "evidence_chain": evidence_chain_from_analysis(analysis),
         }
         if source_files and i < len(source_files):
             row["file"] = os.path.basename(source_files[i])
@@ -604,12 +617,70 @@ def build_scan_snapshot(
         "report_id": f"tdebug_scan_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
         "timestamp": _utc_now(),
         "source_dir": str(Path(directory).as_posix()),
+        "task_type": task_type or "default",
         "n_trajectories": len(rows),
         "distribution": dist,
+        "distribution_rates": distribution_rates(dist, n_rows),
         "distribution_labels": {k: FailureType.LABELS.get(k, k) for k in dist},
         "trajectories": rows,
-        "meta": {"tool": "trace-debugger", "note": "启发式失败分类；非 LLM Judge"},
+        "meta": {
+            "tool": "trace-debugger",
+            "note": "启发式失败分类；非 LLM Judge",
+            "heuristic": True,
+        },
     }
+
+
+def build_failures_export(
+    snapshot: dict[str, Any],
+    *,
+    compare: Optional[dict[str, Any]] = None,
+) -> dict[str, Any]:
+    """Stable failure-gate/v1 export for llm-eval-engine --failure-gate."""
+    n = int(snapshot.get("n_trajectories") or 0)
+    dist = dict(snapshot.get("distribution") or {})
+    rates = snapshot.get("distribution_rates") or distribution_rates(dist, n)
+    trajs = []
+    for row in snapshot.get("trajectories") or []:
+        trajs.append({
+            "session_id": row.get("session_id") or "",
+            "file": row.get("file") or "",
+            "query": row.get("query") or "",
+            "assessment": row.get("assessment") or "",
+            "failure_types": list(row.get("failure_types") or []),
+            "failure_labels": list(row.get("failure_labels") or []),
+            "num_steps": row.get("num_steps"),
+            "evidence_chain": list(row.get("evidence_chain") or []),
+            **({
+                "task_episode_id": row["task_episode_id"],
+            } if row.get("task_episode_id") else {}),
+            **({
+                "acceptance_criteria": row["acceptance_criteria"],
+            } if row.get("acceptance_criteria") else {}),
+        })
+    out: dict[str, Any] = {
+        "schema_version": FAILURE_GATE_SCHEMA_VERSION,
+        "producer": "trace-debugger",
+        "report_id": snapshot.get("report_id") or "",
+        "timestamp": snapshot.get("timestamp") or _utc_now(),
+        "task_type": snapshot.get("task_type") or "default",
+        "source_dir": snapshot.get("source_dir") or "",
+        "n_trajectories": n,
+        "distribution": dist,
+        "distribution_rates": rates,
+        "distribution_labels": snapshot.get("distribution_labels") or {
+            k: FailureType.LABELS.get(k, k) for k in dist
+        },
+        "trajectories": trajs,
+        "meta": {
+            "tool": "trace-debugger",
+            "note": "failure-gate/v1 — deterministic heuristics for eval-engine",
+            "heuristic": True,
+        },
+    }
+    if compare:
+        out["compare"] = compare
+    return out
 
 
 def load_snapshot(path: str) -> dict[str, Any]:
@@ -619,9 +690,13 @@ def load_snapshot(path: str) -> dict[str, Any]:
 
 
 def compare_snapshots(current: dict[str, Any], baseline: dict[str, Any]) -> str:
-    """对比两次扫描的失败分布，生成终端报告。"""
+    """对比两次扫描的失败分布，生成终端报告（含率差）。"""
     cur_dist = current.get("distribution") or {}
     base_dist = baseline.get("distribution") or {}
+    cur_n = int(current.get("n_trajectories") or 0)
+    base_n = int(baseline.get("n_trajectories") or 0)
+    cur_rates = current.get("distribution_rates") or distribution_rates(cur_dist, cur_n)
+    base_rates = baseline.get("distribution_rates") or distribution_rates(base_dist, base_n)
     all_types = sorted(set(cur_dist) | set(base_dist))
 
     lines = [
@@ -638,18 +713,26 @@ def compare_snapshots(current: dict[str, Any], baseline: dict[str, Any]) -> str:
     if not all_types:
         lines.append("  （两次扫描均未检测到失败类型）")
     else:
-        lines.append(f"  {'type':<22} {'base':>5} {'cur':>5} {'delta':>6}  label")
-        lines.append("  " + "-" * 50)
+        lines.append(
+            f"  {'type':<22} {'base':>5} {'cur':>5} {'delta':>6}  "
+            f"{'base%':>6} {'cur%':>6} {'d_pp':>6}  label"
+        )
+        lines.append("  " + "-" * 72)
         for ft in all_types:
             b = base_dist.get(ft, 0)
             c = cur_dist.get(ft, 0)
             delta = c - b
             sign = "+" if delta > 0 else ""
+            br = base_rates.get(ft, 0.0) * 100
+            cr = cur_rates.get(ft, 0.0) * 100
+            dpp = cr - br
+            dpp_s = f"{dpp:+.1f}"
             label = FailureType.LABELS.get(ft, ft)
-            lines.append(f"  {ft:<22} {b:5d} {c:5d} {sign}{delta:5d}  {label}")
+            lines.append(
+                f"  {ft:<22} {b:5d} {c:5d} {sign}{delta:5d}  "
+                f"{br:5.1f}% {cr:5.1f}% {dpp_s:>6}  {label}"
+            )
 
-    cur_n = current.get("n_trajectories") or 0
-    base_n = baseline.get("n_trajectories") or 0
     cur_fail_sessions = sum(1 for r in current.get("trajectories") or [] if r.get("failure_types"))
     base_fail_sessions = sum(1 for r in baseline.get("trajectories") or [] if r.get("failure_types"))
     lines.extend([
@@ -657,6 +740,7 @@ def compare_snapshots(current: dict[str, Any], baseline: dict[str, Any]) -> str:
         f"  含失败轨迹数: {base_fail_sessions} → {cur_fail_sessions} "
         f"({cur_fail_sessions - base_fail_sessions:+d})",
         f"  扫描轨迹总数: {base_n} → {cur_n} ({cur_n - base_n:+d})",
+        f"  n 对齐: {'是' if cur_n == base_n else '否（规则 B 跳过；规则 R 仍按率差）'}",
         "=" * 55,
     ])
     return "\n".join(lines)

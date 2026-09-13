@@ -51,13 +51,29 @@ def test_build_findings_report():
     assert len(report["dimensions"]) == 5
 
 
+def test_gate_stability_block_present():
+    base = _snap({"tool_error": 2}, 2)
+    cur = _snap({"tool_error": 2}, 2)
+    gate = evaluate_regression_gate(cur, base)
+    assert gate["stability"]["n_aligned"] is True
+    assert "distribution_rate_delta_pp" in gate["stability"]
+
+
+def test_build_findings_includes_evidence():
+    base = _snap({"llm_offtrack": 1}, 1)
+    cur = _snap({"llm_offtrack": 4}, 4)
+    report = build_findings_report(cur, base)
+    assert report["gate_decision"] == "hold"
+    assert any(f.get("evidence") for f in report["findings"])
+    assert "stability" in (report.get("compare") or {})
 def test_probe_project_mechanisms():
     import os
 
-    root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     mechs = probe_project_mechanisms(root)
-    ids = {m["id"] for m in mechs}
-    assert "golden-fixtures" in ids
-    assert "thresholds-doc" in ids
-    golden = next(m for m in mechs if m["id"] == "golden-fixtures")
-    assert golden["evidence_state"] in ("present", "wired", "missing")
+    ids = {m['id'] for m in mechs}
+    assert 'golden-fixtures' in ids
+    assert 'false-positive-fixtures' in ids
+    assert 'thresholds-doc' in ids
+    golden = next(m for m in mechs if m['id'] == 'golden-fixtures')
+    assert golden['evidence_state'] in ('present', 'wired', 'missing')

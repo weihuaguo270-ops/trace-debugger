@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+from typing import Optional
 
 from .reader import load, load_recent_paths
 from .analyzer import Analyzer, FailureType, failure_distribution
@@ -11,6 +12,7 @@ from .record import (
     DEFAULT_RECORD_PATH,
     append_failure_events,
     build_scan_snapshot,
+    build_failures_export,
     compare_snapshots,
     load_snapshot,
     format_failures_digest,
@@ -19,6 +21,7 @@ from .record import (
 )
 from .validate import format_validation_report, validate_trajectory_file
 from .harness_health import evaluate_regression_gate, build_findings_report
+from .profiles import PROFILE_NAMES, resolve_analyzer
 
 
 def main():
@@ -96,6 +99,9 @@ def _print_help():
     print("  --json-out PATH    写入结构化 JSON 分析结果")
     print("  --record [PATH]    追加失败事件到 JSONL（默认 .tdebug/failures.jsonl）")
     print("  --prompt-out PATH  judge 模式：将 prompt 写入文件")
+    print("  --task-type NAME   分析配置：default|qa|code|creative")
+    print("  --contracts        启用内置 tool contract 校验")
+    print("  --contracts-file PATH  额外 tool contract JSON")
     print("  --session ID       failures/stats：只统计指定 session")
     print("  --stats            failures 模式：输出聚合统计而非明细")
     print("  --stats-json-out PATH  将聚合统计写入 JSON")
@@ -105,14 +111,18 @@ def _print_help():
     print()
     print("选项（scan）:")
     print("  --json-out PATH    写入扫描快照 JSON（可归档、可对比）")
+    print("  --failures-out PATH  写入 failure-gate/v1（供 llm-eval-engine 消费）")
     print("  --findings-out PATH  写入 Harness Health findings.json（需 --compare 时含门禁判定）")
     print("  --project-root PATH  探测项目机制（golden/baseline/ledger）用于 findings")
     print("  --record [PATH]    为每条轨迹追加失败事件到 JSONL")
-    print("  --compare PATH     与历史快照对比失败分布变化")
+    print("  --compare PATH     与历史快照对比失败分布变化（含率差）")
+    print("  --task-type NAME   同上")
+    print("  --contracts / --contracts-file PATH  同上")
     print()
     print("示例:")
     print("  tdebug traj.json --json-out report.json --record")
     print("  tdebug judge traj.json --prompt-out judge.txt")
+    print("  tdebug scan trajs/ 50 --failures-out failures.json --compare baseline.json")
     print("  tdebug failures .tdebug/failures.jsonl --stats --stats-json-out stats.json")
 
 
@@ -156,6 +166,18 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
         elif a == "--stats-json-out" and i + 1 < len(args):
             flags["stats_json_out"] = args[i + 1]
             i += 2
+        elif a == "--task-type" and i + 1 < len(args):
+            flags["task_type"] = args[i + 1]
+            i += 2
+        elif a == "--failures-out" and i + 1 < len(args):
+            flags["failures_out"] = args[i + 1]
+            i += 2
+        elif a == "--contracts":
+            flags["contracts"] = True
+            i += 1
+        elif a == "--contracts-file" and i + 1 < len(args):
+            flags["contracts_file"] = args[i + 1]
+            i += 2
         elif a.startswith("-"):
             print(f"未知选项: {a}")
             sys.exit(1)
@@ -163,6 +185,32 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
             positional.append(a)
             i += 1
     return positional, flags
+
+
+def _analyzer_from_flags(flags: dict) -> Analyzer:
+    """Build Analyzer from CLI flags (task-type / contracts)."""
+    extra_contracts = None
+    if flags.get("contracts_file"):
+        path = flags["contracts_file"]
+        if not os.path.exists(path):
+            print(f"contracts 文件不存在: {path}")
+            sys.exit(1)
+        with open(path, encoding="utf-8") as f:
+            extra_contracts = json.load(f)
+        if not isinstance(extra_contracts, dict):
+            print("contracts 文件必须是 JSON object")
+            sys.exit(1)
+    enable = bool(flags.get("contracts") or flags.get("contracts_file"))
+    try:
+        return resolve_analyzer(
+            flags.get("task_type") or "default",
+            enable_tool_contracts=enable,
+            tool_contracts=extra_contracts if enable else None,
+        )
+    except ValueError as exc:
+        print(str(exc))
+        print(f"可选: {', '.join(PROFILE_NAMES)}")
+        sys.exit(1)
 
 
 def _parse_analyze_args(args: list[str]) -> tuple[str, dict]:
@@ -206,17 +254,18 @@ def _write_text(path: str, content: str) -> None:
         f.write(content)
 
 
-def _analyze_file(filepath: str) -> tuple:
+def _analyze_file(filepath: str, flags: Optional[dict] = None) -> tuple:
     if not os.path.exists(filepath):
         print(f"文件不存在: {filepath}")
         sys.exit(1)
     traj = load(filepath)
-    analysis = Analyzer().analyze(traj)
+    analyzer = _analyzer_from_flags(flags or {})
+    analysis = analyzer.analyze(traj)
     return traj, analysis
 
 
 def _cmd_analyze(filepath: str, flags: dict):
-    _, analysis = _analyze_file(filepath)
+    _, analysis = _analyze_file(filepath, flags)
     _safe_print(format_report(analysis))
 
     if flags.get("json_out"):
@@ -230,7 +279,7 @@ def _cmd_analyze(filepath: str, flags: dict):
 
 
 def _cmd_judge(filepath: str, flags: dict):
-    _, analysis = _analyze_file(filepath)
+    _, analysis = _analyze_file(filepath, flags)
     prompt = build_judge_prompt(analysis)
 
     if flags.get("prompt_out"):
@@ -297,10 +346,13 @@ def _cmd_scan(directory: str, n: int, flags: dict):
         print(f"目录中没有轨迹 JSON 文件: {directory}")
         return
 
+    analyzer = _analyzer_from_flags(flags)
+    task_type = flags.get("task_type") or "default"
+
     print("=" * 55)
     print("  Trace Debugger — 扫描结果")
     print(f"  目录: {directory}")
-    print(f"  最近 {len(trajs)} 条轨迹")
+    print(f"  最近 {len(trajs)} 条轨迹  task_type={task_type}")
     print("=" * 55)
 
     analyses = []
@@ -308,7 +360,7 @@ def _cmd_scan(directory: str, n: int, flags: dict):
     total_recorded = 0
 
     for i, traj in enumerate(trajs):
-        analysis = Analyzer().analyze(traj)
+        analysis = analyzer.analyze(traj)
         analyses.append(analysis)
         icon = "[PASS]" if "无错误" in analysis.overall_assessment else "[WARN]"
         fails = sorted({ft for pa in analysis.paths for ft in pa.failure_types})
@@ -334,7 +386,11 @@ def _cmd_scan(directory: str, n: int, flags: dict):
             print(f"  {ft:20s} {cnt:3d}  ({label})")
     print("=" * 55)
 
-    snapshot = build_scan_snapshot(directory, n, trajs, analyses, source_files=source_files)
+    snapshot = build_scan_snapshot(
+        directory, n, trajs, analyses,
+        source_files=source_files,
+        task_type=task_type,
+    )
 
     if flags.get("json_out"):
         _write_text(flags["json_out"], json.dumps(snapshot, ensure_ascii=False, indent=2))
@@ -343,6 +399,8 @@ def _cmd_scan(directory: str, n: int, flags: dict):
     if record_path and total_recorded:
         print(f"[已记录 {total_recorded} 条失败事件] {record_path}")
 
+    gate = None
+    baseline = None
     if flags.get("compare"):
         if not os.path.exists(flags["compare"]):
             print(f"对比基准不存在: {flags['compare']}")
@@ -352,9 +410,24 @@ def _cmd_scan(directory: str, n: int, flags: dict):
         gate = evaluate_regression_gate(snapshot, baseline)
         _safe_print(f"\n  门禁判定: {gate['decision'].upper()}  触发规则: {gate['triggered_rules'] or '无'}")
 
+    if flags.get("failures_out"):
+        compare_block = None
+        if gate and baseline is not None:
+            compare_block = {
+                "baseline_report_id": baseline.get("report_id"),
+                "baseline_timestamp": baseline.get("timestamp"),
+                "triggered_rules": gate.get("triggered_rules"),
+                "fail_rate": gate.get("fail_rate"),
+                "distribution_delta": gate.get("distribution_delta"),
+                "stability": gate.get("stability"),
+                "gate_decision": gate.get("decision"),
+            }
+        failures = build_failures_export(snapshot, compare=compare_block)
+        _write_text(flags["failures_out"], json.dumps(failures, ensure_ascii=False, indent=2))
+        print(f"\n[已写入 failure-gate] {flags['failures_out']}  schema={failures['schema_version']}")
+
     if flags.get("findings_out"):
-        baseline = None
-        if flags.get("compare") and os.path.exists(flags["compare"]):
+        if baseline is None and flags.get("compare") and os.path.exists(flags["compare"]):
             baseline = load_snapshot(flags["compare"])
         project_root = flags.get("project_root") or os.getcwd()
         findings = build_findings_report(
