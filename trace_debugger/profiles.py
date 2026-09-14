@@ -12,6 +12,9 @@ PROFILES: dict[str, dict[str, Any]] = {
     "qa": {
         "enable_offtrack": True,
         "offtrack_overlap": 0.15,
+        # Structural search weak signals (not semantic quality)
+        "search_min_results": 1,
+        "search_require_url": True,
     },
     "code": {
         "enable_offtrack": False,

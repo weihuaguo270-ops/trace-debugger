@@ -1,0 +1,25 @@
+{
+  "session_id": "golden_search_weak",
+  "query": "搜索 Python 异步 IO 教程",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-14T00:00:02Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "调用搜索",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Python asyncio tutorial\"}"
+      },
+      "observation": "{\"results\": [{\"title\": \"假结果一\", \"snippet\": \"无链接\"}, {\"title\": \"假结果二\", \"snippet\": \"仍无 url\"}, {\"title\": \"假结果三\", \"snippet\": \"只有标题\"}]}",
+      "duration_seconds": 1.2
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 搜索 Python 异步 IO 教程 仅得到无链接条目",
+      "observation": ""
+    }
+  ],
+  "final_answer": "搜索 Python 异步 IO 教程 仅得到无链接条目",
+  "total_duration_seconds": 1.5
+}

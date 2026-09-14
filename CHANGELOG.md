@@ -4,6 +4,7 @@
 
 ### Added
 
+- Search structural weak signal search_weak (search_min_results / search_require_url; enabled in qa profile) — not semantic quality Judge
 - `trace_debugger.adapters`: OpenAI / Anthropic messages → Format B (no SDK dependency)
 - OpenAI Chat stream coalesce (`coalesce_chat_completion_chunks`) — rejects half-finished turns
 - OpenAI Responses API items → Format B (`openai_responses_to_trajectory`)

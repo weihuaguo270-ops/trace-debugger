@@ -39,6 +39,16 @@
       "expected_failures": [],
       "must_not_detect": ["llm_offtrack"],
       "notes": "创意改写；creative profile 关闭 offtrack"
+    },
+    {
+      "id": "fp_search_with_urls",
+      "file": "fp_search_with_urls.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "task_type": "qa",
+      "expected_failures": [],
+      "must_not_detect": ["search_weak", "search_empty", "llm_offtrack"],
+      "notes": "正常带 url 的 results；qa 结构规则不得误报"
     }
   ]
 }

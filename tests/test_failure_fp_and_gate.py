@@ -24,7 +24,7 @@ from trace_debugger.tool_contracts import check_tool_contract, merge_contracts
 
 def test_false_positive_suite_passes():
     report = run_false_positive_suite()
-    assert report["n_cases"] == 4
+    assert report["n_cases"] == 5
     assert report["n_failed"] == 0, report
 
 
@@ -35,6 +35,19 @@ def test_fp_case(case_id: str):
     analysis = analyze_case(case, golden_dir=DEFAULT_FP_DIR)
     errors = validate_case(analysis, case)
     assert not errors, f"{case_id}: {errors}"
+
+
+def test_search_weak_no_url_vs_with_url():
+    """3 条无 url → search_weak；带 url → 不触发。"""
+    weak = DEFAULT_FP_DIR.parent / "failure_golden" / "search_weak.json"
+    ok = DEFAULT_FP_DIR / "fp_search_with_urls.json"
+    az = Analyzer(search_min_results=1, search_require_url=True)
+    weak_fails = {ft for pa in az.analyze(load(str(weak))).paths for ft in pa.failure_types}
+    ok_fails = {ft for pa in az.analyze(load(str(ok))).paths for ft in pa.failure_types}
+    assert FailureType.SEARCH_WEAK in weak_fails
+    assert FailureType.SEARCH_EMPTY not in weak_fails
+    assert FailureType.SEARCH_WEAK not in ok_fails
+    assert FailureType.SEARCH_EMPTY not in ok_fails
 
 
 def test_code_profile_skips_offtrack():

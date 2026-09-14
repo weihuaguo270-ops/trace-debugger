@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "description": "黄金失败集 — taxonomy + 正例 + held-out；供证据链与 CI 门禁",
-  "n_cases": 28,
+  "n_cases": 29,
   "cases": [
     {
       "id": "golden_tool_error",
@@ -38,6 +38,26 @@
         }
       ],
       "notes": "verified detected=['approval_denied']"
+    },
+    {
+      "id": "golden_search_weak",
+      "file": "search_weak.json",
+      "split": "golden",
+      "category": "negative",
+      "task_type": "qa",
+      "expected_failures": [
+        "search_weak"
+      ],
+      "must_not_detect": [
+        "search_empty"
+      ],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "search_weak"
+        }
+      ],
+      "notes": "3 results without url → search_weak under qa profile"
     },
     {
       "id": "golden_search_empty",
