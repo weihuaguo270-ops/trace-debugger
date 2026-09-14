@@ -22,6 +22,28 @@ EvidenceState = Literal[
 
 GateDecision = Literal["pass", "review", "hold"]
 
+_GATE_RANK: dict[str, int] = {"pass": 0, "review": 1, "hold": 2}
+
+
+def should_fail_on_gate(decision: str, fail_on: str) -> bool:
+    """Return True if CLI/CI should exit non-zero for this gate decision.
+
+    ``fail_on`` is the minimum severity that fails the build:
+    - ``hold``  → only ``hold`` fails
+    - ``review`` → ``review`` or ``hold`` fails
+    - ``pass``  → any non-pass fails (strict)
+    """
+    d = (decision or "pass").strip().lower()
+    threshold = (fail_on or "").strip().lower()
+    if threshold not in _GATE_RANK:
+        raise ValueError(
+            f"invalid fail_on {fail_on!r}; expected hold|review|pass"
+        )
+    if d not in _GATE_RANK:
+        d = "hold"
+    return _GATE_RANK[d] >= _GATE_RANK[threshold]
+
+
 DIMENSIONS: dict[str, str] = {
     "task-understanding": "Task Understanding",
     "controlled-execution": "Controlled Execution",

@@ -51,6 +51,7 @@ from trace_debugger.harness_health import (
     build_findings_report,
     evaluate_regression_gate,
     probe_project_mechanisms,
+    should_fail_on_gate,
 )
 from trace_debugger.profiles import resolve_analyzer, PROFILE_NAMES
 from trace_debugger.evidence import EvidenceItem, evidence_chain_from_analysis
@@ -69,4 +70,12 @@ from trace_debugger.episode import (
     EPISODE_SCHEMA_VERSION,
     ImportedEpisode,
     import_evaluation_episode,
+)
+from trace_debugger.adapters import (
+    openai_messages_to_trajectory,
+    anthropic_messages_to_trajectory,
+    openai_responses_to_trajectory,
+    chat_stream_to_trajectory,
+    coalesce_chat_completion_chunks,
+    IncompleteStreamError,
 )

@@ -9,6 +9,7 @@
   - 最终方案的可靠性评估
 """
 from __future__ import annotations
+import json
 import re
 from collections import Counter
 from dataclasses import dataclass, field
@@ -25,7 +26,10 @@ class FailureType:
     """失败原因分类"""
     TOOL_ERROR = "tool_error"           # 工具调用报错
     ACCEPTANCE_FAILED = "acceptance_failed"  # 验收测试失败
+    APPROVAL_DENIED = "approval_denied"  # MCP / 策略批准被拒绝
+    INCOMPLETE_STREAM = "incomplete_stream"  # 半截流 / in_progress 打标
     SEARCH_EMPTY = "search_empty"       # 搜索无结果
+    SEARCH_WEAK = "search_weak"         # 有结果但缺 url/title 等结构（非语义质量）
     SEARCH_TIMEOUT = "search_timeout"   # 搜索超时
     LLM_OFFTRACK = "llm_offtrack"      # LLM 跑偏（答非所问）
     CONTEXT_OVERFLOW = "context_overflow"  # 上下文溢出
@@ -36,7 +40,10 @@ class FailureType:
     LABELS = {
         "tool_error": "工具调用报错",
         "acceptance_failed": "验收测试失败",
+        "approval_denied": "批准被拒绝",
+        "incomplete_stream": "半截流/未完成",
         "search_empty": "搜索无有效结果",
+        "search_weak": "搜索结果结构过弱",
         "search_timeout": "搜索超时",
         "llm_offtrack": "LLM 偏离用户意图",
         "context_overflow": "上下文窗口溢出",
@@ -44,6 +51,106 @@ class FailureType:
         "no_answer": "未给出最终答案",
         "unknown": "未知原因",
     }
+
+
+def _is_approval_denied(action_name: str, observation: str, error_message: str) -> bool:
+    """MCP / policy approval denied (not a generic tool crash)."""
+    name = (action_name or "").lower()
+    blob = f"{observation or ''}\n{error_message or ''}".lower()
+    if "mcp approval denied" in blob or "responses.mcp.approval_denied" in blob:
+        return True
+    return "mcp_approval_response" in name and (
+        "approval denied" in blob or "approve=false" in blob.replace(" ", "")
+    )
+
+
+def _is_incomplete_stream(action_name: str, observation: str, error_message: str) -> bool:
+    """Marked half-finished stream / Responses in_progress item."""
+    name = (action_name or "").lower()
+    blob = f"{observation or ''}\n{error_message or ''}".lower()
+    if "responses.incomplete" in blob or "incomplete stream" in blob:
+        return True
+    return name == "incomplete_stream"
+
+
+def _parse_json_blob(text: str) -> Any:
+    raw = (text or "").strip()
+    if not raw or raw[0] not in "{[":
+        return None
+    try:
+        return json.loads(raw)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return None
+
+
+def extract_search_result_items(observation: str) -> Optional[list[Any]]:
+    """If observation is JSON with a ``results`` list (or is a list), return it.
+
+    Returns ``None`` when the observation is not structured search payload
+    (plain text stays on the short-obs ``search_empty`` path).
+    """
+    data = _parse_json_blob(observation)
+    if data is None:
+        return None
+    if isinstance(data, list):
+        return data
+    if not isinstance(data, dict):
+        return None
+    for key in ("results", "items", "organic", "web_results"):
+        if key in data and isinstance(data[key], list):
+            return data[key]
+    nested = data.get("output") or data.get("data") or data.get("response")
+    if isinstance(nested, dict):
+        for key in ("results", "items"):
+            if key in nested and isinstance(nested[key], list):
+                return nested[key]
+    if isinstance(nested, list):
+        return nested
+    # Explicit empty results key
+    if "results" in data and data["results"] is None:
+        return []
+    return None
+
+
+def _hit_has_url(hit: Any) -> bool:
+    if not isinstance(hit, dict):
+        return False
+    for key in ("url", "link", "href", "source_url", "permalink"):
+        val = hit.get(key)
+        if isinstance(val, str) and val.strip():
+            return True
+        if isinstance(val, dict) and (val.get("url") or val.get("href")):
+            return True
+    return False
+
+
+def _hit_has_title(hit: Any) -> bool:
+    if not isinstance(hit, dict):
+        return False
+    for key in ("title", "name", "headline"):
+        val = hit.get(key)
+        if isinstance(val, str) and val.strip():
+            return True
+    return False
+
+
+def search_hit_structurally_ok(
+    hit: Any,
+    *,
+    require_url: bool = False,
+    require_title: bool = False,
+) -> bool:
+    """Structural usability only — no relevance / quality judging."""
+    if not isinstance(hit, dict):
+        return False
+    if require_url and not _hit_has_url(hit):
+        return False
+    if require_title and not _hit_has_title(hit):
+        return False
+    # If neither required, still treat "no url and no title" as unusable
+    if not require_url and not require_title:
+        return _hit_has_url(hit) or _hit_has_title(hit)
+    return True
 
 
 _STOPWORDS = {
@@ -103,6 +210,28 @@ def is_search_tool(name: str, *, substrings: tuple[str, ...] = ("search",), extr
     if "搜索" in (name or ""):
         return True
     return (name or "") in extra_names or n in {x.lower() for x in extra_names}
+
+
+def _responses_structured_error_rule(
+    action_name: str,
+    observation: str,
+    error_message: str,
+) -> str:
+    """Pick evidence rule_id for Responses computer/shell structured failures."""
+    name = (action_name or "").lower()
+    blob = f"{observation or ''}\n{error_message or ''}"
+    blob_l = blob.lower()
+    if "responses.protocol.mcp_list_tools" in blob_l:
+        return "responses.protocol.mcp_list_tools"
+    if "responses.shell.nonzero_exit" in blob_l or (
+        "shell" in name and "exit_code=" in blob_l
+    ):
+        return "responses.shell.nonzero_exit"
+    if "computer" in name or "responses.computer.failed" in blob_l:
+        return "responses.computer.failed"
+    if "shell" in name or "responses.shell.failed" in blob_l:
+        return "responses.shell.failed"
+    return "heuristic.tool_error"
 
 
 def is_final_thought(thought: str, markers: tuple[str, ...]) -> bool:
@@ -192,6 +321,9 @@ class Analyzer:
         final_answer_markers: tuple[str, ...] = ("FINAL ANSWER",),
         search_tool_substrings: tuple[str, ...] = ("search",),
         search_tool_names: tuple[str, ...] = (),
+        search_min_results: int = 0,
+        search_require_url: bool = False,
+        search_require_title: bool = False,
         enable_tool_contracts: bool = False,
         tool_contracts: Optional[dict[str, Any]] = None,
         task_type: str = "default",
@@ -204,9 +336,21 @@ class Analyzer:
         self.final_answer_markers = final_answer_markers
         self.search_tool_substrings = search_tool_substrings
         self.search_tool_names = search_tool_names
+        self.search_min_results = int(search_min_results or 0)
+        self.search_require_url = bool(search_require_url)
+        self.search_require_title = bool(search_require_title)
         self.enable_tool_contracts = enable_tool_contracts
         self.tool_contracts = merge_contracts(tool_contracts) if enable_tool_contracts else {}
         self.task_type = task_type or "default"
+
+    @property
+    def search_structure_checks_enabled(self) -> bool:
+        """True when configurable structural search rules are active."""
+        return (
+            self.search_min_results > 0
+            or self.search_require_url
+            or self.search_require_title
+        )
 
     def step_is_final(self, step: Step) -> bool:
         """按当前分析器终答标记判断步骤。"""
@@ -581,34 +725,134 @@ class Analyzer:
                         failure_type=failure_type,
                     )
                 )
+            elif step.has_error and _is_incomplete_stream(
+                step.action_name, step.observation, step.error_message
+            ):
+                failure_type = FailureType.INCOMPLETE_STREAM
+                failure_detail = (
+                    f"半截流/未完成: "
+                    f"{(step.error_message or step.observation or '')[:100]}"
+                )
+                suggestion = "使用完整 finish_reason / completed 导出，或仅在 CI 调试时 on_incomplete=mark"
+                ev.append(
+                    evidence(
+                        "responses.incomplete",
+                        failure_detail,
+                        excerpt=(step.error_message or step.observation or "")[:120],
+                        step_index=step.index,
+                        failure_type=failure_type,
+                    )
+                )
+            elif step.has_error and _is_approval_denied(
+                step.action_name, step.observation, step.error_message
+            ):
+                failure_type = FailureType.APPROVAL_DENIED
+                failure_detail = (
+                    f"{step.action_name} 批准被拒绝: "
+                    f"{(step.error_message or step.observation or '')[:100]}"
+                )
+                suggestion = "检查 MCP/策略审批策略，或改用不需批准的工具路径"
+                ev.append(
+                    evidence(
+                        "responses.mcp.approval_denied",
+                        failure_detail,
+                        excerpt=(step.error_message or step.observation or "")[:120],
+                        step_index=step.index,
+                        failure_type=failure_type,
+                    )
+                )
             elif step.has_error:
                 failure_type = FailureType.TOOL_ERROR
                 failure_detail = f"{step.action_name} 调用失败: {step.error_message[:100]}"
                 suggestion = f"检查 {step.action_name} 的参数或重试"
+                rule_id = _responses_structured_error_rule(
+                    step.action_name, step.observation, step.error_message,
+                )
                 ev.append(
                     evidence(
-                        "heuristic.tool_error",
+                        rule_id,
                         failure_detail,
-                        excerpt=(step.error_message or "")[:120],
+                        excerpt=(step.error_message or step.observation or "")[:120],
                         step_index=step.index,
                         failure_type=failure_type,
                     )
                 )
-            elif self.tool_is_search(step.action_name) and (
-                not step.observation or len(step.observation) < 20
-            ):
-                failure_type = FailureType.SEARCH_EMPTY
-                failure_detail = f"搜索 '{step.action_args[:60]}' 无有效结果"
-                suggestion = "换搜索词或尝试其他来源"
-                ev.append(
-                    evidence(
-                        "heuristic.search_empty",
-                        failure_detail,
-                        excerpt=(step.observation or "")[:80],
-                        step_index=step.index,
-                        failure_type=failure_type,
+            elif self.tool_is_search(step.action_name):
+                obs = (step.observation or "").strip()
+                hits = extract_search_result_items(obs)
+                # Empty / tiny text, or structured results=[]
+                if (not obs or len(obs) < 20) or (hits is not None and len(hits) == 0):
+                    failure_type = FailureType.SEARCH_EMPTY
+                    failure_detail = f"搜索 '{step.action_args[:60]}' 无有效结果"
+                    suggestion = "换搜索词或尝试其他来源"
+                    rule_id = (
+                        "heuristic.search_empty.results"
+                        if hits is not None and len(hits) == 0
+                        else "heuristic.search_empty"
                     )
-                )
+                    ev.append(
+                        evidence(
+                            rule_id,
+                            failure_detail,
+                            excerpt=obs[:80],
+                            step_index=step.index,
+                            failure_type=failure_type,
+                        )
+                    )
+                elif self.search_structure_checks_enabled and hits is not None:
+                    usable = [
+                        h
+                        for h in hits
+                        if search_hit_structurally_ok(
+                            h,
+                            require_url=self.search_require_url,
+                            require_title=self.search_require_title,
+                        )
+                    ]
+                    need = self.search_min_results if self.search_min_results > 0 else 1
+                    if len(usable) < need:
+                        failure_type = FailureType.SEARCH_WEAK
+                        failure_detail = (
+                            f"搜索 '{step.action_args[:60]}' 有 {len(hits)} 条结果但"
+                            f"结构过弱（可用 {len(usable)} < {need}；"
+                            f"require_url={self.search_require_url}）"
+                        )
+                        suggestion = "检查检索工具是否返回 url/title；勿做语义垃圾评判"
+                        ev.append(
+                            evidence(
+                                "heuristic.search_weak.structure",
+                                failure_detail,
+                                excerpt=obs[:120],
+                                step_index=step.index,
+                                failure_type=failure_type,
+                            )
+                        )
+                    elif step.duration > self.timeout_seconds:
+                        failure_type = FailureType.SEARCH_TIMEOUT
+                        failure_detail = f"{step.action_name} 耗时 {step.duration:.1f}s"
+                        suggestion = "考虑限制搜索范围或加缓存"
+                        ev.append(
+                            evidence(
+                                "heuristic.search_timeout",
+                                failure_detail,
+                                excerpt=f"{step.duration:.1f}s",
+                                step_index=step.index,
+                                failure_type=failure_type,
+                            )
+                        )
+                elif step.duration > self.timeout_seconds:
+                    failure_type = FailureType.SEARCH_TIMEOUT
+                    failure_detail = f"{step.action_name} 耗时 {step.duration:.1f}s"
+                    suggestion = "考虑限制搜索范围或加缓存"
+                    ev.append(
+                        evidence(
+                            "heuristic.search_timeout",
+                            failure_detail,
+                            excerpt=f"{step.duration:.1f}s",
+                            step_index=step.index,
+                            failure_type=failure_type,
+                        )
+                    )
             elif step.duration > self.timeout_seconds:
                 failure_type = FailureType.SEARCH_TIMEOUT
                 failure_detail = f"{step.action_name} 耗时 {step.duration:.1f}s"
@@ -682,7 +926,10 @@ class Analyzer:
         mapping = {
             FailureType.TOOL_ERROR: "检查工具参数是否正确，或增加参数校验",
             FailureType.ACCEPTANCE_FAILED: "检查失败断言和候选差异，修复后重新验收",
+            FailureType.APPROVAL_DENIED: "检查 MCP/策略审批，确认 approve 或换工具路径",
+            FailureType.INCOMPLETE_STREAM: "等待流结束或改用 on_incomplete=mark 仅作调试落盘",
             FailureType.SEARCH_EMPTY: "调整搜索词策略，先确认需求再搜索",
+            FailureType.SEARCH_WEAK: "补齐检索结果的 url/title 字段；不做语义质量 Judge",
             FailureType.SEARCH_TIMEOUT: "限制搜索范围或添加缓存层",
             FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束，或增加意图校验",
             FailureType.CONTEXT_OVERFLOW: "压缩上下文或启用摘要/窗口滑动",

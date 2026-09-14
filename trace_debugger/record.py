@@ -537,7 +537,10 @@ def _suggestion_for_type(failure_type: str) -> str:
     mapping = {
         FailureType.TOOL_ERROR: "检查工具参数是否正确，或增加参数校验",
         FailureType.ACCEPTANCE_FAILED: "检查失败断言和候选差异，修复后重新验收",
+        FailureType.APPROVAL_DENIED: "检查 MCP/策略审批，确认 approve 或换工具路径",
+        FailureType.INCOMPLETE_STREAM: "等待流结束或改用 on_incomplete=mark 仅作调试落盘",
         FailureType.SEARCH_EMPTY: "调整搜索词策略，先确认需求再搜索",
+        FailureType.SEARCH_WEAK: "补齐检索结果的 url/title 字段；不做语义质量 Judge",
         FailureType.SEARCH_TIMEOUT: "限制搜索范围或添加缓存层",
         FailureType.LLM_OFFTRACK: "在 system prompt 中强化约束，或增加意图校验",
         FailureType.CONTEXT_OVERFLOW: "压缩上下文或启用摘要/窗口滑动",

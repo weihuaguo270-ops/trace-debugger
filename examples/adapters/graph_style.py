@@ -1,7 +1,8 @@
-"""Graph-style Agent 适配器 — 模拟节点/状态机类运行时（非 ReAct 原生字段）
+"""有限示例：当节点记录已经近似「一步」时，映射为 StepEvent。
 
-内部格式与 Format B 不同，通过 adapter 映射为 StepEvent。
-可作为 LangGraph / 状态机 Agent 的集成样板。
+警告：这不是「把整张 LangGraph / 状态机编译成 Format B steps」的方案。
+图拓扑应留在原运行时；仅在已有 thought/tool/obs 边界时使用本映射。
+政策说明见 docs/INTEGRATIONS.md「LangGraph / 状态机图」。
 """
 from __future__ import annotations
 
@@ -13,7 +14,7 @@ from trace_debugger.harness import StepEvent
 
 @dataclass
 class GraphNodeRecord:
-    """Graph 运行时单节点记录（框架内部形态）。"""
+    """已近似线性步进的节点记录（非通用图 IR）。"""
 
     run_id: str
     node_name: str

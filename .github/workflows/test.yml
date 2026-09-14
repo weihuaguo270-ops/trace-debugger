@@ -49,6 +49,13 @@ jobs:
       run: python examples/publish_golden_evidence.py --stem golden_evidence_baseline --out-dir /tmp/tdebug_golden_docs
     - name: Publish failure snapshot (legacy bundle)
       run: python examples/publish_failure_snapshot.py --dir examples/failure_bundle --stem ci_failure_smoke --out-dir /tmp/tdebug_docs
+    - name: Rule regression gate with --fail-on hold
+      run: |
+        tdebug scan fixtures/failure_golden 5 --json-out /tmp/tdebug_gate_baseline.json
+        tdebug scan fixtures/failure_golden 5 \
+          --compare /tmp/tdebug_gate_baseline.json \
+          --fail-on hold \
+          --failures-out /tmp/tdebug_gate_failures.json
 
   test-windows:
     runs-on: windows-latest

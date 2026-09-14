@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
-  "description": "黄金失败集 — 7 类 taxonomy + 正例 + held-out；供证据链与 CI 门禁",
-  "n_cases": 27,
+  "description": "黄金失败集 — taxonomy + 正例 + held-out；供证据链与 CI 门禁",
+  "n_cases": 28,
   "cases": [
     {
       "id": "golden_tool_error",
@@ -19,6 +19,25 @@
         }
       ],
       "notes": "verified detected=['tool_error']"
+    },
+    {
+      "id": "golden_approval_denied",
+      "file": "approval_denied.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "approval_denied"
+      ],
+      "must_not_detect": [
+        "tool_error"
+      ],
+      "expected_step_failures": [
+        {
+          "step": 2,
+          "type": "approval_denied"
+        }
+      ],
+      "notes": "verified detected=['approval_denied']"
     },
     {
       "id": "golden_search_empty",

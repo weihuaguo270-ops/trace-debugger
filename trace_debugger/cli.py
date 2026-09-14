@@ -20,7 +20,11 @@ from .record import (
     failure_stats_from_log,
 )
 from .validate import format_validation_report, validate_trajectory_file
-from .harness_health import evaluate_regression_gate, build_findings_report
+from .harness_health import (
+    evaluate_regression_gate,
+    build_findings_report,
+    should_fail_on_gate,
+)
 from .profiles import PROFILE_NAMES, resolve_analyzer
 
 
@@ -116,13 +120,15 @@ def _print_help():
     print("  --project-root PATH  探测项目机制（golden/baseline/ledger）用于 findings")
     print("  --record [PATH]    为每条轨迹追加失败事件到 JSONL")
     print("  --compare PATH     与历史快照对比失败分布变化（含率差）")
+    print("  --fail-on LEVEL    compare 后门禁达到阈值则 exit 1：hold|review|pass")
+    print("  --incomplete MODE  adapter 导入半截流：reject(默认)|mark；与 --fail-on 无关")
     print("  --task-type NAME   同上")
     print("  --contracts / --contracts-file PATH  同上")
     print()
     print("示例:")
     print("  tdebug traj.json --json-out report.json --record")
     print("  tdebug judge traj.json --prompt-out judge.txt")
-    print("  tdebug scan trajs/ 50 --failures-out failures.json --compare baseline.json")
+    print("  tdebug scan trajs/ 50 --compare baseline.json --fail-on hold --failures-out failures.json")
     print("  tdebug failures .tdebug/failures.jsonl --stats --stats-json-out stats.json")
 
 
@@ -177,6 +183,20 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
             i += 1
         elif a == "--contracts-file" and i + 1 < len(args):
             flags["contracts_file"] = args[i + 1]
+            i += 2
+        elif a == "--fail-on" and i + 1 < len(args):
+            level = args[i + 1].strip().lower()
+            if level not in ("hold", "review", "pass"):
+                print(f"--fail-on 无效: {args[i + 1]}（期望 hold|review|pass）")
+                sys.exit(1)
+            flags["fail_on"] = level
+            i += 2
+        elif a == "--incomplete" and i + 1 < len(args):
+            mode = args[i + 1].strip().lower()
+            if mode not in ("reject", "mark"):
+                print(f"--incomplete 无效: {args[i + 1]}（期望 reject|mark）")
+                sys.exit(1)
+            flags["incomplete"] = mode
             i += 2
         elif a.startswith("-"):
             print(f"未知选项: {a}")
@@ -401,6 +421,10 @@ def _cmd_scan(directory: str, n: int, flags: dict):
 
     gate = None
     baseline = None
+    if flags.get("fail_on") and not flags.get("compare"):
+        print("--fail-on 需要同时提供 --compare PATH")
+        sys.exit(1)
+
     if flags.get("compare"):
         if not os.path.exists(flags["compare"]):
             print(f"对比基准不存在: {flags['compare']}")
@@ -435,3 +459,13 @@ def _cmd_scan(directory: str, n: int, flags: dict):
         )
         _write_text(flags["findings_out"], json.dumps(findings, ensure_ascii=False, indent=2))
         print(f"\n[已写入 findings] {flags['findings_out']}  gate={findings['gate_decision']}")
+
+    if flags.get("fail_on") and gate is not None:
+        decision = gate.get("decision") or "pass"
+        if should_fail_on_gate(decision, flags["fail_on"]):
+            print(
+                f"\n[fail-on={flags['fail_on']}] 门禁 {decision.upper()} "
+                f"达到阈值，退出码 1"
+            )
+            sys.exit(1)
+        print(f"\n[fail-on={flags['fail_on']}] 门禁 {decision.upper()} 未达阈值，通过")

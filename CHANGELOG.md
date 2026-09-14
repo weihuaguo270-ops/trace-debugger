@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### Added
+
+- `trace_debugger.adapters`: OpenAI / Anthropic messages → Format B (no SDK dependency)
+- OpenAI Chat stream coalesce (`coalesce_chat_completion_chunks`) — rejects half-finished turns
+- OpenAI Responses API items → Format B (`openai_responses_to_trajectory`)
+- Responses extended Item map: computer / MCP / web&file search / shell / code_interpreter / image (no base64) / multimodal refs / protocol + unknown fallback
+- CLI `--fail-on hold|review|pass` with `--compare` (non-zero exit for CI); CI smoke step
+- Computer/shell structured failures (`responses.computer.failed` / `responses.shell.nonzero_exit`) without requiring English `error` in free text
+- MCP `approve=false` → `approval_denied` + golden fixture
+- `on_incomplete="reject"|"mark"` for half-finished streams/Responses; CLI `--incomplete`; type `incomplete_stream`
+- Tests: `tests/test_message_adapters.py`, `tests/test_openai_stream_and_responses.py`, `tests/test_responses_extended_items.py`, `tests/test_fail_on_cli.py`
+
+### Documentation
+
+- INTEGRATIONS: OpenAI/Anthropic field gaps; LangGraph must not be force-flattened to `steps`
+- Wired message adapters into INTEGRATIONS usage snippet
+
 ## 0.6.0 (2026-09-13)
 
 ### Added
