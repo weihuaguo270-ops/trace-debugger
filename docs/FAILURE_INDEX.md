@@ -6,8 +6,8 @@
 
 | 报告 | 来源 | 轨迹数 | 说明 |
 |------|------|--------|------|
-| [golden_evidence_baseline.md](./golden_evidence_baseline.md) | `fixtures/failure_golden` | **27** | CI 门禁 100%；**对外引用首选** |
-| [GOLDEN_FAILURE_INDEX.md](./GOLDEN_FAILURE_INDEX.md) | 黄金集索引 | 27 | taxonomy + golden/held_out 分栏 |
+| [golden_evidence_baseline.md](./golden_evidence_baseline.md) | `fixtures/failure_golden` | **29** | CI 门禁 100%；**对外引用首选** |
+| [GOLDEN_FAILURE_INDEX.md](./GOLDEN_FAILURE_INDEX.md) | 黄金集索引 | 29 | taxonomy + golden/held_out 分栏 |
 | [tdebug_failure_20260715.md](./tdebug_failure_20260715.md) | `examples/failure_bundle` | 5 | 快速演示 bundle |
 
 ## 一键发布（本仓自洽，无需外部 Agent）
@@ -18,7 +18,7 @@ python examples/publish_golden_evidence.py
 
 # 演示 bundle
 python examples/publish_failure_snapshot.py --dir examples/failure_bundle
-tdebug scan fixtures/failure_golden 27
+tdebug scan fixtures/failure_golden 29
 
 # 导出前校验
 tdebug validate fixtures/failure_golden/tool_error.json

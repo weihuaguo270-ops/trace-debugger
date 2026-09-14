@@ -1,16 +1,16 @@
 # 黄金失败集证据（golden_evidence_baseline）
 
-- **report_id:** `golden_evidence_20260728_115720`
-- **timestamp:** `2026-07-28T11:57:20.892681+00:00`
-- **cases:** 27 (pass 27 / fail 0)
+- **report_id:** `golden_evidence_20260914_054351`
+- **timestamp:** `2026-09-14T05:43:51.557834+00:00`
+- **cases:** 29 (pass 29 / fail 0)
 - **pass_rate:** 100%
-- **git:** `99ae967`
+- **git:** `ee6c5e6`
 
 ## 分栏通过率
 
 | split | n | passed | pass_rate |
 |-------|--:|-------:|----------:|
-| `golden` | 21 | 21 | 100% |
+| `golden` | 23 | 23 | 100% |
 | `held_out` | 6 | 6 | 100% |
 
 ## 失败类型覆盖（负例轨迹）
@@ -24,10 +24,13 @@
 | `no_answer` | 3 | 未给出最终答案 |
 | `llm_offtrack` | 2 | LLM 偏离用户意图 |
 | `search_timeout` | 2 | 搜索超时 |
+| `approval_denied` | 1 | 批准被拒绝 |
 
 ## 用例明细
 
 - `golden_tool_error` [PASS] split=golden expected=[tool_error] detected=[tool_error] — tool_error.json
+- `golden_approval_denied` [PASS] split=golden expected=[approval_denied] detected=[approval_denied] — approval_denied.json
+- `golden_search_weak` [PASS] split=golden expected=[search_weak] detected=[search_weak] — search_weak.json
 - `golden_search_empty` [PASS] split=golden expected=[search_empty] detected=[search_empty] — search_empty.json
 - `golden_search_timeout` [PASS] split=golden expected=[search_timeout] detected=[search_timeout] — search_timeout.json
 - `golden_duplicate_with_empty` [PASS] split=golden expected=[duplicate,search_empty] detected=[duplicate,search_empty] — duplicate_with_empty.json

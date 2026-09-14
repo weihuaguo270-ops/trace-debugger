@@ -20,6 +20,7 @@
 
 - INTEGRATIONS: OpenAI/Anthropic field gaps; LangGraph must not be force-flattened to `steps`
 - Wired message adapters into INTEGRATIONS usage snippet
+- README / VALUE / golden indexes / POSITIONING：对齐 Unreleased 进展与黄金集 29 条
 
 ## 0.6.0 (2026-09-13)
 
