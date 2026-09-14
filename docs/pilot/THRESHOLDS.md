@@ -64,8 +64,15 @@
 2. `含失败轨迹数: X → Y (+Z)` → 换算占比后对照 **规则 B**
 3. `扫描轨迹总数` 变化 → 若 `n` 不一致，先对齐 N 再比（试点固定 N=100）
 4. `门禁判定: PASS|REVIEW|HOLD` → 与 `--findings-out` 中 `gate_decision` 一致
+5. `--fail-on hold|review|pass` → 达到阈值时 **非零退出**（CI 硬拦）；`--fail-on` 必须配合 `--compare`
 
-结构化 findings 见 [HARNESS_HEALTH.md](../../../react-agent/docs/HARNESS_HEALTH.md)（`schemas/findings.schema.json`）。
+| `--fail-on` | exit 1 当 |
+|-------------|-----------|
+| `hold` | 仅 `hold` |
+| `review` | `review` 或 `hold` |
+| `pass` | 任何非 `pass`（最严） |
+
+默认不加 `--fail-on` 时仍只打印判定，不改退出码。
 
 ---
 

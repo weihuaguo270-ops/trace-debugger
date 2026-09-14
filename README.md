@@ -121,6 +121,7 @@ Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 |------|------|
 | `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 规则回归对比（含率差） |
 | `tdebug scan … --failures-out failures.json` | **failure-gate/v1**：供 llm-eval-engine 消费 |
+| `tdebug scan … --compare baseline.json --fail-on hold` | 门禁达 hold（或 `--fail-on review`）则 **exit 1** 拦 CI |
 | `tdebug scan … --findings-out findings.json` | Harness Health：门禁判定 + 修复建议 |
 | `tdebug scan … --task-type qa\|code\|creative` | 任务类型分析配置 |
 | `tdebug … --contracts` | 启用 tool contract → `tool_error` |
@@ -146,8 +147,10 @@ tdebug judge offtrack.json --prompt-out judge.txt
 ## 轨迹格式与集成
 
 - Schema：[schemas/agent_trajectory.schema.json](schemas/agent_trajectory.schema.json)
-- 集成：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) · Adapters：[examples/adapters/](examples/adapters/)
+- 集成：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)（含 OpenAI/Anthropic 缺口、LangGraph 不硬转 steps）· Adapters：[examples/adapters/](examples/adapters/)
+- **Messages 适配（已实现，无 SDK）：** `from trace_debugger.adapters import openai_messages_to_trajectory, anthropic_messages_to_trajectory`
 - Episode：`evaluation-episode/v1` 可由不同 Agent SDK 导出后离线导入；本仓不依赖 LangGraph、OpenAI Agents SDK 或生产方 Python 包
+- **LangGraph / 状态机：** 不要把整图强制拍平为 `steps`；仅在明确的工具/ReAct 边界上局部导出 Format B（见 INTEGRATIONS）
 - 运行数据：[docs/PORTABILITY.md](docs/PORTABILITY.md)；默认不再写入已安装包目录
 - Analyzer 可配置：`final_answer_markers`、`search_tool_names` 等
 
