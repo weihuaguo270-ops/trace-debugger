@@ -26,10 +26,14 @@ from .harness_health import (
     should_fail_on_gate,
 )
 from .profiles import PROFILE_NAMES, resolve_analyzer
+from .console_io import configure_stdio, safe_print
 
 
 def main():
     """CLI 入口"""
+    # 输出被重定向时 Windows 会退回 ANSI 代码页，中文直接导致 UnicodeEncodeError；
+    # 入口处统一切到 UTF-8 + replace，后面的裸 print 才不会再炸。
+    configure_stdio()
     argv = sys.argv[1:]
     if not argv:
         print("用法: tdebug <轨迹.json> | replay <轨迹.json> | scan <目录> | judge <轨迹.json>")
@@ -259,11 +263,7 @@ def _parse_scan_args(args: list[str]) -> tuple[str, int, dict]:
 
 def _safe_print(text: str) -> None:
     """Avoid UnicodeEncodeError on Windows GBK consoles."""
-    try:
-        print(text)
-    except UnicodeEncodeError:
-        enc = getattr(sys.stdout, "encoding", None) or "utf-8"
-        print(text.encode(enc, errors="replace").decode(enc, errors="replace"))
+    safe_print(text)
 
 
 def _write_text(path: str, content: str) -> None:
