@@ -2,6 +2,63 @@
 
 ## Unreleased
 
+### Added
+
+- `trace_debugger.adapters`: OpenAI / Anthropic messages → Format B (no SDK dependency)
+- OpenAI Chat stream coalesce (`coalesce_chat_completion_chunks`) — rejects half-finished turns
+- OpenAI Responses API items → Format B (`openai_responses_to_trajectory`)
+- Responses extended Item map: computer / MCP / web&file search / shell / code_interpreter / image (no base64) / multimodal refs / protocol + unknown fallback
+- CLI `--fail-on hold|review|pass` with `--compare` (non-zero exit for CI); CI smoke step
+- Computer/shell structured failures (`responses.computer.failed` / `responses.shell.nonzero_exit`) without requiring English `error` in free text
+- MCP `approve=false` → `approval_denied` + golden fixture
+- `on_incomplete="reject"|"mark"` for half-finished streams/Responses; CLI `--incomplete`; type `incomplete_stream`
+- Search structural weak signal `search_weak` (`search_min_results` / `search_require_url`; enabled in `qa` profile) — not semantic quality Judge
+- Responses `protocol_mode=ignore_fail|audit|fail_on_error` for list_tools/compaction (protocol ≠ Agent task failure)
+- Tests: `tests/test_message_adapters.py`, `tests/test_openai_stream_and_responses.py`, `tests/test_responses_extended_items.py`, `tests/test_fail_on_cli.py`
+
+### Fixed
+
+- CLI on Windows with a legacy ANSI code page (e.g. cp1252 runner): redirected
+  stdout made every Chinese line raise `UnicodeEncodeError` and the command died
+  with a traceback. `main()` now calls `configure_stdio()` (UTF-8 + `errors=replace`),
+  and `_safe_print` shares that helper. Covered by `tests/test_fail_on_cli.py`
+  under `Remove-Item Env:PYTHONIOENCODING` in CI.
+- `adapters/openai_stream.py`: narrow `delta` / `function` dicts before indexing
+  so `mypy` `index` errors stop failing the `typecheck` job (no behavior change).
+
+### Documentation
+
+- INTEGRATIONS: OpenAI/Anthropic field gaps; LangGraph must not be force-flattened to `steps`
+- Wired message adapters into INTEGRATIONS usage snippet
+- README / VALUE / golden indexes / POSITIONING：对齐 Unreleased 进展与黄金集 29 条
+
+## 0.6.0 (2026-09-13)
+
+### Added
+
+- Step-level `evidence` / `evidence_chain` on analysis and scan exports
+- Task-type profiles: `--task-type default|qa|code|creative` (`profiles.py`)
+- Tool contracts: `--contracts` / `--contracts-file` → `tool_error` + `tool_contract.*`
+- Stable `failure-gate/v1` export: `--failures-out` + `schemas/failures.schema.json`
+- Compare rate columns + gate **rule R** (type rate delta; works when `n` differs)
+- False-positive fixture set `fixtures/failure_fp/` + CI tests
+
+### Changed
+
+- Scan snapshots include `distribution_rates`, `task_type`, per-traj `evidence_chain`
+- Findings compare block includes `stability`; findings entries populate `evidence`
+
+## 0.5.1 (2026-08-20)
+
+### Documentation and contracts
+
+- Documented the current Format B, Episode v1, failure taxonomy, validation, harness,
+  artifact-analysis, golden-evidence, and intervention-ledger contracts.
+
+### Verified
+
+- Existing full regression remains green: 75 passed.
+
 ## 0.5.0 (2026-08-14)
 
 ### Added

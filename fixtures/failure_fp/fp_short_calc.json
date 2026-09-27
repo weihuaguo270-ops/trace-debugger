@@ -1,0 +1,25 @@
+{
+  "session_id": "fp_short_calc",
+  "query": "100除以7等于多少？",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-13T00:00:02Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "计算",
+      "action": {
+        "name": "calculator",
+        "arguments": "{\"expr\": \"100/7\"}"
+      },
+      "observation": "14.2857142857",
+      "duration_seconds": 0.05
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 约 14.29",
+      "observation": ""
+    }
+  ],
+  "final_answer": "约等于 14.29。",
+  "total_duration_seconds": 0.1
+}

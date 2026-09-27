@@ -12,14 +12,15 @@ from trace_debugger.golden import (
     validate_case,
     analyze_case,
 )
+from trace_debugger.profiles import resolve_analyzer
 from trace_debugger.runtime import StepWatcher
 
 
-def test_manifest_has_27_cases():
+def test_manifest_has_29_cases():
     manifest = load_manifest()
-    assert len(manifest.cases) == 27
+    assert len(manifest.cases) == 29
     assert {c.split for c in manifest.cases} == {"golden", "held_out"}
-    assert sum(1 for c in manifest.cases if c.split == "golden") == 21
+    assert sum(1 for c in manifest.cases if c.split == "golden") == 23
     assert sum(1 for c in manifest.cases if c.split == "held_out") == 6
 
 
@@ -43,8 +44,8 @@ def test_taxonomy_coverage():
         if case.category == "negative":
             covered.update(case.expected_failures)
     required = {
-        "tool_error", "search_empty", "search_timeout", "duplicate",
-        "no_answer", "llm_offtrack", "context_overflow",
+        "tool_error", "approval_denied", "search_empty", "search_weak", "search_timeout",
+        "duplicate", "no_answer", "llm_offtrack", "context_overflow",
     }
     assert required <= covered
 
@@ -69,6 +70,7 @@ def test_step_watcher_replay(case_id: str, tmp_path):
         query=data.get("query", ""),
         model=data.get("model", "mock"),
         record_path=record_path,
+        analyzer=resolve_analyzer(case.task_type),
     )
 
     for raw in data.get("steps") or []:

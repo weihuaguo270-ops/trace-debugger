@@ -6,14 +6,16 @@
 
 | 分栏 | 数量 | 用途 |
 |------|------|------|
-| `golden` | 21 | 开发/回归 — taxonomy 覆盖 + 正例 + 组合失败 |
+| `golden` | 23 | 开发/回归 — taxonomy 覆盖 + 正例 + 组合失败 |
 | `held_out` | 6 | 对照 — 不参与规则微调，只用于门禁 |
 
-**合计 27 条**，每条在 `manifest.json` 含 `expected_failures` / `must_not_detect` / `expected_step_failures`。
+**合计 29 条**，每条在 `manifest.json` 含 `expected_failures` / `must_not_detect` / `expected_step_failures`。
 
 ## Taxonomy 覆盖
 
-原有 7 类失败均有独立 golden 负例：`tool_error` · `search_empty` · `search_timeout` · `duplicate` · `no_answer` · `llm_offtrack` · `context_overflow`。`acceptance_failed` 由真实交付故障轨迹对应的独立回归测试覆盖，尚未并入历史 golden manifest。
+黄金负例覆盖（manifest 内）：`tool_error` · `approval_denied` · `search_empty` · `search_weak` · `search_timeout` · `duplicate` · `no_answer` · `llm_offtrack` · `context_overflow`。
+
+另：`acceptance_failed` 由真实交付故障轨迹对应的独立回归测试覆盖，尚未并入 golden manifest；`incomplete_stream` 由 adapter `on_incomplete=mark` 路径测试覆盖（默认 reject，不进 golden 默认分布）。
 
 另含：正例（无失败）、多路径、中文搜索工具、工具错误后恢复、Harness 阻止重复等。
 
@@ -40,7 +42,7 @@ python examples/publish_golden_evidence.py --stem golden_evidence_baseline
 ## 与 failure_bundle 关系
 
 - `examples/failure_bundle/` — 早期 5 条演示（保留兼容）
-- `fixtures/failure_golden/` — **标准证据集**（27 条 + manifest）
+- `fixtures/failure_golden/` — **标准证据集**（29 条 + manifest）
 
 ## 诚实边界
 

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weihuaguo270-ops/trace-debugger/schemas/failures.schema.json",
+  "title": "Failure Gate Export (failure-gate/v1)",
+  "description": "Stable handoff for llm-eval-engine --failure-gate. Deterministic heuristic failures only — not Judge scores.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "producer",
+    "report_id",
+    "timestamp",
+    "n_trajectories",
+    "distribution",
+    "trajectories"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "failure-gate/v1"
+    },
+    "producer": {
+      "type": "string",
+      "const": "trace-debugger"
+    },
+    "report_id": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "task_type": { "type": "string" },
+    "source_dir": { "type": "string" },
+    "n_trajectories": { "type": "integer", "minimum": 0 },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "distribution_rates": {
+      "type": "object",
+      "additionalProperties": { "type": "number" },
+      "description": "per-type count / n_trajectories"
+    },
+    "distribution_labels": { "type": "object" },
+    "trajectories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["session_id", "failure_types"],
+        "properties": {
+          "session_id": { "type": "string" },
+          "file": { "type": "string" },
+          "query": { "type": "string" },
+          "assessment": { "type": "string" },
+          "failure_types": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "failure_labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "num_steps": { "type": "integer" },
+          "evidence_chain": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["rule_id", "signal"],
+              "properties": {
+                "rule_id": { "type": "string" },
+                "signal": { "type": "string" },
+                "excerpt": { "type": "string" },
+                "step_index": { "type": ["integer", "null"] },
+                "path_index": { "type": ["integer", "null"] },
+                "failure_type": { "type": "string" }
+              }
+            }
+          },
+          "task_episode_id": { "type": "string" },
+          "acceptance_criteria": {}
+        }
+      }
+    },
+    "compare": {
+      "type": "object",
+      "description": "Optional regression block when --compare was used"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "tool": { "type": "string" },
+        "note": { "type": "string" },
+        "heuristic": { "type": "boolean" }
+      }
+    }
+  }
+}

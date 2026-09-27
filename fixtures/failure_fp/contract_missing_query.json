@@ -1,0 +1,25 @@
+{
+  "session_id": "contract_missing_query",
+  "query": "搜索天气",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-13T00:00:05Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "搜索",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"q\": \"weather\"}"
+      },
+      "observation": "some long enough observation text here for search",
+      "duration_seconds": 0.2
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 未能按约定参数搜索",
+      "observation": ""
+    }
+  ],
+  "final_answer": "未能按约定参数搜索",
+  "total_duration_seconds": 0.3
+}

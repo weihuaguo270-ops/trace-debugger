@@ -7,7 +7,9 @@
 
 ## 一句话
 
-> trace-debugger 是面向中小型 Agent 团队的本地失败治理工具：把难读的执行轨迹变成可统计、可复盘、可进 CI 的失败信号。
+> trace-debugger 是面向中小型 Agent 团队的本地轨迹失败检测与规则回归工具：把难读的执行轨迹变成可统计、可复盘、可进 CI 的确定性失败信号；发版最终裁决交给 llm-eval-engine。
+
+与评测仓的分工：[POSITIONING_AND_DIVISION.md](./POSITIONING_AND_DIVISION.md)。
 
 ---
 
@@ -30,7 +32,7 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 - 本地、轻量，JSON/JSONL 即可，无云账号
 - Format B + adapter，不绑框架
 - 规则可解释、可 git 验证，不依赖 LLM Judge
-- golden 27 条 + 扫描快照 + `--compare`，结果可审计
+- golden 29 条 + 扫描快照 + `--compare` / `--fail-on`，结果可审计
 
 ### 边界
 
@@ -43,9 +45,9 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 **Agent 回归测试与失败治理门禁**
 
 ```
-轨迹 JSON → 8 类失败标签 → JSONL / log 记录
-    → 发版前 scan + --compare baseline
-    → CI golden 27 条
+轨迹 JSON → 启发式失败标签 → JSONL / log 记录
+    → 发版前 scan + --compare baseline（可选 --fail-on）
+    → CI golden 29 条
 ```
 
 调试、StepWatcher、Judge prompt 都有，但**简历和 README 先讲门禁**，其余折叠。
@@ -56,7 +58,8 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 
 ### 已经站得住的
 
-- Format B 打标签、报告、JSONL 记录 — 黄金集 27/27 + CI
+- Format B 打标签、报告、JSONL 记录 — 黄金集 29/29 + CI
+- v0.6.0：evidence / contracts / FP 集 / failure-gate/v1；Unreleased：adapters + 结构化失败信号（见 CHANGELOG）
 - react-agent 100 条轨迹上做过 offtrack 校准（6→1，见 [RISKS.md](./RISKS.md)）
 - **react-agent 试点 Phase 0–5**（[pilot/README.md](./pilot/README.md)）：
   - 冻结 baseline + no_mock；Run A/B；[决策案例](./cases/regression_gate_20260730.md)
@@ -107,3 +110,4 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 | 2026-07-29 | 初版；主定位定为回归门禁 |
 | 2026-07-30 | 试点 Phase 0–5、案例、自评 65%（Phase 5 代理耗时） |
 | 2026-07-30 | v0.2.5：统一价值说明口径 |
+| 2026-09-14 | 对齐 Unreleased：golden 29、adapters / `--fail-on` / 新失败类型；定位仍为规则信号非 Judge |

@@ -155,7 +155,13 @@ def _parse_step(raw: dict) -> Step:
     has_error = False
     error_msg = ""
     if observation:
-        if "error" in observation.lower() or "异常" in observation:
+        low = observation.lower()
+        if (
+            "error" in low
+            or "异常" in observation
+            or "错误" in observation
+            or observation.strip().startswith("[错误]")
+        ):
             has_error = True
             error_msg = observation[:200]
 

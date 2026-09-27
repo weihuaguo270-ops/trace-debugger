@@ -1,0 +1,22 @@
+{
+  "session_id": "fp_grounded_time",
+  "query": "现在几点了？",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-13T00:00:01Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "查时间",
+      "action": { "name": "get_time", "arguments": "{}" },
+      "observation": "2026-09-13 18:40:00",
+      "duration_seconds": 0.1
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 当前时间是 2026年9月13日 18时40分",
+      "observation": ""
+    }
+  ],
+  "final_answer": "当前时间是 2026年9月13日 18时40分。",
+  "total_duration_seconds": 0.2
+}

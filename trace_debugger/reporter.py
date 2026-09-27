@@ -99,6 +99,10 @@ def analysis_to_dict(analysis: TrajectoryAnalysis) -> dict:
                         "failure_type": sa.failure_type,
                         "failure_detail": sa.failure_detail,
                         "suggestion": sa.suggestion,
+                        "evidence": [
+                            e.to_dict() if hasattr(e, "to_dict") else e
+                            for e in (sa.evidence or [])
+                        ],
                     }
                     for sa in pa.step_analyses
                 ],

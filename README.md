@@ -4,23 +4,28 @@
 
 **面向中小型 Agent 团队的本地失败治理工具** — 把难以阅读的执行轨迹，变成可统计、可复盘、**可进 CI** 的失败信号。
 
-> **主定位：Agent 回归测试与失败治理门禁**（非完整 APM、非云 tracing）  
+> **主定位：Agent 轨迹失败检测与规则回归**（确定性失败信号；非完整 APM、非云 tracing）  
+> 发版最终裁决在 [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) · 分工见 [docs/POSITIONING_AND_DIVISION.md](docs/POSITIONING_AND_DIVISION.md)  
 > 独立项目 · 框架无关 · [react-agent](https://github.com/weihuaguo270-ops/react-agent) 仅为参考集成
 
 ## 业务目标
 
-本项目是 **Agent 发布前的失败治理门禁**：接入标准轨迹后，可以判断“哪里坏了、是否比上一版变差、能否安全发版”，而不是把日志堆成一个不可行动的总分。
+本项目是 **Agent 轨迹失败检测与规则回归**工具：接入标准轨迹后，判断「哪里出现硬失败、失败分布是否比上一版变差」，并产出可供 [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) 消费的失败证据；**不**自行做最终发版裁决。
 
 | 业务环节 | 项目交付 | 决策用途 |
 |----------|----------|----------|
 | 运行采集 | Format B 轨迹、StepWatcher、Artifact 引用 | 保留可复盘的执行证据 |
-| 失败识别 | 8 类可解释启发式、JSONL findings、统计聚合 | 定位工具、检索、验收、策略和轨迹问题 |
-| 版本比较 | baseline、`scan --compare`、golden CI | 检查发版后失败分布是否退化 |
-| 发布协作 | 可读报告、修复边界、intervention ledger | 支持 review/hold 与后续复盘 |
+| 失败识别 | 可解释启发式失败标签、JSONL findings、统计聚合 | 定位工具、检索、验收、策略和轨迹问题 |
+| 版本比较 | baseline、`scan --compare`、golden CI | 检查规则层失败分布是否退化 |
+| 下游交接 | failures / findings 导出 | 供评测仓 failure-gate 与复盘使用 |
 
 **当前阶段：** 适合本地或 CI 的低成本回归门禁。已在独立 GitHub 沙箱中复现验收失败，输出
 `acceptance_failed` 并交给评测引擎形成 `hold`；这属于 `external_real_sandbox`，不是生产团队接入。
 项目仍不是完整 APM、云 tracing 或自动修复系统；真实团队接入仍需脱敏、权限和时序存储。
+
+**2026-09-14 文档更新：** Unreleased 进展对齐 — OpenAI/Anthropic adapters（含 Responses/stream）、
+结构化 computer/shell 失败、`approval_denied`、`incomplete` mark、`search_weak`、`protocol_mode`、
+`--fail-on`；黄金集 **29** 条。契约与门禁仍以 v0.6.0 failure-gate 为主干。
 
 ---
 
@@ -28,17 +33,18 @@
 
 Agent 团队把运行轨迹接入 trace-debugger 之后：
 
-1. **自动识别** 8 类常见失败（工具报错、验收失败、搜索空结果、重复调用等）
+1. **自动识别** 常见硬失败（工具报错、验收失败、搜索空/弱结构、批准拒绝、半截流打标、重复调用等）
 2. **形成记录** — JSONL + 可读 log，便于复盘
 3. **发版前对比** — `tdebug scan` + `--compare` 发现失败分布是否变差
 4. **结构化 findings** — `--findings-out` 输出门禁判定 + 修复边界（Harness Health，v0.2.7+）
-5. **CI 门禁** — 黄金集 27 条 + 可选分布快照
+5. **CI 门禁** — 黄金集 29 条 + 可选 `--fail-on` 拦 CI
 
 ```bash
 pip install -e .
 tdebug scan trajectories/ 50 \
   --json-out snapshots/latest.json \
   --compare snapshots/baseline.json \
+  --fail-on hold \
   --findings-out snapshots/latest_findings.json \
   --project-root .
 python -m pytest tests/test_failure_golden.py   # CI 同款
@@ -87,8 +93,8 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 
 | 已交付 | 说明 |
 |--------|------|
-| 8 类启发式 + CLI | `tdebug` / `stats` / `validate` |
-| 黄金集 + CI | 27/27 — 规则回归 |
+| 启发式失败标签 + CLI | `tdebug` / `stats` / `validate`（含 adapters 结构化信号） |
+| 黄金集 + CI | 29/29 — 规则回归（含 `approval_denied` / `search_weak`） |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 | **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |
 | **跨 Agent Episode** (v0.4.0) | 导入 `evaluation-episode/v1`，保留框架、Agent 版本、split 与业务终态校验证据；无需安装轨迹生产方 SDK |
@@ -115,9 +121,13 @@ Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 
 | 命令 | 说明 |
 |------|------|
-| `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 回归对比 |
+| `tdebug scan <dir> [N] --compare baseline.json` | **主路径**：批量 + 规则回归对比（含率差） |
+| `tdebug scan … --failures-out failures.json` | **failure-gate/v1**：供 llm-eval-engine 消费 |
+| `tdebug scan … --compare baseline.json --fail-on hold` | 门禁达 hold（或 `--fail-on review`）则 **exit 1** 拦 CI |
 | `tdebug scan … --findings-out findings.json` | Harness Health：门禁判定 + 修复建议 |
-| `tdebug <file.json>` | 单条分析 |
+| `tdebug scan … --task-type qa\|code\|creative` | 任务类型分析配置 |
+| `tdebug … --contracts` | 启用 tool contract → `tool_error` |
+| `tdebug <file.json>` | 单条分析（含步骤证据） |
 | `tdebug stats [jsonl]` | 失败类型聚合 |
 | `tdebug validate <file.json>` | Format B 校验 |
 
@@ -130,7 +140,7 @@ tdebug failures .tdebug/failures.jsonl
 tdebug judge offtrack.json --prompt-out judge.txt
 ```
 
-选项：`--json-out` · `--findings-out` · `--project-root` · `--record` · `--compare` · `--session` · `--schema`（validate）
+选项：`--json-out` · `--findings-out` · `--project-root` · `--record` · `--compare` · `--fail-on` · `--incomplete` · `--session` · `--schema`（validate）
 
 </details>
 
@@ -139,10 +149,13 @@ tdebug judge offtrack.json --prompt-out judge.txt
 ## 轨迹格式与集成
 
 - Schema：[schemas/agent_trajectory.schema.json](schemas/agent_trajectory.schema.json)
-- 集成：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) · Adapters：[examples/adapters/](examples/adapters/)
+- 集成：[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)（含 OpenAI/Anthropic 缺口、LangGraph 不硬转 steps）· Adapters：[examples/adapters/](examples/adapters/)
+- **Adapters（已实现，无 SDK）：** messages / stream coalesce / Responses Items → Format B；见 `trace_debugger.adapters` 与 [examples/adapters/](examples/adapters/)
+- Responses：`on_incomplete`、`protocol_mode`（协议失败 ≠ 任务失败）；结构化 computer/shell/MCP 失败信号
 - Episode：`evaluation-episode/v1` 可由不同 Agent SDK 导出后离线导入；本仓不依赖 LangGraph、OpenAI Agents SDK 或生产方 Python 包
+- **LangGraph / 状态机：** 不要把整图强制拍平为 `steps`；仅在明确的工具/ReAct 边界上局部导出 Format B（见 INTEGRATIONS）
 - 运行数据：[docs/PORTABILITY.md](docs/PORTABILITY.md)；默认不再写入已安装包目录
-- Analyzer 可配置：`final_answer_markers`、`search_tool_names` 等
+- Analyzer 可配置：`final_answer_markers`、`search_tool_names`、`search_min_results` / `search_require_url`（qa profile）等
 
 ---
 
@@ -150,6 +163,7 @@ tdebug judge offtrack.json --prompt-out judge.txt
 
 | 文档 | 说明 |
 |------|------|
+| [docs/POSITIONING_AND_DIVISION.md](docs/POSITIONING_AND_DIVISION.md) | **与 llm-eval-engine 定位分工（避免重复）** |
 | [docs/VALUE.md](docs/VALUE.md) | **价值、主场景、业务证明缺口、下一步** |
 | [docs/pilot/WORKFLOW.md](docs/pilot/WORKFLOW.md) | 试点 scan + compare + findings 工作流 |
 | [docs/intervention_ledger.json](docs/intervention_ledger.json) | 纵向干预记录（Learning Capture） |

@@ -1,0 +1,25 @@
+{
+  "session_id": "fp_search_with_urls",
+  "query": "搜索 Rust 所有权文档",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-14T00:00:03Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "搜索文档",
+      "action": {
+        "name": "web_search",
+        "arguments": "{\"query\": \"Rust ownership\"}"
+      },
+      "observation": "{\"results\": [{\"title\": \"Ownership\", \"url\": \"https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html\"}, {\"title\": \"References\", \"url\": \"https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html\"}, {\"title\": \"Slices\", \"url\": \"https://doc.rust-lang.org/book/ch04-03-slices.html\"}]}",
+      "duration_seconds": 0.9
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: Rust 所有权文档见官方 book 的 ownership 章节",
+      "observation": ""
+    }
+  ],
+  "final_answer": "Rust 所有权文档见官方 book 的 ownership 章节",
+  "total_duration_seconds": 1.1
+}

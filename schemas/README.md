@@ -32,9 +32,9 @@ Any ReAct-style Agent that emits this JSON can use offline analysis (`tdebug`), 
 - `trace_debugger.analyzer.Analyzer` — heuristic failure classification
 - `trace_debugger.runtime.StepWatcher` — runtime detection + JSONL record
 
-Fixtures: `fixtures/failure_golden/` (27 cases, CI gate).
+Related schemas: [`findings.schema.json`](findings.schema.json) · [`failures.schema.json`](failures.schema.json) (`failure-gate/v1`) · [`intervention_ledger.schema.json`](intervention_ledger.schema.json).
 
-Related schemas: [`findings.schema.json`](findings.schema.json) · [`intervention_ledger.schema.json`](intervention_ledger.schema.json) (Harness Health, v0.2.7+).
+Fixtures: `fixtures/failure_golden/` (27) · `fixtures/failure_fp/` (false-positive CI).
 
 ## Legacy alias
 

@@ -1,0 +1,54 @@
+{
+  "schema_version": "1",
+  "description": "False-positive regression set — must stay clean under default Analyzer (no LLM Judge).",
+  "cases": [
+    {
+      "id": "fp_grounded_time",
+      "file": "fp_grounded_time.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "expected_failures": [],
+      "must_not_detect": ["llm_offtrack", "tool_error", "no_answer"],
+      "notes": "短问答+工具观测 grounded，历史上 offtrack 假阳性"
+    },
+    {
+      "id": "fp_short_calc",
+      "file": "fp_short_calc.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "expected_failures": [],
+      "must_not_detect": ["llm_offtrack", "no_answer"],
+      "notes": "计算题答案含数字，词重叠启发式不可靠"
+    },
+    {
+      "id": "fp_code_snippet",
+      "file": "fp_code_snippet.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "task_type": "code",
+      "expected_failures": [],
+      "must_not_detect": ["llm_offtrack"],
+      "notes": "代码生成查询与答案词重叠低；须用 code profile"
+    },
+    {
+      "id": "fp_creative_paraphrase",
+      "file": "fp_creative_paraphrase.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "task_type": "creative",
+      "expected_failures": [],
+      "must_not_detect": ["llm_offtrack"],
+      "notes": "创意改写；creative profile 关闭 offtrack"
+    },
+    {
+      "id": "fp_search_with_urls",
+      "file": "fp_search_with_urls.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "task_type": "qa",
+      "expected_failures": [],
+      "must_not_detect": ["search_weak", "search_empty", "llm_offtrack"],
+      "notes": "正常带 url 的 results；qa 结构规则不得误报"
+    }
+  ]
+}
