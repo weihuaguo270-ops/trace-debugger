@@ -43,6 +43,26 @@
           "evidence_state": { "type": "string" },
           "repair_boundary": { "type": "string" },
           "validation_route": { "type": "string" },
+          "failure_type": { "type": "string" },
+          "verification_ref": {
+            "type": "object",
+            "description": "Machine-checkable regression lock for this finding; a hold finding without a resolvable ref must fail the gate.",
+            "required": ["scope", "tests", "command", "verified"],
+            "properties": {
+              "scope": { "type": "string", "enum": ["failure_type", "suite"] },
+              "failure_type": { "type": "string" },
+              "fixtures": {
+                "type": "object",
+                "properties": {
+                  "must_detect": { "type": "array", "items": { "type": "string" } },
+                  "must_stay_clean": { "type": "array", "items": { "type": "string" } }
+                }
+              },
+              "tests": { "type": "array", "items": { "type": "string" } },
+              "command": { "type": "string" },
+              "verified": { "type": "boolean" }
+            }
+          },
           "evidence": { "type": "array", "items": { "type": "string" } }
         }
       }

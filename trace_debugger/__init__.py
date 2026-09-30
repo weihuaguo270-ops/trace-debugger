@@ -53,6 +53,12 @@ from trace_debugger.harness_health import (
     probe_project_mechanisms,
     should_fail_on_gate,
 )
+from trace_debugger.verification import (
+    build_verification_ref,
+    fixture_coverage,
+    known_case_ids,
+    validate_findings_report,
+)
 from trace_debugger.profiles import resolve_analyzer, PROFILE_NAMES
 from trace_debugger.evidence import EvidenceItem, evidence_chain_from_analysis
 from trace_debugger.golden import (

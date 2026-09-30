@@ -25,6 +25,7 @@ from .harness_health import (
     build_findings_report,
     should_fail_on_gate,
 )
+from .verification import validate_findings_report
 from .profiles import PROFILE_NAMES, resolve_analyzer
 from .console_io import configure_stdio, safe_print
 
@@ -121,6 +122,7 @@ def _print_help():
     print("  --json-out PATH    写入扫描快照 JSON（可归档、可对比）")
     print("  --failures-out PATH  写入 failure-gate/v1（供 llm-eval-engine 消费）")
     print("  --findings-out PATH  写入 Harness Health findings.json（需 --compare 时含门禁判定）")
+    print("  --require-verification  每条 finding 必须可验证（有回归锁），否则 exit 1")
     print("  --project-root PATH  探测项目机制（golden/baseline/ledger）用于 findings")
     print("  --record [PATH]    为每条轨迹追加失败事件到 JSONL")
     print("  --compare PATH     与历史快照对比失败分布变化（含率差）")
@@ -161,6 +163,9 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
         elif a == "--project-root" and i + 1 < len(args):
             flags["project_root"] = args[i + 1]
             i += 2
+        elif a == "--require-verification":
+            flags["require_verification"] = True
+            i += 1
         elif a == "--prompt-out" and i + 1 < len(args):
             flags["prompt_out"] = args[i + 1]
             i += 2
@@ -450,6 +455,10 @@ def _cmd_scan(directory: str, n: int, flags: dict):
         _write_text(flags["failures_out"], json.dumps(failures, ensure_ascii=False, indent=2))
         print(f"\n[已写入 failure-gate] {flags['failures_out']}  schema={failures['schema_version']}")
 
+    if flags.get("require_verification") and not flags.get("findings_out"):
+        print("--require-verification 需要同时提供 --findings-out PATH")
+        sys.exit(1)
+
     if flags.get("findings_out"):
         if baseline is None and flags.get("compare") and os.path.exists(flags["compare"]):
             baseline = load_snapshot(flags["compare"])
@@ -459,6 +468,24 @@ def _cmd_scan(directory: str, n: int, flags: dict):
         )
         _write_text(flags["findings_out"], json.dumps(findings, ensure_ascii=False, indent=2))
         print(f"\n[已写入 findings] {flags['findings_out']}  gate={findings['gate_decision']}")
+
+        problems = validate_findings_report(findings, project_root=project_root)
+        if problems:
+            affected = {p.split(":", 1)[0] for p in problems}
+            print(
+                f"\n[verification] {len(affected)} 条 finding 缺少可执行的回归锁"
+                f"（{len(problems)} 处问题）:"
+            )
+            for problem in problems:
+                print(f"  - {problem}")
+            if flags.get("require_verification"):
+                print("[require-verification] 退出码 1")
+                sys.exit(1)
+        else:
+            print(
+                f"[verification] {len(findings.get('findings') or [])} 条 finding "
+                "均有可解析的回归锁"
+            )
 
     if flags.get("fail_on") and gate is not None:
         decision = gate.get("decision") or "pass"
