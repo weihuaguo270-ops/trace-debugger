@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal, Optional
 
+from .verification import build_verification_ref
+
 EvidenceState = Literal[
     "present",
     "wired",
@@ -187,6 +189,8 @@ def _finding_distribution(
         "impact": "回归门禁规则 A：单类型计数异常上升",
         "repair_boundary": "trace-debugger/analyzer 或 react-agent prompt/工具",
         "validation_route": "tdebug scan --compare + golden/FP CI + METRICS_LOG",
+        "failure_type": ft,
+        "verification_ref": build_verification_ref(ft),
         "evidence": evidence or [f"distribution[{ft}]: {base} → {cur}"],
     }
 
@@ -211,6 +215,8 @@ def _finding_type_rate(
         "impact": "回归门禁规则 R：单类型率差异常（n 不对齐时仍生效）",
         "repair_boundary": "trace-debugger/analyzer 或 Agent prompt/工具",
         "validation_route": "tdebug scan --compare（看 rate 列）+ failure-gate 导出",
+        "failure_type": ft,
+        "verification_ref": build_verification_ref(ft),
         "evidence": [
             f"rate[{ft}]: {base_pct:.1f}% → {cur_pct:.1f}%",
             f"delta_pp={delta_pp:+.1f}",
@@ -237,6 +243,8 @@ def _finding_fail_rate(
         "impact": "回归门禁规则 B：含失败轨迹占比显著上升",
         "repair_boundary": "发版前 prompt/工具/analyzer 变更",
         "validation_route": "重扫 pilot N=100 对齐 baseline 后 compare",
+        # Session-level finding: not tied to one failure type → suite-scope lock.
+        "verification_ref": build_verification_ref(None),
     }
 
 

@@ -15,6 +15,11 @@
 - Search structural weak signal `search_weak` (`search_min_results` / `search_require_url`; enabled in `qa` profile) — not semantic quality Judge
 - Responses `protocol_mode=ignore_fail|audit|fail_on_error` for list_tools/compaction (protocol ≠ Agent task failure)
 - Tests: `tests/test_message_adapters.py`, `tests/test_openai_stream_and_responses.py`, `tests/test_responses_extended_items.py`, `tests/test_fail_on_cli.py`
+- Findings `verification_ref`: every actionable finding now carries a machine-checkable regression
+  lock (fixture ids derived from the manifests — no hardcoded case ids — plus the lock tests and
+  command). A type with no `must_detect` case is marked `verified: false` instead of passing as prose.
+- CLI `--require-verification` (with `--findings-out`): exits 1 when any finding has no resolvable
+  lock; wired into the CI regression-gate step. Test: `tests/test_findings_verification.py`
 
 ### Fixed
 
