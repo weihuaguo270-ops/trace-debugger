@@ -49,7 +49,7 @@ Agent 团队把运行轨迹接入 trace-debugger 之后：
 2. **形成记录** — JSONL + 可读 log，便于复盘
 3. **发版前对比** — `tdebug scan` + `--compare` 发现失败分布是否变差
 4. **结构化 findings** — `--findings-out` 输出门禁判定 + 修复边界（Harness Health，v0.2.7+）
-5. **CI 门禁** — 黄金集 29 条 + 可选 `--fail-on` 拦 CI
+5. **CI 门禁** — 黄金集 32 条 + 可选 `--fail-on` 拦 CI
 
 ```bash
 pip install -e .
@@ -106,7 +106,7 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 | 已交付 | 说明 |
 |--------|------|
 | 启发式失败标签 + CLI | `tdebug` / `stats` / `validate`（含 adapters 结构化信号） |
-| 黄金集 + CI | 29/29 — 规则回归（含 `approval_denied` / `search_weak`） |
+| 黄金集 + CI | 32/32 — 规则回归（含 `approval_denied` / `search_weak` / `acceptance_failed` / `incomplete_stream`） |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 | **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |
 | **跨 Agent Episode** (v0.4.0) | 导入 `evaluation-episode/v1`，保留框架、Agent 版本、split 与业务终态校验证据；无需安装轨迹生产方 SDK |

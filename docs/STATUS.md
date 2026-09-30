@@ -8,10 +8,10 @@
 ## 当前
 
 - 版本基线：v0.6.0 failure-gate（2026-09-14 Unreleased 增量）
-- 最近验证：黄金集 29 条、OpenAI/Anthropic adapter、`search_weak`、`--fail-on`
+- 最近验证：黄金集 32 条、OpenAI/Anthropic adapter、`search_weak`、`--fail-on`
 - 可声称：本地/CI 轨迹失败分类、baseline 对比、JSONL findings 导出
 - 不能声称：生产 APM、云 tracing、自动修复、多租户
-- 证据摘要：黄金集 29 条；OpenAI/Anthropic adapter 与结构化失败信号；baseline 对比 / findings 导出 / `--fail-on` CI 门禁
+- 证据摘要：黄金集 32 条（11 类 taxonomy 全覆盖）；OpenAI/Anthropic adapter 与结构化失败信号；baseline 对比 / findings 导出 / `--fail-on` CI 门禁
 
 ## P0
 

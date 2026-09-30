@@ -1,8 +1,8 @@
 {
   "schema_version": "1",
   "description": "黄金失败集 — taxonomy + 正例 + held-out；供证据链与 CI 门禁",
-  "n_cases": 29,
-  "n_passed": 29,
+  "n_cases": 32,
+  "n_passed": 32,
   "n_failed": 0,
   "pass_rate": 1.0,
   "cases": [
@@ -55,7 +55,7 @@
       "pass": true,
       "errors": [],
       "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
-      "notes": "3 results without url → search_weak under qa profile"
+      "notes": "verified detected=['search_weak']"
     },
     {
       "id": "golden_search_empty",
@@ -384,6 +384,53 @@
       "notes": "verified detected=['context_overflow']"
     },
     {
+      "id": "golden_acceptance_failed",
+      "file": "acceptance_failed.json",
+      "split": "golden",
+      "category": "negative",
+      "task_type": "default",
+      "expected_failures": [
+        "acceptance_failed"
+      ],
+      "detected_failures": [
+        "acceptance_failed"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/3 步），建议检查",
+      "notes": "verified detected=['acceptance_failed']"
+    },
+    {
+      "id": "golden_incomplete_stream",
+      "file": "incomplete_stream.json",
+      "split": "golden",
+      "category": "negative",
+      "task_type": "default",
+      "expected_failures": [
+        "incomplete_stream"
+      ],
+      "detected_failures": [
+        "incomplete_stream"
+      ],
+      "pass": true,
+      "errors": [],
+      "assessment": "[FAIL] 执行问题较多（1/2 步），建议检查",
+      "notes": "verified detected=['incomplete_stream']"
+    },
+    {
+      "id": "golden_pass_acceptance_ok",
+      "file": "pass_acceptance_ok.json",
+      "split": "golden",
+      "category": "positive",
+      "task_type": "default",
+      "expected_failures": [],
+      "detected_failures": [],
+      "pass": true,
+      "errors": [],
+      "assessment": "[PASS] 执行顺利，3 步无错误",
+      "notes": "verified detected=[]"
+    },
+    {
       "id": "held_out_pass_report",
       "file": "held_out_pass_report.json",
       "split": "held_out",
@@ -480,8 +527,8 @@
       "notes": "verified detected=['duplicate', 'search_empty']"
     }
   ],
-  "report_id": "golden_evidence_20260914_054351",
-  "timestamp": "2026-09-14T05:43:51.557834+00:00",
+  "report_id": "golden_evidence_20260930_084850",
+  "timestamp": "2026-09-30T08:48:50.027012+00:00",
   "source_dir": "D:/agent_learning/trace-debugger/fixtures/failure_golden",
   "distribution": {
     "tool_error": 5,
@@ -491,7 +538,9 @@
     "duplicate": 3,
     "no_answer": 3,
     "llm_offtrack": 2,
-    "context_overflow": 3
+    "context_overflow": 3,
+    "acceptance_failed": 1,
+    "incomplete_stream": 1
   },
   "distribution_labels": {
     "tool_error": "工具调用报错",
@@ -501,10 +550,12 @@
     "duplicate": "重复相同尝试",
     "no_answer": "未给出最终答案",
     "llm_offtrack": "LLM 偏离用户意图",
-    "context_overflow": "上下文窗口溢出"
+    "context_overflow": "上下文窗口溢出",
+    "acceptance_failed": "验收测试失败",
+    "incomplete_stream": "半截流/未完成"
   },
   "meta": {
-    "git": "ee6c5e6",
+    "git": "9602b9b",
     "note": "黄金集标签经 Analyzer 验证；held-out 与 golden 分栏"
   }
 }

@@ -20,9 +20,16 @@
   command). A type with no `must_detect` case is marked `verified: false` instead of passing as prose.
 - CLI `--require-verification` (with `--findings-out`): exits 1 when any finding has no resolvable
   lock; wired into the CI regression-gate step. Test: `tests/test_findings_verification.py`
+- Golden set grows to **32** cases (26 golden / 6 held_out): `acceptance_failed` and
+  `incomplete_stream` now have fixtures plus a positive control, so all 11 failure types carry a
+  regression lock. Previously these two could regress and produce findings nothing could verify.
 
 ### Fixed
 
+- `scripts/generate_failure_golden.py` had drifted from the committed manifest: regenerating dropped
+  `golden_approval_denied` and `golden_search_weak` (29 → 27 cases). Both are back in the generator's
+  spec, it now honours per-case `task_type` (the `qa` profile that `search_weak` needs), and the
+  manifest + fixtures are byte-reproducible from the generator again.
 - CLI on Windows with a legacy ANSI code page (e.g. cp1252 runner): redirected
   stdout made every Chinese line raise `UnicodeEncodeError` and the command died
   with a traceback. `main()` now calls `configure_stdio()` (UTF-8 + `errors=replace`),

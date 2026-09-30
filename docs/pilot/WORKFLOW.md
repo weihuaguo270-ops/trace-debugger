@@ -72,7 +72,7 @@ print(compare_snapshots(cur, base))
 - [ ] `tdebug scan … 100 --compare pilot_baseline.json` 已跑
 - [ ] 未触发 hold，或 hold 已解决并附 METRICS_LOG
 - [ ] `--require-verification` 通过：每条 finding 都能指到回归锁（否则先补 fixture）
-- [ ] golden CI 仍 29/29（独立门禁）
+- [ ] golden CI 仍 32/32（独立门禁）
 
 ---
 
