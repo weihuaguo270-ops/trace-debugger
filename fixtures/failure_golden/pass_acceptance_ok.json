@@ -1,0 +1,35 @@
+{
+  "session_id": "golden_pass_acceptance_ok",
+  "query": "修复 add() 的边界 bug 并跑验收测试",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-14T00:00:12Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "修 add() 的边界 bug",
+      "action": {
+        "name": "edit_file",
+        "arguments": "{\"path\": \"add.py\"}"
+      },
+      "observation": "patched add.py: add() 边界 bug 已修复",
+      "duration_seconds": 0.2
+    },
+    {
+      "step": 2,
+      "thought": "跑验收测试",
+      "action": {
+        "name": "run_acceptance_tests",
+        "arguments": "{\"suite\": \"acceptance\"}"
+      },
+      "observation": "passed: 12 passed",
+      "duration_seconds": 0.9
+    },
+    {
+      "step": 3,
+      "thought": "FINAL ANSWER: 验收通过",
+      "observation": ""
+    }
+  ],
+  "final_answer": "验收测试通过：add() 的边界 bug 已修复，12 项验收全部通过。",
+  "total_duration_seconds": 1.3
+}

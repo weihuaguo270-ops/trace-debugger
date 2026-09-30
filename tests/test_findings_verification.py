@@ -28,6 +28,8 @@ COVERED_TYPES = [
     "no_answer",
     "llm_offtrack",
     "context_overflow",
+    "acceptance_failed",
+    "incomplete_stream",
 ]
 
 
@@ -64,14 +66,14 @@ def test_covered_type_finding_is_verified(failure_type):
 
 
 def test_uncovered_type_is_reported_unverified():
-    """无夹具覆盖的类型：finding 照样产出，但明确标记不可验证。"""
-    report = build_findings_report(_snap({"acceptance_failed": 3}, 3), _snap({}, 0))
+    """无夹具覆盖的类型（如 unknown）：finding 照样产出，但明确标记不可验证。"""
+    report = build_findings_report(_snap({"unknown": 3}, 3), _snap({}, 0))
     by_id = {f["id"]: f for f in report["findings"]}
-    ref = by_id["regression-distribution-acceptance_failed"]["verification_ref"]
+    ref = by_id["regression-distribution-unknown"]["verification_ref"]
     assert ref["verified"] is False
-    assert ref["failure_type"] == "acceptance_failed"
+    assert ref["failure_type"] == "unknown"
     problems = validate_findings_report(report, project_root=str(ROOT))
-    assert any("acceptance_failed" in p for p in problems)
+    assert any("unknown" in p for p in problems)
 
 
 def test_suite_scope_ref_needs_no_fixture():
@@ -154,32 +156,48 @@ def _clean_baseline(tmp_path: Path, n: int = 3) -> Path:
     return path
 
 
-def test_cli_require_verification_rejects_unverifiable_finding(tmp_path):
-    """端到端：不可验证的 hold finding 必须让门禁红。"""
+def test_cli_acceptance_regression_is_now_verifiable(tmp_path):
+    """T1 暴露的缺口已闭合：acceptance_failed 回归现在带回归锁。"""
     trajs = tmp_path / "trajs"
     trajs.mkdir()
     _write_acceptance_trajs(trajs)
 
     findings_path = tmp_path / "findings.json"
-    common = [
+    proc = _run_tdebug([
         "scan", str(trajs), "10",
         "--compare", str(_clean_baseline(tmp_path)),
         "--findings-out", str(findings_path),
+        "--require-verification",
         "--project-root", str(ROOT),
-    ]
-
-    # 不带标志：报告照常写出，exit 0（仅提示）
-    proc = _run_tdebug(common)
+    ])
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
     findings = json.loads(findings_path.read_text(encoding="utf-8"))
     assert findings["gate_decision"] == "hold"
-    unverified = [f for f in findings["findings"] if not f["verification_ref"]["verified"]]
-    assert unverified and unverified[0]["failure_type"] == "acceptance_failed"
+    assert findings["findings"]
+    for finding in findings["findings"]:
+        assert finding["verification_ref"]["verified"] is True
+    acceptance = next(f for f in findings["findings"] if f.get("failure_type") == "acceptance_failed")
+    assert "golden_acceptance_failed" in acceptance["verification_ref"]["fixtures"]["must_detect"]
 
-    # 带标志：同一份报告必须被拒
-    proc2 = _run_tdebug(common + ["--require-verification"])
-    assert proc2.returncode == 1, proc2.stdout + proc2.stderr
-    assert "require-verification" in (proc2.stdout + proc2.stderr)
+
+def test_cli_require_verification_rejects_when_lock_tests_missing(tmp_path):
+    """端到端：回归锁无法执行（lock 测试不在 project-root 下）必须让门禁红。"""
+    trajs = tmp_path / "trajs"
+    trajs.mkdir()
+    _write_acceptance_trajs(trajs)
+
+    proc = _run_tdebug([
+        "scan", str(trajs), "10",
+        "--compare", str(_clean_baseline(tmp_path)),
+        "--findings-out", str(tmp_path / "findings.json"),
+        "--require-verification",
+        "--project-root", str(tmp_path / "no-lock-here"),
+    ])
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    out = proc.stdout + proc.stderr
+    assert "missing test file" in out
+    assert "require-verification" in out
 
 
 def test_cli_require_verification_requires_findings_out():
