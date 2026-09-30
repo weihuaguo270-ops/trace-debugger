@@ -27,6 +27,11 @@ tdebug adjudicate <轨迹目录> 50 \
 默认写入 `.tdebug/adjudication/`（已在 `.gitignore` 内）。表中含原始 query / observation，
 **不要提交进 git**；对外分享前按 [SECURITY.md](../../SECURITY.md) 脱敏。
 
+盲表**只有证据字段**：`case_id`（不透明，如 `case_0001`）/ `query` / `final_answer` / `steps` /
+`human_label` / `human_note`。它**不包含** `source_file`、`session_id` 与任何 analyzer 判定——
+夹具文件名常编码失败类型（`search_empty.json`），带进表就等于把答案递给标注者。来源与判定
+只存在 key 文件，评分时按 `case_id` 合并。
+
 ### 2. 人工标注（唯一的人工步骤）
 
 逐行读 `query` / `final_answer` / `steps`，填写 `human_label`：

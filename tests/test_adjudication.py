@@ -21,7 +21,7 @@ from trace_debugger.reader import load
 ROOT = Path(__file__).resolve().parents[1]
 GOLDEN = ROOT / "fixtures" / "failure_golden"
 
-LEAK_TOKENS = ("failure_type", "analyzer_label", "needs_fix", "llm_offtrack", "tool_error", "search_empty")
+SHEET_FIELDS = {"case_id", "query", "final_answer", "steps", "human_label", "human_note"}
 
 
 def _analyze(files: list[Path]):
@@ -33,21 +33,23 @@ def _analyze(files: list[Path]):
 # ── blinding ──
 
 
-def test_sheet_carries_no_analyzer_verdict():
+def test_sheet_carries_no_analyzer_verdict_or_provenance():
+    """盲表只有证据字段：不带 analyzer 判定，也不带会把类型写进名字的来源信息。"""
     files = sorted(GOLDEN.glob("*.json"))[:6]
     trajs, analyses = _analyze(files)
     src = [str(f) for f in files]
     sheet = build_sheet(analyses, trajs, src)
     assert sheet
     for row in sheet:
+        assert set(row) == SHEET_FIELDS, row
         assert row["human_label"] == []
-        blob = json.dumps(row, ensure_ascii=False)
-        for leaked in LEAK_TOKENS:
-            assert leaked not in blob, f"{leaked} leaked into the blind sheet"
+        assert row["case_id"].startswith("case_"), "id 必须不透明"
 
     key = build_key(analyses, src)
     assert len(key) == len(sheet)
+    assert [row["case_id"] for row in key] == [row["case_id"] for row in sheet]
     assert any(row["analyzer_label"] for row in key), "key must hold the analyzer verdicts"
+    assert any("source_file" in row for row in key), "provenance 只留在 key 里"
 
 
 def test_sheet_carries_the_evidence_a_human_needs():
@@ -155,10 +157,12 @@ def test_cli_adjudicate_roundtrip(tmp_path):
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert sheet_path.exists() and key_path.exists()
 
-    # Blind: the sheet must not contain any analyzer verdict.
-    raw = sheet_path.read_text(encoding="utf-8")
-    for leaked in LEAK_TOKENS:
-        assert leaked not in raw
+    # Blind: 解析后的行只能有证据字段（不用子串扫描——夹具文件名本身含类型名，
+    # 且 scan 取的是最新 N 个文件，子串断言会随 mtime 变化而 flaky）。
+    sheet_rows = load_jsonl(str(sheet_path))
+    assert sheet_rows
+    for row in sheet_rows:
+        assert set(row) == SHEET_FIELDS, row
 
     # Unlabeled → scoring refuses to invent a number.
     proc2 = _run_tdebug([

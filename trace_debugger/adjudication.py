@@ -44,18 +44,28 @@ def _raw_steps(trajectory: Any) -> list[dict[str, Any]]:
     return rows
 
 
+def _opaque_case_id(index: int) -> str:
+    """不透明用例 id：盲表不得从 id / 文件名读出失败类型。"""
+    return f"case_{index + 1:04d}"
+
+
 def build_sheet(
     analyses: Iterable[Any],
     trajectories: Iterable[Any],
     source_files: Iterable[str],
 ) -> list[dict[str, Any]]:
-    """Blind labeling sheet — deliberately carries no analyzer labels."""
+    """Blind labeling sheet — carries neither analyzer labels nor provenance.
+
+    ``source_file`` / ``session_id`` 也被刻意去掉：夹具文件名本身就编码失败类型
+    （如 ``search_empty.json``），带进盲表等于把答案递给标注者。来源映射只存在 key 里，
+    评分时按 ``case_id`` 合并。
+    """
     sheet: list[dict[str, Any]] = []
-    for analysis, trajectory, source in zip(analyses, trajectories, source_files):
-        case_id = getattr(analysis, "session_id", "") or Path(source).stem
+    for index, (analysis, trajectory, _source) in enumerate(
+        zip(analyses, trajectories, source_files)
+    ):
         sheet.append({
-            "case_id": case_id,
-            "source_file": source,
+            "case_id": _opaque_case_id(index),
             "query": _excerpt(getattr(analysis, "query", ""), MAX_QUERY_CHARS),
             "final_answer": _excerpt(getattr(trajectory, "final_answer", "") or "", MAX_ANSWER_CHARS),
             "steps": _raw_steps(trajectory),
@@ -69,17 +79,16 @@ def build_key(
     analyses: Iterable[Any],
     source_files: Iterable[str],
 ) -> list[dict[str, Any]]:
-    """Analyzer verdicts, kept apart from the sheet until scoring."""
+    """Analyzer verdicts + provenance, kept apart from the sheet until scoring."""
     key: list[dict[str, Any]] = []
-    for analysis, source in zip(analyses, source_files):
-        case_id = getattr(analysis, "session_id", "") or Path(source).stem
+    for index, (analysis, source) in enumerate(zip(analyses, source_files)):
         labels = sorted({
             failure
             for path in (getattr(analysis, "paths", None) or [])
             for failure in path.failure_types
         })
         key.append({
-            "case_id": case_id,
+            "case_id": _opaque_case_id(index),
             "source_file": source,
             "analyzer_label": labels,
             "needs_fix": bool(getattr(analysis, "needs_fix", False)),
