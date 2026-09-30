@@ -20,6 +20,8 @@ from trace_debugger.analyzer import (
     failure_distribution,
     is_final_thought,
     is_search_tool,
+    looks_cross_language,
+    script_profile,
 )
 from trace_debugger.reader import Trajectory, Path, Step
 from trace_debugger.reporter import format_report, format_json, build_judge_prompt, analysis_to_dict

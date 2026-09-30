@@ -31,6 +31,12 @@
 
 ### Fixed
 
+- `llm_offtrack` false positives on cross-language answers (Chinese query, English answer and the
+  reverse): word overlap cannot measure "answered the wrong thing" across scripts. A deterministic
+  script check (`looks_cross_language`) now skips offtrack when one side is ≥70% Han and the other
+  ≤10%. Regression locks: `fixtures/failure_fp/fp_cross_language{,_reverse}.json` (false-positive
+  set grows to 7). Trade-off documented in `docs/RISKS.md` §1: a genuinely off-topic cross-language
+  answer is no longer flagged either.
 - `scripts/generate_failure_golden.py` had drifted from the committed manifest: regenerating dropped
   `golden_approval_denied` and `golden_search_weak` (29 → 27 cases). Both are back in the generator's
   spec, it now honours per-case `task_type` (the `qa` profile that `search_weak` needs), and the

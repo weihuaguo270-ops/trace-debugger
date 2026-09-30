@@ -202,6 +202,39 @@ def looks_like_overflow_text(text: str) -> bool:
     return any(re.search(p, low, flags=re.I) for p in _OVERFLOW_PATTERNS)
 
 
+_CJK_CHAR_RE = re.compile(r"[\u4e00-\u9fff]")
+_LATIN_CHAR_RE = re.compile(r"[A-Za-z]")
+_CROSS_LANGUAGE_MIN_CHARS = 8
+_CROSS_LANGUAGE_DOMINANT = 0.7
+_CROSS_LANGUAGE_TRACE = 0.1
+
+
+def script_profile(text: str) -> tuple[int, int]:
+    """(CJK 字数, 拉丁字母数) —— 粗略脚本混合度，不需要分词器。"""
+    return len(_CJK_CHAR_RE.findall(text or "")), len(_LATIN_CHAR_RE.findall(text or ""))
+
+
+def looks_cross_language(query: str, answer: str) -> bool:
+    """query 与 answer 分属不同书写系统 → 词重叠无意义。
+
+    确定性脚本判据，不做语言识别：一侧以汉字为主（≥70%）且另一侧几乎无汉字（≤10%）
+    即视为跨语言。RISKS.md §1 记录的已知假阳性域（中问英答）。代价是这类用例不再报
+    offtrack —— 语义层面的「答非所问」本仓不判，交给下游 Judge。
+    """
+    q_cjk, q_latin = script_profile(query)
+    a_cjk, a_latin = script_profile(answer)
+    q_total, a_total = q_cjk + q_latin, a_cjk + a_latin
+    if min(q_total, a_total) < _CROSS_LANGUAGE_MIN_CHARS:
+        return False
+    q_ratio = q_cjk / q_total
+    a_ratio = a_cjk / a_total
+    return (
+        q_ratio >= _CROSS_LANGUAGE_DOMINANT and a_ratio <= _CROSS_LANGUAGE_TRACE
+    ) or (
+        a_ratio >= _CROSS_LANGUAGE_DOMINANT and q_ratio <= _CROSS_LANGUAGE_TRACE
+    )
+
+
 def is_search_tool(name: str, *, substrings: tuple[str, ...] = ("search",), extra_names: tuple[str, ...] = ()) -> bool:
     """按可配置名称规则判断工具是否属于搜索类。"""
     n = (name or "").lower()
@@ -581,6 +614,10 @@ class Analyzer:
         if re.search(r"(几点|多少|计算|等于|平方|阶乘|沸点|首都)", q) and re.search(
             r"\d", answer
         ):
+            return ""
+
+        # 跨语言（中问英答 / 英问中答）：脚本不同，词重叠量不出「答非所问」
+        if looks_cross_language(traj.query, answer):
             return ""
 
         overlap = len(q_tok & a_tok) / len(q_tok)
