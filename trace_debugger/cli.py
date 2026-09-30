@@ -26,6 +26,17 @@ from .harness_health import (
     should_fail_on_gate,
 )
 from .verification import validate_findings_report
+from .adjudication import (
+    KEY_SCHEMA,
+    SHEET_SCHEMA,
+    build_key,
+    build_sheet,
+    default_sheet_paths,
+    format_score,
+    load_jsonl,
+    score_sheet,
+    write_jsonl,
+)
 from .profiles import PROFILE_NAMES, resolve_analyzer
 from .console_io import configure_stdio, safe_print
 
@@ -83,6 +94,8 @@ def main():
     elif cmd == "validate":
         filepath, flags = _parse_analyze_args(argv[1:])
         _cmd_validate(filepath, flags)
+    elif cmd == "adjudicate":
+        _cmd_adjudicate(argv[1:])
     elif cmd.endswith(".json"):
         filepath, flags = _parse_analyze_args(argv)
         _cmd_analyze(filepath, flags)
@@ -103,6 +116,7 @@ def _print_help():
     print("  tdebug stats [jsonl] [选项]       按失败类型聚合（同 failures --stats）")
     print("  tdebug validate <轨迹.json> [选项]  校验 Format B（可选 jsonschema）")
     print("  tdebug scan <directory> [N] [选项]  扫描最新 N 条轨迹")
+    print("  tdebug adjudicate <dir> [N] [选项]  生成盲评标注表 / 评分（根因判对率）")
     print()
     print("选项（analyze / judge）:")
     print("  --json-out PATH    写入结构化 JSON 分析结果")
@@ -130,6 +144,13 @@ def _print_help():
     print("  --incomplete MODE  adapter 导入半截流：reject(默认)|mark；与 --fail-on 无关")
     print("  --task-type NAME   同上")
     print("  --contracts / --contracts-file PATH  同上")
+    print()
+    print("选项（adjudicate）:")
+    print("  --sheet-out PATH   标注表输出（默认 .tdebug/adjudication/<dir>_sheet.jsonl，勿入库）")
+    print("  --key-out PATH     答案 key 输出（与标注表分开，评分时才合并）")
+    print("  --score            进入评分模式：读 --sheet / --key 算 precision/recall")
+    print("  --sheet PATH       评分模式：人工标注表")
+    print("  --key PATH         评分模式：analyzer 判定 key")
     print()
     print("示例:")
     print("  tdebug traj.json --json-out report.json --record")
@@ -166,6 +187,21 @@ def _parse_flags(args: list[str]) -> tuple[list[str], dict]:
         elif a == "--require-verification":
             flags["require_verification"] = True
             i += 1
+        elif a == "--sheet-out" and i + 1 < len(args):
+            flags["sheet_out"] = args[i + 1]
+            i += 2
+        elif a == "--key-out" and i + 1 < len(args):
+            flags["key_out"] = args[i + 1]
+            i += 2
+        elif a == "--score":
+            flags["score"] = True
+            i += 1
+        elif a == "--sheet" and i + 1 < len(args):
+            flags["sheet"] = args[i + 1]
+            i += 2
+        elif a == "--key" and i + 1 < len(args):
+            flags["key"] = args[i + 1]
+            i += 2
         elif a == "--prompt-out" and i + 1 < len(args):
             flags["prompt_out"] = args[i + 1]
             i += 2
@@ -359,6 +395,69 @@ def _cmd_replay(filepath: str):
 
     print(f"\n最终答案: {traj.final_answer[:200]}")
     print("回放完成。")
+
+
+def _cmd_adjudicate(args: list[str]):
+    """Build a blind labeling sheet, or score an already-labeled one."""
+    positional, flags = _parse_flags(args)
+
+    if flags.get("score"):
+        sheet_path = flags.get("sheet")
+        key_path = flags.get("key")
+        if not sheet_path or not key_path:
+            print("评分模式需要同时提供 --sheet PATH 与 --key PATH")
+            sys.exit(1)
+        for path in (sheet_path, key_path):
+            if not os.path.exists(path):
+                print(f"文件不存在: {path}")
+                sys.exit(1)
+        report = score_sheet(load_jsonl(sheet_path), load_jsonl(key_path))
+        _safe_print(format_score(report))
+        if flags.get("json_out"):
+            _write_text(flags["json_out"], json.dumps(report, ensure_ascii=False, indent=2))
+            print(f"\n[已写入评分 JSON] {flags['json_out']}")
+        return
+
+    if not positional:
+        print("用法: tdebug adjudicate <目录> [N] [--sheet-out PATH] [--key-out PATH]")
+        print("      tdebug adjudicate --score --sheet SHEET.jsonl --key KEY.jsonl")
+        sys.exit(1)
+
+    directory = positional[0]
+    n = int(positional[1]) if len(positional) > 1 and positional[1].isdigit() else 20
+    if not os.path.exists(directory):
+        print(f"目录不存在: {directory}")
+        sys.exit(1)
+
+    trajs, source_files = load_recent_paths(directory, n)
+    if not trajs:
+        print(f"目录中没有轨迹 JSON 文件: {directory}")
+        return
+
+    analyzer = _analyzer_from_flags(flags)
+    analyses = [analyzer.analyze(traj) for traj in trajs]
+    sheet = build_sheet(analyses, trajs, source_files)
+    key = build_key(analyses, source_files)
+
+    default_sheet, default_key = default_sheet_paths(directory)
+    sheet_path = flags.get("sheet_out") or default_sheet
+    key_path = flags.get("key_out") or default_key
+    for path in (sheet_path, key_path):
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+    write_jsonl(sheet_path, sheet, schema=SHEET_SCHEMA)
+    write_jsonl(key_path, key, schema=KEY_SCHEMA)
+
+    print("=" * 55)
+    print("  Adjudication — 盲评标注表已生成")
+    print(f"  用例数: {len(sheet)}（表中不含 analyzer 判定，避免锚定）")
+    print(f"  标注表: {sheet_path}")
+    print(f"  答案 key: {key_path}")
+    print("=" * 55)
+    print("  下一步：由未参与规则编写的人填写每行 human_label（留空 = 无失败，多个用逗号分隔）")
+    print(f"  评分:   tdebug adjudicate --score --sheet {sheet_path} --key {key_path}")
+    print("  注意：标注表含原始 query/observation，勿提交进 git（见 SECURITY.md）")
 
 
 def _cmd_scan(directory: str, n: int, flags: dict):

@@ -59,6 +59,12 @@ from trace_debugger.verification import (
     known_case_ids,
     validate_findings_report,
 )
+from trace_debugger.adjudication import (
+    build_key,
+    build_sheet,
+    score_sheet,
+    format_score,
+)
 from trace_debugger.profiles import resolve_analyzer, PROFILE_NAMES
 from trace_debugger.evidence import EvidenceItem, evidence_chain_from_analysis
 from trace_debugger.golden import (
