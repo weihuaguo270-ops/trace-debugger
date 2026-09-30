@@ -1,5 +1,17 @@
 # Trace Debugger
 
+## 项目定位
+
+面向中小型 Agent 团队的本地轨迹失败检测与 CI 规则回归工具，负责发现和输出失败证据，不负责最终发布裁决。
+
+## 对外口径
+
+可以表述为本地/CI 失败治理工具；不能表述为生产 APM、云 tracing 或自动修复系统。当前状态与 P0 见 [`docs/STATUS.md`](docs/STATUS.md)。
+
+## 结构入口
+
+核心代码在 `trace_debugger/`，轨迹契约在 `schemas/`，黄金集与回归测试在 `fixtures/`、`tests/`，定位与证据在 `docs/`。
+
 [![CI](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml/badge.svg)](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **面向中小型 Agent 团队的本地失败治理工具** — 把难以阅读的执行轨迹，变成可统计、可复盘、**可进 CI** 的失败信号。
