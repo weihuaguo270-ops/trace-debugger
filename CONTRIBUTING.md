@@ -8,7 +8,7 @@ Agent 轨迹分析**小工具**。欢迎补规则、修解析或加测试。
 pip install -e ".[test]"
 
 pytest tests/ -q                               # 全量
-pytest tests/test_failure_golden.py -q         # 规则回归（golden 29）
+pytest tests/test_failure_golden.py -q         # 规则回归（golden 32）
 pytest tests/test_failure_fp_and_gate.py -q    # 假阳性回归 + 门禁导出
 
 # CI 的规则门禁步骤：同数据 compare 不应触发 hold
