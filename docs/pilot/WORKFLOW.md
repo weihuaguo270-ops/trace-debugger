@@ -23,13 +23,18 @@ tdebug scan ../react-agent/src/react_agent/trajectories 100 \
   --json-out docs/snapshots/pilot_latest.json \
   --compare docs/snapshots/pilot_baseline.json \
   --findings-out docs/snapshots/pilot_latest_findings.json \
+  --require-verification \
   --project-root .
 ```
 
 1. 看终端 **distribution delta**、**含失败轨迹数**、**门禁判定**（`pass` / `review` / `hold`）
 2. 对照 [THRESHOLDS.md](./THRESHOLDS.md) 判定 pass / review / hold
-3. 可选：检查 `pilot_latest_findings.json` 中 `findings[].repair_boundary`
-4. 追加一行到 [METRICS_LOG.md](./METRICS_LOG.md)
+3. 检查 `pilot_latest_findings.json`：每条 finding 都带 `verification_ref`（回归锁：必须命中的
+   fixture、必须保持干净的假阳性 fixture、复跑命令）。`--require-verification` 会在任何 finding
+   缺少可解析回归锁时 exit 1 —— 没有夹具覆盖的失败类型（当前为 `acceptance_failed`、
+   `incomplete_stream`）一旦回归就会被拦下，必须先补 golden 用例
+4. 可选：检查 `findings[].repair_boundary` 确定修复边界
+5. 追加一行到 [METRICS_LOG.md](./METRICS_LOG.md)
 
 ---
 
@@ -66,7 +71,8 @@ print(compare_snapshots(cur, base))
 
 - [ ] `tdebug scan … 100 --compare pilot_baseline.json` 已跑
 - [ ] 未触发 hold，或 hold 已解决并附 METRICS_LOG
-- [ ] golden CI 仍 27/27（独立门禁）
+- [ ] `--require-verification` 通过：每条 finding 都能指到回归锁（否则先补 fixture）
+- [ ] golden CI 仍 32/32（独立门禁）
 
 ---
 

@@ -6,16 +6,16 @@
 
 | 分栏 | 数量 | 用途 |
 |------|------|------|
-| `golden` | 23 | 开发/回归 — taxonomy 覆盖 + 正例 + 组合失败 |
+| `golden` | 26 | 开发/回归 — taxonomy 覆盖 + 正例 + 组合失败 |
 | `held_out` | 6 | 对照 — 不参与规则微调，只用于门禁 |
 
-**合计 29 条**，每条在 `manifest.json` 含 `expected_failures` / `must_not_detect` / `expected_step_failures`。
+**合计 32 条**，每条在 `manifest.json` 含 `expected_failures` / `must_not_detect` / `expected_step_failures`。
 
 ## Taxonomy 覆盖
 
-黄金负例覆盖（manifest 内）：`tool_error` · `approval_denied` · `search_empty` · `search_weak` · `search_timeout` · `duplicate` · `no_answer` · `llm_offtrack` · `context_overflow`。
+黄金负例覆盖（manifest 内）：`tool_error` · `approval_denied` · `search_empty` · `search_weak` · `search_timeout` · `duplicate` · `no_answer` · `llm_offtrack` · `context_overflow` · `acceptance_failed` · `incomplete_stream` —— **11 类 taxonomy 全覆盖**。
 
-另：`acceptance_failed` 由真实交付故障轨迹对应的独立回归测试覆盖，尚未并入 golden manifest；`incomplete_stream` 由 adapter `on_incomplete=mark` 路径测试覆盖（默认 reject，不进 golden 默认分布）。
+`acceptance_failed` / `incomplete_stream` 此前仅由独立回归测试覆盖、未并入 manifest，导致 findings 无法为这两类给出回归锁（见 `--require-verification`）；现已补入 golden 夹具与生成器。
 
 另含：正例（无失败）、多路径、中文搜索工具、工具错误后恢复、Harness 阻止重复等。
 
@@ -42,7 +42,7 @@ python examples/publish_golden_evidence.py --stem golden_evidence_baseline
 ## 与 failure_bundle 关系
 
 - `examples/failure_bundle/` — 早期 5 条演示（保留兼容）
-- `fixtures/failure_golden/` — **标准证据集**（29 条 + manifest）
+- `fixtures/failure_golden/` — **标准证据集**（32 条 + manifest）
 
 ## 诚实边界
 

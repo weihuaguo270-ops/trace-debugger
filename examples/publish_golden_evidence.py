@@ -11,9 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from trace_debugger.analyzer import FailureType, failure_distribution  # noqa: E402
+from trace_debugger.analyzer import FailureType  # noqa: E402
 from trace_debugger.golden import DEFAULT_GOLDEN_DIR, run_golden_suite  # noqa: E402
-from trace_debugger.reader import load  # noqa: E402
 
 
 def _git_sha() -> str:
@@ -32,23 +31,24 @@ def _git_sha() -> str:
 
 
 def build_distribution_report() -> dict:
-    from trace_debugger import Analyzer
-
     suite = run_golden_suite()
-    analyzed = []
+    # Derive the distribution from the suite rows themselves: re-analyzing with a
+    # default Analyzer dropped the per-case task_type (search_weak needs the qa
+    # profile) and let the published artifact diverge from the actual suite.
+    dist: dict[str, int] = {}
     for row in suite["cases"]:
-        analyzed.append(Analyzer().analyze(load(str(DEFAULT_GOLDEN_DIR / row["file"]))))
-    dist = failure_distribution(analyzed)
+        for failure in row.get("detected_failures") or []:
+            dist[failure] = dist.get(failure, 0) + 1
     return {
         **suite,
         "report_id": f"golden_evidence_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "source_dir": str(DEFAULT_GOLDEN_DIR.as_posix()),
-        "distribution": dist,
+        "distribution": dict(sorted(dist.items())),
         "distribution_labels": {k: FailureType.LABELS.get(k, k) for k in dist},
         "meta": {
             "git": _git_sha(),
-            "note": "黄金集标签经 Analyzer 验证；held-out 与 golden 分栏",
+            "note": "黄金集标签经 Analyzer 验证；held-out 与 golden 分栏；distribution 按用例计（含 task_type profile）",
         },
     }
 

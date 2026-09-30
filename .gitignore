@@ -1,6 +1,9 @@
 __pycache__/
 *.pyc
 .env
+# 受限 runner 的 pytest 临时根（见 CONTRIBUTING）
+.pytest-tmp/
+.pytest-run*/
 .DS_Store
 *.egg-info/
 dist/

@@ -15,9 +15,39 @@
 - Search structural weak signal `search_weak` (`search_min_results` / `search_require_url`; enabled in `qa` profile) — not semantic quality Judge
 - Responses `protocol_mode=ignore_fail|audit|fail_on_error` for list_tools/compaction (protocol ≠ Agent task failure)
 - Tests: `tests/test_message_adapters.py`, `tests/test_openai_stream_and_responses.py`, `tests/test_responses_extended_items.py`, `tests/test_fail_on_cli.py`
+- Findings `verification_ref`: every actionable finding now carries a machine-checkable regression
+  lock (fixture ids derived from the manifests — no hardcoded case ids — plus the lock tests and
+  command). A type with no `must_detect` case is marked `verified: false` instead of passing as prose.
+- CLI `--require-verification` (with `--findings-out`): exits 1 when any finding has no resolvable
+  lock; wired into the CI regression-gate step. Test: `tests/test_findings_verification.py`
+- Golden set grows to **32** cases (26 golden / 6 held_out): `acceptance_failed` and
+  `incomplete_stream` now have fixtures plus a positive control, so all 11 failure types carry a
+  regression lock. Previously these two could regress and produce findings nothing could verify.
+- `tdebug adjudicate`: builds a **blind** human-labeling sheet (evidence only — the analyzer's
+  verdict lives in a separate key file) and scores the two into a root-cause correctness rate with
+  per-type precision/recall plus an explicit disagreement list. Refuses to report a number while
+  cases are unlabeled. Protocol: `docs/pilot/ADJUDICATION.md`; sheets carry raw query/observation
+  and default to gitignored `.tdebug/`. Test: `tests/test_adjudication.py`
+- CI guard: the golden fixtures must be byte-reproducible from `scripts/generate_failure_golden.py`
+  (`git diff --exit-code` after regenerating), and a test asserts the published evidence snapshot
+  still matches a fresh suite run.
 
 ### Fixed
 
+- `examples/publish_golden_evidence.py` re-analysed every case with a default `Analyzer()`, ignoring
+  the per-case `task_type`, so the published `distribution` silently omitted `search_weak` (which
+  needs the `qa` profile) while the suite itself passed. The distribution is now derived from the
+  suite rows — one source of truth — and the artifact is regenerated.
+- `llm_offtrack` false positives on cross-language answers (Chinese query, English answer and the
+  reverse): word overlap cannot measure "answered the wrong thing" across scripts. A deterministic
+  script check (`looks_cross_language`) now skips offtrack when one side is ≥70% Han and the other
+  ≤10%. Regression locks: `fixtures/failure_fp/fp_cross_language{,_reverse}.json` (false-positive
+  set grows to 7). Trade-off documented in `docs/RISKS.md` §1: a genuinely off-topic cross-language
+  answer is no longer flagged either.
+- `scripts/generate_failure_golden.py` had drifted from the committed manifest: regenerating dropped
+  `golden_approval_denied` and `golden_search_weak` (29 → 27 cases). Both are back in the generator's
+  spec, it now honours per-case `task_type` (the `qa` profile that `search_weak` needs), and the
+  manifest + fixtures are byte-reproducible from the generator again.
 - CLI on Windows with a legacy ANSI code page (e.g. cp1252 runner): redirected
   stdout made every Chinese line raise `UnicodeEncodeError` and the command died
   with a traceback. `main()` now calls `configure_stdio()` (UTF-8 + `errors=replace`),

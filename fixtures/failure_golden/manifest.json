@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "description": "黄金失败集 — taxonomy + 正例 + held-out；供证据链与 CI 门禁",
-  "n_cases": 29,
+  "n_cases": 32,
   "cases": [
     {
       "id": "golden_tool_error",
@@ -57,7 +57,7 @@
           "type": "search_weak"
         }
       ],
-      "notes": "3 results without url → search_weak under qa profile"
+      "notes": "verified detected=['search_weak']"
     },
     {
       "id": "golden_search_empty",
@@ -347,6 +347,60 @@
       "must_not_detect": [],
       "expected_step_failures": [],
       "notes": "verified detected=['context_overflow']"
+    },
+    {
+      "id": "golden_acceptance_failed",
+      "file": "acceptance_failed.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "acceptance_failed"
+      ],
+      "must_not_detect": [
+        "tool_error"
+      ],
+      "expected_step_failures": [
+        {
+          "step": 2,
+          "type": "acceptance_failed"
+        }
+      ],
+      "notes": "verified detected=['acceptance_failed']"
+    },
+    {
+      "id": "golden_incomplete_stream",
+      "file": "incomplete_stream.json",
+      "split": "golden",
+      "category": "negative",
+      "expected_failures": [
+        "incomplete_stream"
+      ],
+      "must_not_detect": [
+        "tool_error"
+      ],
+      "expected_step_failures": [
+        {
+          "step": 1,
+          "type": "incomplete_stream"
+        }
+      ],
+      "notes": "verified detected=['incomplete_stream']"
+    },
+    {
+      "id": "golden_pass_acceptance_ok",
+      "file": "pass_acceptance_ok.json",
+      "split": "golden",
+      "category": "positive",
+      "expected_failures": [],
+      "must_not_detect": [
+        "acceptance_failed",
+        "incomplete_stream",
+        "tool_error",
+        "llm_offtrack",
+        "no_answer"
+      ],
+      "expected_step_failures": [],
+      "notes": "verified detected=[]"
     },
     {
       "id": "held_out_pass_report",

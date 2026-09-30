@@ -16,11 +16,11 @@ from trace_debugger.profiles import resolve_analyzer
 from trace_debugger.runtime import StepWatcher
 
 
-def test_manifest_has_29_cases():
+def test_manifest_case_count():
     manifest = load_manifest()
-    assert len(manifest.cases) == 29
+    assert len(manifest.cases) == 32
     assert {c.split for c in manifest.cases} == {"golden", "held_out"}
-    assert sum(1 for c in manifest.cases if c.split == "golden") == 23
+    assert sum(1 for c in manifest.cases if c.split == "golden") == 26
     assert sum(1 for c in manifest.cases if c.split == "held_out") == 6
 
 
@@ -46,8 +46,26 @@ def test_taxonomy_coverage():
     required = {
         "tool_error", "approval_denied", "search_empty", "search_weak", "search_timeout",
         "duplicate", "no_answer", "llm_offtrack", "context_overflow",
+        "acceptance_failed", "incomplete_stream",
     }
     assert required <= covered
+
+
+def test_published_golden_snapshot_matches_fresh_suite():
+    """已发布的黄金证据不得与当前规则脱节（含 per-case task_type profile）。"""
+    snapshot_path = DEFAULT_GOLDEN_DIR.parents[1] / "docs" / "snapshots" / "golden_evidence_baseline.json"
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    report = run_golden_suite()
+
+    assert snapshot["n_cases"] == report["n_cases"]
+    assert snapshot["n_passed"] == report["n_passed"]
+    assert snapshot["n_failed"] == report["n_failed"]
+
+    fresh: dict[str, int] = {}
+    for row in report["cases"]:
+        for failure in row["detected_failures"]:
+            fresh[failure] = fresh.get(failure, 0) + 1
+    assert dict(sorted(fresh.items())) == snapshot["distribution"]
 
 
 _SKIP_WATCHER_REPLAY = {"golden_multi_paths", "golden_path_id_branch"}

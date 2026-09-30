@@ -24,8 +24,51 @@ from trace_debugger.tool_contracts import check_tool_contract, merge_contracts
 
 def test_false_positive_suite_passes():
     report = run_false_positive_suite()
-    assert report["n_cases"] == 5
+    assert report["n_cases"] == 7
     assert report["n_failed"] == 0, report
+
+
+def test_cross_language_exemption_is_script_based():
+    from trace_debugger.analyzer import looks_cross_language
+
+    # 跨语言：两个方向都豁免
+    assert looks_cross_language(
+        "鲁迅的《呐喊》是哪一年首次出版的？",
+        "Nahan (Call to Arms) by Lu Xun was first published in 1923 by the Beijing Xinchao Society.",
+    )
+    assert looks_cross_language(
+        "When was Lu Xun's Nahan first published?",
+        "《呐喊》于 1923 年由北京新潮社首次出版，是鲁迅的第一部短篇小说集。",
+    )
+    # 同语言不豁免，否则会掩盖真实的 offtrack
+    assert not looks_cross_language(
+        "鲁迅的《呐喊》是哪一年首次出版的？",
+        "《呐喊》于 1923 年首次出版。",
+    )
+    assert not looks_cross_language(
+        "When was Nahan published?",
+        "It was published in 1923.",
+    )
+    # 文本太短不下判断
+    assert not looks_cross_language("短", "ok")
+
+
+def test_cross_language_does_not_rescue_same_language_offtrack():
+    """豁免只认脚本差异：同语言的答非所问仍必须报出来。"""
+    from trace_debugger.analyzer import Analyzer
+    from trace_debugger.reader import parse
+
+    traj = parse({
+        "session_id": "off_cn",
+        "query": "写一份关于人工智能行业趋势的详细分析报告",
+        "model": "mock-gpt",
+        "steps": [
+            {"step": 1, "thought": "FINAL ANSWER: 今天天气不错，适合出门散步。", "observation": ""},
+        ],
+        "final_answer": "今天天气不错，适合出门散步，记得带伞以免突然下雨，周末可以去公园野餐。",
+    })
+    types = {ft for pa in Analyzer().analyze(traj).paths for ft in pa.failure_types}
+    assert "llm_offtrack" in types
 
 
 @pytest.mark.parametrize("case_id", [c.id for c in load_manifest(str(DEFAULT_FP_DIR / "manifest.json")).cases])

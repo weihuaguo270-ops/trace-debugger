@@ -1,5 +1,17 @@
 # Trace Debugger
 
+## 项目定位
+
+面向中小型 Agent 团队的本地轨迹失败检测与 CI 规则回归工具，负责发现和输出失败证据，不负责最终发布裁决。
+
+## 对外口径
+
+可以表述为本地/CI 失败治理工具；不能表述为生产 APM、云 tracing 或自动修复系统。当前状态与 P0 见 [`docs/STATUS.md`](docs/STATUS.md)。
+
+## 结构入口
+
+核心代码在 `trace_debugger/`，轨迹契约在 `schemas/`，黄金集与回归测试在 `fixtures/`、`tests/`，定位与证据在 `docs/`。
+
 [![CI](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml/badge.svg)](https://github.com/weihuaguo270-ops/trace-debugger/actions/workflows/test.yml) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **面向中小型 Agent 团队的本地失败治理工具** — 把难以阅读的执行轨迹，变成可统计、可复盘、**可进 CI** 的失败信号。
@@ -37,7 +49,7 @@ Agent 团队把运行轨迹接入 trace-debugger 之后：
 2. **形成记录** — JSONL + 可读 log，便于复盘
 3. **发版前对比** — `tdebug scan` + `--compare` 发现失败分布是否变差
 4. **结构化 findings** — `--findings-out` 输出门禁判定 + 修复边界（Harness Health，v0.2.7+）
-5. **CI 门禁** — 黄金集 29 条 + 可选 `--fail-on` 拦 CI
+5. **CI 门禁** — 黄金集 32 条 + 可选 `--fail-on` 拦 CI
 
 ```bash
 pip install -e .
@@ -94,7 +106,7 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 | 已交付 | 说明 |
 |--------|------|
 | 启发式失败标签 + CLI | `tdebug` / `stats` / `validate`（含 adapters 结构化信号） |
-| 黄金集 + CI | 29/29 — 规则回归（含 `approval_denied` / `search_weak`） |
+| 黄金集 + CI | 32/32 — 规则回归（含 `approval_denied` / `search_weak` / `acceptance_failed` / `incomplete_stream`） |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 | **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |
 | **跨 Agent Episode** (v0.4.0) | 导入 `evaluation-episode/v1`，保留框架、Agent 版本、split 与业务终态校验证据；无需安装轨迹生产方 SDK |

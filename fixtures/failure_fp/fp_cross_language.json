@@ -1,0 +1,15 @@
+{
+  "session_id": "fp_cross_language",
+  "query": "鲁迅的《呐喊》是哪一年首次出版的？",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-14T00:00:04Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "FINAL ANSWER: 1923",
+      "observation": ""
+    }
+  ],
+  "final_answer": "Nahan (Call to Arms) by Lu Xun was first published in 1923 by the Beijing Xinchao Society.",
+  "total_duration_seconds": 0.4
+}

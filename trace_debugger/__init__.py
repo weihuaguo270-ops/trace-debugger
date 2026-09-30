@@ -20,6 +20,8 @@ from trace_debugger.analyzer import (
     failure_distribution,
     is_final_thought,
     is_search_tool,
+    looks_cross_language,
+    script_profile,
 )
 from trace_debugger.reader import Trajectory, Path, Step
 from trace_debugger.reporter import format_report, format_json, build_judge_prompt, analysis_to_dict
@@ -52,6 +54,18 @@ from trace_debugger.harness_health import (
     evaluate_regression_gate,
     probe_project_mechanisms,
     should_fail_on_gate,
+)
+from trace_debugger.verification import (
+    build_verification_ref,
+    fixture_coverage,
+    known_case_ids,
+    validate_findings_report,
+)
+from trace_debugger.adjudication import (
+    build_key,
+    build_sheet,
+    score_sheet,
+    format_score,
 )
 from trace_debugger.profiles import resolve_analyzer, PROFILE_NAMES
 from trace_debugger.evidence import EvidenceItem, evidence_chain_from_analysis

@@ -1,0 +1,25 @@
+{
+  "session_id": "golden_incomplete_stream",
+  "query": "总结这份长文档的要点",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-14T00:00:11Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "流式读取模型输出",
+      "action": {
+        "name": "openai_stream",
+        "arguments": "{\"model\": \"gpt\", \"stream\": true}"
+      },
+      "observation": "[错误] responses.incomplete: stream ended with status in_progress",
+      "duration_seconds": 0.4
+    },
+    {
+      "step": 2,
+      "thought": "FINAL ANSWER: 总结这份长文档的要点未完成",
+      "observation": ""
+    }
+  ],
+  "final_answer": "总结这份长文档的要点未完成：流式输出中断，要点不可用。",
+  "total_duration_seconds": 0.6
+}

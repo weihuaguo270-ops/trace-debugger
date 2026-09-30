@@ -49,6 +49,24 @@
       "expected_failures": [],
       "must_not_detect": ["search_weak", "search_empty", "llm_offtrack"],
       "notes": "正常带 url 的 results；qa 结构规则不得误报"
+    },
+    {
+      "id": "fp_cross_language",
+      "file": "fp_cross_language.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "expected_failures": [],
+      "must_not_detect": ["llm_offtrack", "tool_error", "no_answer"],
+      "notes": "中文问 / 英文答，答案正确；词重叠无意义，不得判 offtrack"
+    },
+    {
+      "id": "fp_cross_language_reverse",
+      "file": "fp_cross_language_reverse.json",
+      "split": "false_positive",
+      "category": "false_positive",
+      "expected_failures": [],
+      "must_not_detect": ["llm_offtrack", "tool_error", "no_answer"],
+      "notes": "英文问 / 中文答，答案正确；反向对称不得判 offtrack"
     }
   ]
 }

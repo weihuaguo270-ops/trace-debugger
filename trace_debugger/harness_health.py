@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal, Optional
 
+from .verification import build_verification_ref
+
 EvidenceState = Literal[
     "present",
     "wired",
@@ -187,6 +189,8 @@ def _finding_distribution(
         "impact": "回归门禁规则 A：单类型计数异常上升",
         "repair_boundary": "trace-debugger/analyzer 或 react-agent prompt/工具",
         "validation_route": "tdebug scan --compare + golden/FP CI + METRICS_LOG",
+        "failure_type": ft,
+        "verification_ref": build_verification_ref(ft),
         "evidence": evidence or [f"distribution[{ft}]: {base} → {cur}"],
     }
 
@@ -211,6 +215,8 @@ def _finding_type_rate(
         "impact": "回归门禁规则 R：单类型率差异常（n 不对齐时仍生效）",
         "repair_boundary": "trace-debugger/analyzer 或 Agent prompt/工具",
         "validation_route": "tdebug scan --compare（看 rate 列）+ failure-gate 导出",
+        "failure_type": ft,
+        "verification_ref": build_verification_ref(ft),
         "evidence": [
             f"rate[{ft}]: {base_pct:.1f}% → {cur_pct:.1f}%",
             f"delta_pp={delta_pp:+.1f}",
@@ -237,7 +243,25 @@ def _finding_fail_rate(
         "impact": "回归门禁规则 B：含失败轨迹占比显著上升",
         "repair_boundary": "发版前 prompt/工具/analyzer 变更",
         "validation_route": "重扫 pilot N=100 对齐 baseline 后 compare",
+        # Session-level finding: not tied to one failure type → suite-scope lock.
+        "verification_ref": build_verification_ref(None),
     }
+
+
+def _fixture_case_count(root: Path, rel_path: str) -> Optional[int]:
+    """Live case count from a fixture manifest; None when absent or unreadable.
+
+    Labels must never carry a hardcoded case count — they drift silently
+    (e.g. "golden 27 条" outliving the 29-case set).
+    """
+    if not (root / rel_path).exists():
+        return None
+    from .golden import load_manifest
+
+    try:
+        return len(load_manifest(str(root / rel_path)).cases)
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
 
 
 def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
@@ -252,6 +276,7 @@ def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
         path: str,
         *,
         wired_hint: Optional[str] = None,
+        case_count: Optional[int] = None,
     ) -> None:
         full = root / path
         exists = full.exists()
@@ -261,28 +286,38 @@ def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
             wired = (root / wired_hint).exists()
             if wired:
                 state = "wired"
-        checks.append({
+        entry: dict[str, Any] = {
             "id": mechanism_id,
             "dimension": dimension,
             "label": label,
             "path": path,
             "evidence_state": state,
             "wired": wired,
-        })
+        }
+        if case_count is not None:
+            entry["case_count"] = case_count
+        checks.append(entry)
+
+    golden_rel = "fixtures/failure_golden/manifest.json"
+    fp_rel = "fixtures/failure_fp/manifest.json"
+    golden_n = _fixture_case_count(root, golden_rel)
+    fp_n = _fixture_case_count(root, fp_rel)
 
     _add(
         "golden-fixtures",
         "change-validation",
-        "失败 golden 27 条",
-        "fixtures/failure_golden/manifest.json",
+        f"失败 golden {golden_n} 条" if golden_n is not None else "失败 golden 回归集",
+        golden_rel,
         wired_hint=".github/workflows/test.yml",
+        case_count=golden_n,
     )
     _add(
         "false-positive-fixtures",
         "change-validation",
-        "假阳性回归集",
-        "fixtures/failure_fp/manifest.json",
+        f"假阳性回归集 {fp_n} 条" if fp_n is not None else "假阳性回归集",
+        fp_rel,
         wired_hint=".github/workflows/test.yml",
+        case_count=fp_n,
     )
     _add(
         "pilot-baseline",

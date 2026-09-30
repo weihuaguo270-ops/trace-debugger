@@ -1,16 +1,16 @@
 # 黄金失败集证据（golden_evidence_baseline）
 
-- **report_id:** `golden_evidence_20260914_054351`
-- **timestamp:** `2026-09-14T05:43:51.557834+00:00`
-- **cases:** 29 (pass 29 / fail 0)
+- **report_id:** `golden_evidence_20260930_085604`
+- **timestamp:** `2026-09-30T08:56:04.486880+00:00`
+- **cases:** 32 (pass 32 / fail 0)
 - **pass_rate:** 100%
-- **git:** `ee6c5e6`
+- **git:** `dfa8d46`
 
 ## 分栏通过率
 
 | split | n | passed | pass_rate |
 |-------|--:|-------:|----------:|
-| `golden` | 23 | 23 | 100% |
+| `golden` | 26 | 26 | 100% |
 | `held_out` | 6 | 6 | 100% |
 
 ## 失败类型覆盖（负例轨迹）
@@ -24,7 +24,10 @@
 | `no_answer` | 3 | 未给出最终答案 |
 | `llm_offtrack` | 2 | LLM 偏离用户意图 |
 | `search_timeout` | 2 | 搜索超时 |
+| `acceptance_failed` | 1 | 验收测试失败 |
 | `approval_denied` | 1 | 批准被拒绝 |
+| `incomplete_stream` | 1 | 半截流/未完成 |
+| `search_weak` | 1 | 搜索结果结构过弱 |
 
 ## 用例明细
 
@@ -51,6 +54,9 @@
 - `golden_no_answer_empty_final` [PASS] split=golden expected=[no_answer] detected=[no_answer] — no_answer_empty_final.json
 - `golden_offtrack_subtle` [PASS] split=golden expected=[llm_offtrack] detected=[llm_offtrack] — offtrack_subtle.json
 - `golden_overflow_cumulative` [PASS] split=golden expected=[context_overflow] detected=[context_overflow] — overflow_cumulative.json
+- `golden_acceptance_failed` [PASS] split=golden expected=[acceptance_failed] detected=[acceptance_failed] — acceptance_failed.json
+- `golden_incomplete_stream` [PASS] split=golden expected=[incomplete_stream] detected=[incomplete_stream] — incomplete_stream.json
+- `golden_pass_acceptance_ok` [PASS] split=golden expected=[-] detected=[-] — pass_acceptance_ok.json
 - `held_out_pass_report` [PASS] split=held_out expected=[-] detected=[-] — held_out_pass_report.json
 - `held_out_mixed_warn` [PASS] split=held_out expected=[tool_error] detected=[tool_error] — held_out_mixed_warn.json
 - `held_out_search_chain` [PASS] split=held_out expected=[search_empty] detected=[search_empty] — held_out_search_chain.json
