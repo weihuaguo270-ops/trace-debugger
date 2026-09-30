@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from trace_debugger.analyzer import Analyzer  # noqa: E402
+from trace_debugger.profiles import resolve_analyzer  # noqa: E402
 from trace_debugger.reader import load  # noqa: E402
 
 GOLDEN = ROOT / "fixtures" / "failure_golden"
@@ -304,6 +304,91 @@ def main() -> int:
         "final_answer": "ok", "total_duration_seconds": 1.0,
     })
 
+    save("approval_denied.json", {
+        "session_id": "golden_approval_denied",
+        "query": "写入临时文件", "model": "mock-gpt",
+        "timestamp": "2026-09-14T00:00:01Z",
+        "steps": [
+            {"step": 1, "thought": "[mcp_approval_request]",
+             "action": {"name": "mcp_approval_request",
+                        "arguments": "{\"name\": \"write\", \"server_label\": \"files\"}"},
+             "observation": "{\"name\": \"write\"}", "duration_seconds": 0.1},
+            {"step": 2, "thought": "[mcp_approval_response]",
+             "action": {"name": "mcp_approval_response",
+                        "arguments": "{\"approval_request_id\": \"apr_1\", \"approve\": false}"},
+             "observation": "[错误] mcp approval denied [responses.mcp.approval_denied]",
+             "duration_seconds": 0.1},
+            {"step": 3, "thought": "FINAL ANSWER: 写入临时文件未获批准，无法完成", "observation": ""},
+        ],
+        "final_answer": "写入临时文件未获批准，无法完成", "total_duration_seconds": 0.4,
+    })
+
+    save("search_weak.json", {
+        "session_id": "golden_search_weak",
+        "query": "搜索 Python 异步 IO 教程", "model": "mock-gpt",
+        "timestamp": "2026-09-14T00:00:02Z",
+        "steps": [
+            {"step": 1, "thought": "调用搜索",
+             "action": {"name": "web_search", "arguments": "{\"query\": \"Python asyncio tutorial\"}"},
+             "observation": "{\"results\": [{\"title\": \"假结果一\", \"snippet\": \"无链接\"}, "
+                            "{\"title\": \"假结果二\", \"snippet\": \"仍无 url\"}, "
+                            "{\"title\": \"假结果三\", \"snippet\": \"只有标题\"}]}",
+             "duration_seconds": 1.2},
+            {"step": 2, "thought": "FINAL ANSWER: 搜索 Python 异步 IO 教程 仅得到无链接条目",
+             "observation": ""},
+        ],
+        "final_answer": "搜索 Python 异步 IO 教程 仅得到无链接条目", "total_duration_seconds": 1.5,
+    })
+
+    save("acceptance_failed.json", {
+        "session_id": "golden_acceptance_failed",
+        "query": "修复 add() 的边界 bug 并跑验收测试", "model": "mock-gpt",
+        "timestamp": "2026-09-14T00:00:10Z",
+        "steps": [
+            {"step": 1, "thought": "先修 add() 的边界 bug",
+             "action": {"name": "edit_file", "arguments": "{\"path\": \"add.py\"}"},
+             "observation": "patched add.py: add() 边界 bug 已修复", "duration_seconds": 0.2},
+            {"step": 2, "thought": "跑验收测试",
+             "action": {"name": "run_acceptance_tests", "arguments": "{\"suite\": \"acceptance\"}"},
+             "observation": "failed", "duration_seconds": 1.1},
+            {"step": 3, "thought": "FINAL ANSWER: 验收测试失败", "observation": ""},
+        ],
+        "final_answer": "验收测试失败：add() 的边界 bug 候选变更未通过验收。",
+        "total_duration_seconds": 1.5,
+    })
+
+    save("incomplete_stream.json", {
+        "session_id": "golden_incomplete_stream",
+        "query": "总结这份长文档的要点", "model": "mock-gpt",
+        "timestamp": "2026-09-14T00:00:11Z",
+        "steps": [
+            {"step": 1, "thought": "流式读取模型输出",
+             "action": {"name": "openai_stream", "arguments": "{\"model\": \"gpt\", \"stream\": true}"},
+             "observation": "[错误] responses.incomplete: stream ended with status in_progress",
+             "duration_seconds": 0.4},
+            {"step": 2, "thought": "FINAL ANSWER: 总结这份长文档的要点未完成", "observation": ""},
+        ],
+        "final_answer": "总结这份长文档的要点未完成：流式输出中断，要点不可用。",
+        "total_duration_seconds": 0.6,
+    })
+
+    save("pass_acceptance_ok.json", {
+        "session_id": "golden_pass_acceptance_ok",
+        "query": "修复 add() 的边界 bug 并跑验收测试", "model": "mock-gpt",
+        "timestamp": "2026-09-14T00:00:12Z",
+        "steps": [
+            {"step": 1, "thought": "修 add() 的边界 bug",
+             "action": {"name": "edit_file", "arguments": "{\"path\": \"add.py\"}"},
+             "observation": "patched add.py: add() 边界 bug 已修复", "duration_seconds": 0.2},
+            {"step": 2, "thought": "跑验收测试",
+             "action": {"name": "run_acceptance_tests", "arguments": "{\"suite\": \"acceptance\"}"},
+             "observation": "passed: 12 passed", "duration_seconds": 0.9},
+            {"step": 3, "thought": "FINAL ANSWER: 验收通过", "observation": ""},
+        ],
+        "final_answer": "验收测试通过：add() 的边界 bug 已修复，12 项验收全部通过。",
+        "total_duration_seconds": 1.3,
+    })
+
     save("held_out_pass_report.json", {
         "session_id": "held_pass_report",
         "query": "写一份关于 AI 行业趋势的简短报告", "model": "mock-gpt",
@@ -398,6 +483,10 @@ def main() -> int:
     specs = [
         ("golden_tool_error", "tool_error.json", "golden", "negative", ["tool_error"], [],
          [{"step": 1, "type": "tool_error"}]),
+        ("golden_approval_denied", "approval_denied.json", "golden", "negative",
+         ["approval_denied"], ["tool_error"], [{"step": 2, "type": "approval_denied"}]),
+        ("golden_search_weak", "search_weak.json", "golden", "negative",
+         ["search_weak"], ["search_empty"], [{"step": 1, "type": "search_weak"}], "qa"),
         ("golden_search_empty", "search_empty.json", "golden", "negative", ["search_empty"], [],
          [{"step": 1, "type": "search_empty"}]),
         ("golden_search_timeout", "search_timeout.json", "golden", "negative", ["search_timeout"], [],
@@ -433,6 +522,12 @@ def main() -> int:
         ("golden_offtrack_subtle", "offtrack_subtle.json", "golden", "negative", ["llm_offtrack"], [], []),
         ("golden_overflow_cumulative", "overflow_cumulative.json", "golden", "negative",
          ["context_overflow"], [], []),
+        ("golden_acceptance_failed", "acceptance_failed.json", "golden", "negative",
+         ["acceptance_failed"], ["tool_error"], [{"step": 2, "type": "acceptance_failed"}]),
+        ("golden_incomplete_stream", "incomplete_stream.json", "golden", "negative",
+         ["incomplete_stream"], ["tool_error"], [{"step": 1, "type": "incomplete_stream"}]),
+        ("golden_pass_acceptance_ok", "pass_acceptance_ok.json", "golden", "positive", [],
+         ["acceptance_failed", "incomplete_stream", "tool_error", "llm_offtrack", "no_answer"], []),
         ("held_out_pass_report", "held_out_pass_report.json", "held_out", "positive", [],
          ["llm_offtrack", "tool_error"], []),
         ("held_out_mixed_warn", "held_out_mixed_warn.json", "held_out", "negative", ["tool_error"], [],
@@ -447,28 +542,35 @@ def main() -> int:
          ["duplicate", "search_empty"], [], []),
     ]
 
-    analyzer = Analyzer()
     manifest_cases = []
     mismatches = []
-    for sid, fname, split, cat, exp, must_not, step_exp in specs:
-        analysis = analyzer.analyze(load(str(GOLDEN / fname)))
+    for spec in specs:
+        sid, fname, split, cat, exp, must_not, step_exp = spec[:7]
+        task_type = spec[7] if len(spec) > 7 else "default"
+        # task_type decides which analyzer profile validates the case.
+        analysis = resolve_analyzer(task_type).analyze(load(str(GOLDEN / fname)))
         detected = sorted({ft for pa in analysis.paths for ft in pa.failure_types})
         if set(detected) != set(exp):
             mismatches.append((sid, exp, detected))
-        manifest_cases.append({
+        entry = {
             "id": sid,
             "file": fname,
             "split": split,
             "category": cat,
+        }
+        if task_type != "default":
+            entry["task_type"] = task_type
+        entry.update({
             "expected_failures": exp,
             "must_not_detect": must_not,
             "expected_step_failures": step_exp,
             "notes": f"verified detected={detected}",
         })
+        manifest_cases.append(entry)
 
     manifest = {
         "schema_version": "1",
-        "description": "黄金失败集 — 7 类 taxonomy + 正例 + held-out；供证据链与 CI 门禁",
+        "description": "黄金失败集 — taxonomy + 正例 + held-out；供证据链与 CI 门禁",
         "n_cases": len(manifest_cases),
         "cases": manifest_cases,
     }

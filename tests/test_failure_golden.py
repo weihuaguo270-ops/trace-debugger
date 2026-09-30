@@ -16,11 +16,11 @@ from trace_debugger.profiles import resolve_analyzer
 from trace_debugger.runtime import StepWatcher
 
 
-def test_manifest_has_29_cases():
+def test_manifest_case_count():
     manifest = load_manifest()
-    assert len(manifest.cases) == 29
+    assert len(manifest.cases) == 32
     assert {c.split for c in manifest.cases} == {"golden", "held_out"}
-    assert sum(1 for c in manifest.cases if c.split == "golden") == 23
+    assert sum(1 for c in manifest.cases if c.split == "golden") == 26
     assert sum(1 for c in manifest.cases if c.split == "held_out") == 6
 
 
@@ -46,6 +46,7 @@ def test_taxonomy_coverage():
     required = {
         "tool_error", "approval_denied", "search_empty", "search_weak", "search_timeout",
         "duplicate", "no_answer", "llm_offtrack", "context_overflow",
+        "acceptance_failed", "incomplete_stream",
     }
     assert required <= covered
 
