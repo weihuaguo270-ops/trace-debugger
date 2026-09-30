@@ -77,3 +77,30 @@ def test_probe_project_mechanisms():
     assert 'thresholds-doc' in ids
     golden = next(m for m in mechs if m['id'] == 'golden-fixtures')
     assert golden['evidence_state'] in ('present', 'wired', 'missing')
+
+
+def test_probe_fixture_counts_come_from_manifests():
+    """探针计数必须来自 manifest，不得硬编码（回归：曾写死 27 条）。"""
+    import os
+
+    from trace_debugger.golden import DEFAULT_FP_DIR, load_manifest
+
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    mechs = {m['id']: m for m in probe_project_mechanisms(root)}
+
+    golden_n = len(load_manifest().cases)
+    fp_n = len(load_manifest(str(DEFAULT_FP_DIR / 'manifest.json')).cases)
+
+    assert mechs['golden-fixtures']['case_count'] == golden_n
+    assert f'{golden_n} 条' in mechs['golden-fixtures']['label']
+    assert mechs['false-positive-fixtures']['case_count'] == fp_n
+    assert f'{fp_n} 条' in mechs['false-positive-fixtures']['label']
+
+
+def test_probe_without_manifests_degrades_gracefully(tmp_path):
+    """夹具缺失时探针标 missing，不带计数、不抛异常。"""
+    mechs = {m['id']: m for m in probe_project_mechanisms(str(tmp_path))}
+    golden = mechs['golden-fixtures']
+    assert golden['evidence_state'] == 'missing'
+    assert 'case_count' not in golden
+    assert golden['label'] == '失败 golden 回归集'

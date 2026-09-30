@@ -240,6 +240,22 @@ def _finding_fail_rate(
     }
 
 
+def _fixture_case_count(root: Path, rel_path: str) -> Optional[int]:
+    """Live case count from a fixture manifest; None when absent or unreadable.
+
+    Labels must never carry a hardcoded case count — they drift silently
+    (e.g. "golden 27 条" outliving the 29-case set).
+    """
+    if not (root / rel_path).exists():
+        return None
+    from .golden import load_manifest
+
+    try:
+        return len(load_manifest(str(root / rel_path)).cases)
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
     """Static probe: Present / Wired for known harness mechanisms (no session inference)."""
     root = Path(project_root)
@@ -252,6 +268,7 @@ def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
         path: str,
         *,
         wired_hint: Optional[str] = None,
+        case_count: Optional[int] = None,
     ) -> None:
         full = root / path
         exists = full.exists()
@@ -261,28 +278,38 @@ def probe_project_mechanisms(project_root: str) -> list[dict[str, Any]]:
             wired = (root / wired_hint).exists()
             if wired:
                 state = "wired"
-        checks.append({
+        entry: dict[str, Any] = {
             "id": mechanism_id,
             "dimension": dimension,
             "label": label,
             "path": path,
             "evidence_state": state,
             "wired": wired,
-        })
+        }
+        if case_count is not None:
+            entry["case_count"] = case_count
+        checks.append(entry)
+
+    golden_rel = "fixtures/failure_golden/manifest.json"
+    fp_rel = "fixtures/failure_fp/manifest.json"
+    golden_n = _fixture_case_count(root, golden_rel)
+    fp_n = _fixture_case_count(root, fp_rel)
 
     _add(
         "golden-fixtures",
         "change-validation",
-        "失败 golden 27 条",
-        "fixtures/failure_golden/manifest.json",
+        f"失败 golden {golden_n} 条" if golden_n is not None else "失败 golden 回归集",
+        golden_rel,
         wired_hint=".github/workflows/test.yml",
+        case_count=golden_n,
     )
     _add(
         "false-positive-fixtures",
         "change-validation",
-        "假阳性回归集",
-        "fixtures/failure_fp/manifest.json",
+        f"假阳性回归集 {fp_n} 条" if fp_n is not None else "假阳性回归集",
+        fp_rel,
         wired_hint=".github/workflows/test.yml",
+        case_count=fp_n,
     )
     _add(
         "pilot-baseline",
