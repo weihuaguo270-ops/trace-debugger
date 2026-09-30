@@ -51,6 +51,23 @@ def test_taxonomy_coverage():
     assert required <= covered
 
 
+def test_published_golden_snapshot_matches_fresh_suite():
+    """已发布的黄金证据不得与当前规则脱节（含 per-case task_type profile）。"""
+    snapshot_path = DEFAULT_GOLDEN_DIR.parents[1] / "docs" / "snapshots" / "golden_evidence_baseline.json"
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    report = run_golden_suite()
+
+    assert snapshot["n_cases"] == report["n_cases"]
+    assert snapshot["n_passed"] == report["n_passed"]
+    assert snapshot["n_failed"] == report["n_failed"]
+
+    fresh: dict[str, int] = {}
+    for row in report["cases"]:
+        for failure in row["detected_failures"]:
+            fresh[failure] = fresh.get(failure, 0) + 1
+    assert dict(sorted(fresh.items())) == snapshot["distribution"]
+
+
 _SKIP_WATCHER_REPLAY = {"golden_multi_paths", "golden_path_id_branch"}
 
 

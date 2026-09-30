@@ -28,9 +28,16 @@
   per-type precision/recall plus an explicit disagreement list. Refuses to report a number while
   cases are unlabeled. Protocol: `docs/pilot/ADJUDICATION.md`; sheets carry raw query/observation
   and default to gitignored `.tdebug/`. Test: `tests/test_adjudication.py`
+- CI guard: the golden fixtures must be byte-reproducible from `scripts/generate_failure_golden.py`
+  (`git diff --exit-code` after regenerating), and a test asserts the published evidence snapshot
+  still matches a fresh suite run.
 
 ### Fixed
 
+- `examples/publish_golden_evidence.py` re-analysed every case with a default `Analyzer()`, ignoring
+  the per-case `task_type`, so the published `distribution` silently omitted `search_weak` (which
+  needs the `qa` profile) while the suite itself passed. The distribution is now derived from the
+  suite rows — one source of truth — and the artifact is regenerated.
 - `llm_offtrack` false positives on cross-language answers (Chinese query, English answer and the
   reverse): word overlap cannot measure "answered the wrong thing" across scripts. A deterministic
   script check (`looks_cross_language`) now skips offtrack when one side is ≥70% Han and the other
