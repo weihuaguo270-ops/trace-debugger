@@ -23,6 +23,11 @@
 - Golden set grows to **32** cases (26 golden / 6 held_out): `acceptance_failed` and
   `incomplete_stream` now have fixtures plus a positive control, so all 11 failure types carry a
   regression lock. Previously these two could regress and produce findings nothing could verify.
+- `tdebug adjudicate`: builds a **blind** human-labeling sheet (evidence only — the analyzer's
+  verdict lives in a separate key file) and scores the two into a root-cause correctness rate with
+  per-type precision/recall plus an explicit disagreement list. Refuses to report a number while
+  cases are unlabeled. Protocol: `docs/pilot/ADJUDICATION.md`; sheets carry raw query/observation
+  and default to gitignored `.tdebug/`. Test: `tests/test_adjudication.py`
 
 ### Fixed
 
