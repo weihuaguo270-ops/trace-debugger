@@ -55,6 +55,9 @@ jobs:
         tdebug scan fixtures/failure_golden 5 \
           --compare /tmp/tdebug_gate_baseline.json \
           --fail-on hold \
+          --findings-out /tmp/tdebug_gate_findings.json \
+          --require-verification \
+          --project-root . \
           --failures-out /tmp/tdebug_gate_failures.json
 
   test-windows:
