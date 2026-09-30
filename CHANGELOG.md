@@ -16,6 +16,16 @@
 - Responses `protocol_mode=ignore_fail|audit|fail_on_error` for list_tools/compaction (protocol ≠ Agent task failure)
 - Tests: `tests/test_message_adapters.py`, `tests/test_openai_stream_and_responses.py`, `tests/test_responses_extended_items.py`, `tests/test_fail_on_cli.py`
 
+### Fixed
+
+- CLI on Windows with a legacy ANSI code page (e.g. cp1252 runner): redirected
+  stdout made every Chinese line raise `UnicodeEncodeError` and the command died
+  with a traceback. `main()` now calls `configure_stdio()` (UTF-8 + `errors=replace`),
+  and `_safe_print` shares that helper. Covered by `tests/test_fail_on_cli.py`
+  under `Remove-Item Env:PYTHONIOENCODING` in CI.
+- `adapters/openai_stream.py`: narrow `delta` / `function` dicts before indexing
+  so `mypy` `index` errors stop failing the `typecheck` job (no behavior change).
+
 ### Documentation
 
 - INTEGRATIONS: OpenAI/Anthropic field gaps; LangGraph must not be force-flattened to `steps`

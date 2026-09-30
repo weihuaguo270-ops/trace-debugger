@@ -97,24 +97,27 @@ def _merge_tool_call_delta(
         if not isinstance(d, dict):
             continue
         idx = int(d.get("index", 0))
-        slot = acc.setdefault(
-            idx,
-            {
+        if idx not in acc:
+            acc[idx] = {
                 "id": "",
                 "type": "function",
                 "function": {"name": "", "arguments": ""},
-            },
-        )
+            }
+        slot: dict[str, Any] = acc[idx]
         if d.get("id"):
             slot["id"] = str(d["id"])
         if d.get("type"):
             slot["type"] = str(d["type"])
-        fn = d.get("function") if isinstance(d.get("function"), dict) else {}
+        raw_fn = d.get("function")
+        fn: dict[str, Any] = raw_fn if isinstance(raw_fn, dict) else {}
+        raw_slot_fn = slot.get("function")
+        slot_fn: dict[str, Any] = raw_slot_fn if isinstance(raw_slot_fn, dict) else {}
+        slot["function"] = slot_fn
         if fn.get("name"):
-            slot["function"]["name"] = str(fn["name"])
+            slot_fn["name"] = str(fn["name"])
         if fn.get("arguments"):
-            slot["function"]["arguments"] = (
-                str(slot["function"].get("arguments") or "") + str(fn["arguments"])
+            slot_fn["arguments"] = (
+                str(slot_fn.get("arguments") or "") + str(fn["arguments"])
             )
 
 
@@ -158,7 +161,8 @@ def coalesce_chat_completion_chunks(
             choice = chunk
         if choice.get("finish_reason"):
             finish_reason = str(choice["finish_reason"])
-        delta = choice.get("delta") if isinstance(choice.get("delta"), dict) else {}
+        raw_delta = choice.get("delta")
+        delta: dict[str, Any] = raw_delta if isinstance(raw_delta, dict) else {}
         if not delta and "content" in choice and "role" in choice:
             # Already a full message slipped into the stream list
             return {
