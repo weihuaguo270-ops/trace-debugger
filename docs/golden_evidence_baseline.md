@@ -1,10 +1,10 @@
 # 黄金失败集证据（golden_evidence_baseline）
 
-- **report_id:** `golden_evidence_20260930_084850`
-- **timestamp:** `2026-09-30T08:48:50.027012+00:00`
+- **report_id:** `golden_evidence_20260930_085604`
+- **timestamp:** `2026-09-30T08:56:04.486880+00:00`
 - **cases:** 32 (pass 32 / fail 0)
 - **pass_rate:** 100%
-- **git:** `9602b9b`
+- **git:** `dfa8d46`
 
 ## 分栏通过率
 
@@ -27,6 +27,7 @@
 | `acceptance_failed` | 1 | 验收测试失败 |
 | `approval_denied` | 1 | 批准被拒绝 |
 | `incomplete_stream` | 1 | 半截流/未完成 |
+| `search_weak` | 1 | 搜索结果结构过弱 |
 
 ## 用例明细
 

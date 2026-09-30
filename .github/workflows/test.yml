@@ -43,6 +43,10 @@ jobs:
         --cov-fail-under=50
     - name: Golden failure suite (evidence chain)
       run: python -m pytest tests/test_failure_golden.py -v --tb=short
+    - name: Fixtures are reproducible from the generator
+      run: |
+        python scripts/generate_failure_golden.py
+        git diff --exit-code -- fixtures/failure_golden
     - name: Portable Episode import
       run: python -m pytest tests/test_episode_import.py -q
     - name: Publish golden evidence snapshot
