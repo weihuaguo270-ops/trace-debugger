@@ -1,0 +1,15 @@
+{
+  "session_id": "fp_cross_language_reverse",
+  "query": "When was Lu Xun's Nahan first published?",
+  "model": "mock-gpt",
+  "timestamp": "2026-09-14T00:00:05Z",
+  "steps": [
+    {
+      "step": 1,
+      "thought": "FINAL ANSWER: 1923",
+      "observation": ""
+    }
+  ],
+  "final_answer": "《呐喊》于 1923 年由北京新潮社首次出版，是鲁迅的第一部短篇小说集。",
+  "total_duration_seconds": 0.4
+}
