@@ -3,7 +3,7 @@
 **读者：** 两仓维护者、简历/评审口径、集成方  
 **用途：** 固定「谁回答什么问题、谁产出什么证据、谁做最终发布裁决」，避免定位重复与路线图撞车。  
 **状态：** 约定稿（2026-09-13）  
-**对端副本：** 请在 [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) 同步同名文档 `docs/POSITIONING_AND_DIVISION.md`；若内容冲突，以两边 README「业务目标」+ 本文最近修订日期较新者为准，并开 PR 对齐。
+**对端副本：** [llm-eval-engine](https://github.com/weihuaguo270-ops/llm-eval-engine) **尚无**同名文档（2026-10-01 核对：该仓无此路径，`git log --all` 也查不到历史）——**本仓这份目前是唯一副本**。若要与对端建立双副本，先在对端仓新建同名文档，再按 §6.3 规则维护；在那之前，边界变更只需改本仓并同步对端 README 的相关表述。
 
 相关仓：
 
@@ -146,7 +146,7 @@ python examples/run_cross_agent_release.py episodes/ \
 
 ### 6.3 共同维护
 
-- 本文两仓各存一份，重大边界变更必须 **双仓 PR**（或先改本文再改两边 README）。  
+- 本文**目标**是两仓各存一份；**现状只有本仓一份**（见文首「对端副本」）。在 llm-eval-engine 建好同名文档之前，边界变更只改本仓，并同步对端 README 的相关表述；建好之后重大边界变更必须 **双仓 PR**。  
 - Schema / Episode 变更：先改共享约定，再跑两边最小 CI。  
 - 简历/答辩：**三仓各讲一句话**（§1），禁止把两仓都说成「发布评测平台」。
 
@@ -175,3 +175,4 @@ python examples/run_cross_agent_release.py episodes/ \
 | 2026-09-13 | v0.6.0：tdebug 落地证据链 / contracts / FP CI / failure-gate/v1 / 规则 R |
 | 2026-09-14 | Unreleased：adapters + P0–P2 规则信号；golden 29；文档口径对齐（仍不做语义 Judge） |
 | 2026-09-30 | golden **32**（11 类全覆盖）；`verification_ref` 回归锁 + `--require-verification` 进 CI；`tdebug adjudicate` 盲评（单标注者）；`looks_cross_language` 跨语言假阳性豁免（FP 7） |
+| 2026-10-01 | 核对对端副本：llm-eval-engine 无同名文档（无路径亦无历史）→ 文首与 §6.3 改为**如实描述现状**，并给出建立双副本的前置步骤 |
