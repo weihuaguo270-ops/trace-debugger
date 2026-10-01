@@ -111,3 +111,4 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 | 2026-07-30 | 试点 Phase 0–5、案例、自评 65%（Phase 5 代理耗时） |
 | 2026-07-30 | v0.2.5：统一价值说明口径 |
 | 2026-09-14 | 对齐 Unreleased：golden 29、adapters / `--fail-on` / 新失败类型；定位仍为规则信号非 Judge |
+| 2026-09-30 | 正文补「每条 finding 带 `verification_ref` 回归锁」，Unreleased 清单补 `--require-verification` 与 `tdebug adjudicate`；黄金集口径已是 32（26 golden / 6 held_out） |
