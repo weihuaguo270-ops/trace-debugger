@@ -31,7 +31,7 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 
 - 本地、轻量，JSON/JSONL 即可，无云账号
 - Format B + adapter，不绑框架
-- 规则可解释、可 git 验证，不依赖 LLM Judge
+- 规则可解释、可 git 验证，不依赖 LLM Judge；每条 finding 带 `verification_ref` 回归锁（必须命中的 fixture + 必须保持干净的假阳性对照 + 复跑命令）
 - golden 32 条 + 扫描快照 + `--compare` / `--fail-on`，结果可审计
 
 ### 边界
@@ -59,7 +59,7 @@ Agent 跑挂之后，轨迹散在 JSON 里，难分类、难汇总、难在发�
 ### 已经站得住的
 
 - Format B 打标签、报告、JSONL 记录 — 黄金集 32/32 + CI
-- v0.6.0：evidence / contracts / FP 集 / failure-gate/v1；Unreleased：adapters + 结构化失败信号（见 CHANGELOG）
+- v0.6.0：evidence / contracts / FP 集 / failure-gate/v1；Unreleased：adapters + 结构化失败信号 + `verification_ref` 回归锁 + `tdebug adjudicate` 盲评（见 CHANGELOG）
 - react-agent 100 条轨迹上做过 offtrack 校准（6→1，见 [RISKS.md](./RISKS.md)）
 - **react-agent 试点 Phase 0–5**（[pilot/README.md](./pilot/README.md)）：
   - 冻结 baseline + no_mock；Run A/B；[决策案例](./cases/regression_gate_20260730.md)
