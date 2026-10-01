@@ -60,6 +60,7 @@ react-agent（或任意 Agent）产出轨迹 / Episode
 | `findings` / intervention **修复边界线索** | 最终 `pass/review/hold` 发布裁决 |
 | `tdebug judge --prompt-out` **只导出 prompt** | Eval Loop、动态 rubric、Benchmark 多模型决策榜 |
 | 为下游提供稳定的 failure / findings 导出 | 数据切分泄漏治理、安全对抗主集、双人标注仲裁 |
+| 盲评标注表 + **单标注者**根因判对率（`tdebug adjudicate`） | 评审者间 κ / 双人仲裁（归 llm-eval-engine） |
 
 **对外忌用主卖点：**「发布评测决策系统」「Judge 校准」「能否发版的最终依据」。  
 **对外可用：**「失败信号 / 规则回归 / 给发布评测提供 failure-gate 证据」。
@@ -129,7 +130,8 @@ python examples/run_cross_agent_release.py episodes/ \
 | README / VALUE 主定位 | 收窄为「轨迹失败检测与规则回归」；发版最终决策指向 llm-eval-engine | 已做 |
 | 「能否发版」表述 | 改为「提供失败证据，供评测决策消费」 | 已做 |
 | 路线图 | 步骤证据、假阳性集、tool 契约、`--task-type`、failure-gate 导出；**不**做 κ/Judge/Eval Loop | **0.6.0 已落地** |
-| Adapters + 结构化信号 | Messages/stream/Responses；computer/shell、`approval_denied`、`incomplete` mark、`search_weak`、`protocol_mode`、`--fail-on` | **Unreleased（PR 栈）** |
+| Adapters + 结构化信号 | Messages/stream/Responses；computer/shell、`approval_denied`、`incomplete` mark、`search_weak`、`protocol_mode`、`--fail-on` | **已合并（#6）** |
+| 可验证 findings + 盲评 | `verification_ref` 回归锁 + `--require-verification`（进 CI 门禁）；`tdebug adjudicate` 盲表/评分（单标注者根因判对率、逐类型 P/R） | **已合并（#8）** |
 | INTEGRATIONS | failures → failure-gate 字段说明；半截流/协议项策略 | 已做 |
 | 与 AgentRx/Hindsight 类能力 | 若做步骤归因，保持**确定性/可解释**；语义归因交给对端 | 持续 |
 
@@ -172,3 +174,4 @@ python examples/run_cross_agent_release.py episodes/ \
 | 2026-09-13 | 初版：固定双仓定位、硬边界、交接契约与后续调整清单 |
 | 2026-09-13 | v0.6.0：tdebug 落地证据链 / contracts / FP CI / failure-gate/v1 / 规则 R |
 | 2026-09-14 | Unreleased：adapters + P0–P2 规则信号；golden 29；文档口径对齐（仍不做语义 Judge） |
+| 2026-09-30 | golden **32**（11 类全覆盖）；`verification_ref` 回归锁 + `--require-verification` 进 CI；`tdebug adjudicate` 盲评（单标注者）；`looks_cross_language` 跨语言假阳性豁免（FP 7） |

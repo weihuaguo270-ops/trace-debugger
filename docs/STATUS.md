@@ -7,11 +7,11 @@
 
 ## 当前
 
-- 版本基线：v0.6.0 failure-gate（2026-09-14 Unreleased 增量）
-- 最近验证：黄金集 32 条、OpenAI/Anthropic adapter、`search_weak`、`--fail-on`
-- 可声称：本地/CI 轨迹失败分类、baseline 对比、JSONL findings 导出
-- 不能声称：生产 APM、云 tracing、自动修复、多租户
-- 证据摘要：黄金集 32 条（11 类 taxonomy 全覆盖）；OpenAI/Anthropic adapter 与结构化失败信号；baseline 对比 / findings 导出 / `--fail-on` CI 门禁
+- 版本基线：v0.6.0 failure-gate（Unreleased 增量至 2026-09-30）
+- 最近验证：黄金集 **32** 条（26 golden / 6 held_out，11 类 taxonomy 全覆盖）；每条 finding 可指到 `verification_ref` 回归锁（`--require-verification` 已进 CI 门禁）；`tdebug adjudicate` 盲评标注/评分可用（**尚无独立第二标注者，因此不给根因判对率数字**）；`looks_cross_language` 跨语言假阳性豁免（FP 集 7 条）
+- 可声称：本地/CI 轨迹失败分类、baseline 对比、JSONL findings 导出、逐条 finding 的机器可校验回归锁
+- 不能声称：生产 APM、云 tracing、自动修复、多租户；**检测准确率**（需独立人工标注，协议见 [pilot/ADJUDICATION.md](pilot/ADJUDICATION.md)）
+- 证据摘要：黄金集 32 条（11 类全覆盖）+ 假阳性集 7 条；`verification_ref` 回归锁与夹具漂移守卫；baseline 对比 / findings 导出 / `--fail-on` / `--require-verification`
 
 ## P0
 

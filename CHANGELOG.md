@@ -60,7 +60,7 @@
 
 - INTEGRATIONS: OpenAI/Anthropic field gaps; LangGraph must not be force-flattened to `steps`
 - Wired message adapters into INTEGRATIONS usage snippet
-- README / VALUE / golden indexes / POSITIONING：对齐 Unreleased 进展与黄金集 29 条
+- README / STATUS / VALUE / golden indexes / POSITIONING：对齐 Unreleased 进展与黄金集 **32** 条，并登记 `--require-verification`、`tdebug adjudicate`（协议见 docs/pilot/ADJUDICATION.md）与跨语言假阳性豁免
 
 ## 0.6.0 (2026-09-13)
 

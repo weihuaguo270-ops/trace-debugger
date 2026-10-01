@@ -35,9 +35,22 @@
 `acceptance_failed` 并交给评测引擎形成 `hold`；这属于 `external_real_sandbox`，不是生产团队接入。
 项目仍不是完整 APM、云 tracing 或自动修复系统；真实团队接入仍需脱敏、权限和时序存储。
 
-**2026-09-14 文档更新：** Unreleased 进展对齐 — OpenAI/Anthropic adapters（含 Responses/stream）、
-结构化 computer/shell 失败、`approval_denied`、`incomplete` mark、`search_weak`、`protocol_mode`、
-`--fail-on`；黄金集 **29** 条。契约与门禁仍以 v0.6.0 failure-gate 为主干。
+**2026-09-30 文档更新：** 黄金集 **32** 条（26 golden / 6 held_out，**11 类 taxonomy 全覆盖**）——
+`acceptance_failed` / `incomplete_stream` 补入 manifest 后，每条 finding 都带机器可校验的
+**`verification_ref` 回归锁**（必须命中的 fixture + 必须保持干净的假阳性 fixture + 复跑命令）；
+`--require-verification` 让缺锁的 finding 直接 exit 1，已接进 CI 门禁步骤。新增
+**`tdebug adjudicate`**：生成盲评标注表（判定与 key 分离）并算根因判对率 + 逐类型 P/R
+（协议见 [docs/pilot/ADJUDICATION.md](docs/pilot/ADJUDICATION.md)）。`llm_offtrack` 增加
+**跨语言假阳性豁免**（`looks_cross_language`；FP 集增至 7 条，取舍见 docs/RISKS.md §1）。
+契约与门禁仍以 v0.6.0 failure-gate 为主干。
+
+<details>
+<summary>历史更新（2026-09-14）</summary>
+
+OpenAI/Anthropic adapters（含 Responses/stream）、结构化 computer/shell 失败、`approval_denied`、
+`incomplete` mark、`search_weak`、`protocol_mode`、`--fail-on`；当时黄金集 29 条。
+
+</details>
 
 ---
 
@@ -58,6 +71,7 @@ tdebug scan trajectories/ 50 \
   --compare snapshots/baseline.json \
   --fail-on hold \
   --findings-out snapshots/latest_findings.json \
+  --require-verification \
   --project-root .
 python -m pytest tests/test_failure_golden.py   # CI 同款
 ```
@@ -107,6 +121,8 @@ python -m pytest tests/test_failure_golden.py   # CI 同款
 |--------|------|
 | 启发式失败标签 + CLI | `tdebug` / `stats` / `validate`（含 adapters 结构化信号） |
 | 黄金集 + CI | 32/32 — 规则回归（含 `approval_denied` / `search_weak` / `acceptance_failed` / `incomplete_stream`） |
+| **可验证 findings** (Unreleased) | 每条 finding 带 `verification_ref` 回归锁（fixture + 假阳性对照 + 复跑命令）；`--require-verification` 缺锁即 exit 1，已进 CI |
+| **盲评根因判对率** (Unreleased) | `tdebug adjudicate`：盲表与 key 分离，输出根因判对率 + 逐类型 P/R；未标完拒绝报数 |
 | 发版 compare | `--compare` + 试点 baseline / 案例 |
 | **Harness Health** (v0.2.7) | 五维 Agent Work Loop · 证据状态 · `findings.json` · intervention ledger |
 | **跨 Agent Episode** (v0.4.0) | 导入 `evaluation-episode/v1`，保留框架、Agent 版本、split 与业务终态校验证据；无需安装轨迹生产方 SDK |
@@ -137,6 +153,9 @@ Golden CI：[docs/golden_evidence_baseline.md](docs/golden_evidence_baseline.md)
 | `tdebug scan … --failures-out failures.json` | **failure-gate/v1**：供 llm-eval-engine 消费 |
 | `tdebug scan … --compare baseline.json --fail-on hold` | 门禁达 hold（或 `--fail-on review`）则 **exit 1** 拦 CI |
 | `tdebug scan … --findings-out findings.json` | Harness Health：门禁判定 + 修复建议 |
+| `tdebug scan … --findings-out findings.json --require-verification` | **回归锁门禁**：任一 finding 缺可执行锁则 exit 1（CI 同款） |
+| `tdebug adjudicate <dir> [N] --sheet-out … --key-out …` | **盲评标注表**：证据与判定分离，供人工标根因 |
+| `tdebug adjudicate --score --sheet … --key …` | 算**根因判对率** + 逐类型 P/R + 分歧清单（未标完不报数） |
 | `tdebug scan … --task-type qa\|code\|creative` | 任务类型分析配置 |
 | `tdebug … --contracts` | 启用 tool contract → `tool_error` |
 | `tdebug <file.json>` | 单条分析（含步骤证据） |
@@ -152,7 +171,7 @@ tdebug failures .tdebug/failures.jsonl
 tdebug judge offtrack.json --prompt-out judge.txt
 ```
 
-选项：`--json-out` · `--findings-out` · `--project-root` · `--record` · `--compare` · `--fail-on` · `--incomplete` · `--session` · `--schema`（validate）
+选项：`--json-out` · `--findings-out` · `--require-verification` · `--project-root` · `--record` · `--compare` · `--fail-on` · `--incomplete` · `--session` · `--schema`（validate）
 
 </details>
 
@@ -178,6 +197,7 @@ tdebug judge offtrack.json --prompt-out judge.txt
 | [docs/POSITIONING_AND_DIVISION.md](docs/POSITIONING_AND_DIVISION.md) | **与 llm-eval-engine 定位分工（避免重复）** |
 | [docs/VALUE.md](docs/VALUE.md) | **价值、主场景、业务证明缺口、下一步** |
 | [docs/pilot/WORKFLOW.md](docs/pilot/WORKFLOW.md) | 试点 scan + compare + findings 工作流 |
+| [docs/pilot/ADJUDICATION.md](docs/pilot/ADJUDICATION.md) | **盲评协议**：`tdebug adjudicate` 标注表与根因判对率 |
 | [docs/intervention_ledger.json](docs/intervention_ledger.json) | 纵向干预记录（Learning Capture） |
 | [schemas/findings.schema.json](schemas/findings.schema.json) | findings.json 契约 |
 | [docs/RISKS.md](docs/RISKS.md) | 风险与边界 |

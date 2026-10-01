@@ -11,9 +11,19 @@ pytest tests/ -q                               # 全量
 pytest tests/test_failure_golden.py -q         # 规则回归（golden 32）
 pytest tests/test_failure_fp_and_gate.py -q    # 假阳性回归 + 门禁导出
 
-# CI 的规则门禁步骤：同数据 compare 不应触发 hold
+# CI 的规则门禁步骤（与 .github/workflows/test.yml 同款）：同数据 compare 不应触发 hold，
+# 且每条 finding 必须能指到回归锁（缺锁即 exit 1）
 tdebug scan fixtures/failure_golden 5 --json-out /tmp/gate.json
-tdebug scan fixtures/failure_golden 5 --compare /tmp/gate.json --fail-on hold
+tdebug scan fixtures/failure_golden 5 \
+  --compare /tmp/gate.json \
+  --fail-on hold \
+  --findings-out /tmp/gate_findings.json \
+  --require-verification \
+  --project-root .
+
+# CI 也守卫夹具可复现：改 spec 后必须能原样重生成
+python scripts/generate_failure_golden.py
+git diff --exit-code -- fixtures/failure_golden
 ```
 
 ## 受限 runner / 容器 / 沙箱
