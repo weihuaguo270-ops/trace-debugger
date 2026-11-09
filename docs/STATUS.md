@@ -1,5 +1,28 @@
 # 项目状态
 
+## 产品定位与边界
+
+trace-debugger 是企业内部工作助手（work-assistant）和规划中的受控变更交付（change-delivery）共用的轨迹失败雷达与 CI 钩子。它负责规则失败打标、scan/compare、golden 回归和 findings 导出，不负责最终发版裁决。
+
+llm-eval-engine 消费本仓 failure-gate 与业务/过程证据，输出 pass/review/hold。本仓仍是本地/CI 失败治理原型，不是生产 APM、云 tracing、自动修复或多租户平台。
+
+## 项目命名与边界
+
+| 名称 | 角色 |
+|---|---|
+| 企业内部工作助手 / work-assistant | 产生规范咨询和报销办理轨迹的主应用 |
+| 受控变更交付 / change-delivery | 规划中的独立应用，暂不拆仓 |
+| trace-debugger | 本仓，失败信号和 CI 回归 |
+| llm-eval-engine | 姊妹仓，发版前自检和最终 pass/review/hold |
+
+## 简历项目简介
+
+为企业内部工作助手和受控变更交付构建轨迹失败雷达与 CI 钩子。
+将 Format B / Episode 轨迹转换为可解释的工具、检索、验收和审批失败信号。
+提供 baseline、scan/compare、golden 回归、findings 导出和 verification_ref 追溯。
+通过稳定 failure-gate 产物把规则层证据交给 llm-eval-engine 做过程/业务发布前自检。
+当前证据来自本地 CI、黄金集和 external_real_sandbox，不等同生产 APM、线上 SLA 或自动修复系统。
+
 ## 定位与边界
 
 本地 Agent 轨迹失败检测与 CI 规则回归工具：负责发现并输出失败证据，不负责最终发布裁决。
